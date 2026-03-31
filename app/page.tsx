@@ -615,7 +615,9 @@ export default function Home() {
                   };
                   
                   // Distribute uniformly around the screen
-                  const left = pseudoRandom(i + 10) * 100; 
+                  const randVal = pseudoRandom(i + 10);
+                  // Bias distribution towards the right side
+                  const left = Math.pow(randVal, 0.4) * 100; 
                   const top = pseudoRandom(i + 20) * 100;
                   
                   // Boxes sizes (Squares & Rectangles) - Reduced size for smaller 'pixels'
@@ -667,9 +669,9 @@ export default function Home() {
                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] md:w-[70%] h-[90%] bg-[radial-gradient(circle_at_center,rgba(252,252,252,0.95)_0%,rgba(252,252,252,0.6)_50%,transparent_100%)] pointer-events-none z-0"></div>
             </div>
 
-            <div className="relative z-10 w-full flex-1 max-w-[1240px] mx-auto flex flex-col justify-center items-center text-center px-6 md:px-12 pointer-events-none mt-[-20px] md:mt-[-40px]">
-               <motion.div style={{ y: quotesTextY }}>
-                  <h2 className="flex flex-col items-center justify-center text-[32px] sm:text-[40px] md:text-[56px] lg:text-[64px] font-bold text-[#1f1f1f] leading-[1.2] tracking-tight relative z-20">
+            <div className="relative z-10 w-full flex-1 max-w-[1240px] mx-auto flex flex-col justify-center items-start text-left px-8 md:px-20 pointer-events-none mt-[-20px] md:mt-[-40px]">
+               <motion.div style={{ y: quotesTextY }} className="w-full">
+                  <h2 className="flex flex-col items-start justify-center text-[32px] sm:text-[40px] md:text-[56px] lg:text-[64px] font-bold text-[#1f1f1f] leading-[1.2] tracking-tight relative z-20 w-full">
                      <motion.span 
                         style={{ opacity: textOp1, y: textY1, textShadow: "0 0 30px rgba(252,252,252,1), 0 0 10px rgba(252,252,252,0.9)" }}
                      >“Belajarlah</motion.span>
