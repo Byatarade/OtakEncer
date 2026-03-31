@@ -614,7 +614,7 @@ export default function Home() {
 
                {/* Scrolling Marquee Container */}
                <motion.div 
-                  className="flex gap-8 md:gap-12 min-w-max px-4 py-12 items-center"
+                  className="flex gap-6 md:gap-8 min-w-max px-4 py-12 items-center"
                   animate={{ x: ["0%", "-50%"] }}
                   transition={{ ease: "linear", duration: 35, repeat: Infinity }}
                >
@@ -622,31 +622,33 @@ export default function Home() {
                   {[...testimonials, ...testimonials].map((testimonial, idx) => (
                      <motion.div 
                         key={idx}
-                        whileHover={{ y: -10, scale: 1.02 }}
+                        whileHover={{ y: -6, scale: 1.02 }}
                         transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                        className="w-[320px] md:w-[480px] bg-white border-[2.5px] border-[#672cb9] rounded-[32px] pt-12 pb-10 px-8 md:px-12 relative flex flex-col justify-between shrink-0 cursor-pointer"
+                        className="w-[280px] md:w-[360px] h-[280px] md:h-[320px] bg-white border-[2.5px] border-[#672cb9] rounded-[24px] md:rounded-[28px] pt-10 pb-8 px-6 md:px-10 relative flex flex-col justify-between shrink-0 cursor-pointer shadow-[0_12px_24px_rgba(103,44,185,0.05)] hover:shadow-[0_20px_40px_rgba(103,44,185,0.12)]"
                      >
                         {/* Top Left Quote */}
-                        <div className="absolute -top-7 md:-top-9 left-10 md:left-12 bg-white px-2 md:px-4 text-[#672cb9] text-[56px] md:text-[72px] font-black leading-none font-serif select-none flex items-center justify-center">
+                        <div className="absolute -top-6 md:-top-7 left-6 md:left-8 bg-white px-2 md:px-4 text-[#672cb9] text-[48px] md:text-[60px] font-black leading-none font-serif select-none flex items-center justify-center">
                            “
                         </div>
                         
                         {/* Bottom Right Quote */}
-                        <div className="absolute -bottom-8 md:-bottom-10 right-10 md:right-12 bg-white px-2 md:px-4 text-[#672cb9] text-[56px] md:text-[72px] font-black leading-none font-serif select-none flex items-center justify-center">
+                        <div className="absolute -bottom-8 md:-bottom-9 right-6 md:right-8 bg-white px-2 md:px-4 text-[#672cb9] text-[48px] md:text-[60px] font-black leading-none font-serif select-none flex items-center justify-center">
                            ”
                         </div>
                         
-                        <p className="text-[15px] md:text-[18px] text-[#2c1d42] text-center leading-[1.6] md:leading-[1.7] mb-10 md:mb-12 font-medium">
-                           {testimonial.text}
-                        </p>
+                        <div className="flex-1 flex items-center justify-center pt-2">
+                           <p className="text-[14px] md:text-[16px] text-[#2c1d42] text-center leading-[1.6] md:leading-[1.7] font-bold md:font-medium italic">
+                              "{testimonial.text}"
+                           </p>
+                        </div>
                         
-                        <div className="flex items-center justify-center gap-4 mt-auto">
-                           <div className="w-[45px] h-[45px] md:w-[60px] md:h-[60px] rounded-full overflow-hidden relative shadow-sm">
+                        <div className="flex items-center justify-center gap-4 mt-auto border-t border-gray-100 pt-5">
+                           <div className="w-[48px] h-[48px] md:w-[60px] md:h-[60px] rounded-full overflow-hidden relative shadow-sm border-[2.5px] border-[#ffa515] shrink-0">
                               <Image src={testimonial.avatar} alt={testimonial.name} fill className="object-cover" />
                            </div>
                            <div className="flex flex-col text-left">
-                              <h4 className="text-[16px] md:text-[20px] font-bold text-[#672cb9] leading-tight capitalize">{testimonial.name}</h4>
-                              <p className="text-[12px] md:text-[14px] text-gray-500 font-medium leading-tight">{testimonial.role}</p>
+                              <h4 className="text-[16px] md:text-[18px] font-bold text-[#672cb9] leading-tight capitalize tracking-tight">{testimonial.name}</h4>
+                              <p className="text-[11px] md:text-[13px] text-[#ffa515] font-bold leading-none mt-1 uppercase tracking-wider">{testimonial.role}</p>
                            </div>
                         </div>
                      </motion.div>
@@ -662,89 +664,132 @@ export default function Home() {
             </div>
          </section>
 
-         {/* CTA Card over Peach background */}
-         <section className="w-full bg-[#fff2de] px-4 md:px-12 py-16 md:py-24 flex flex-col items-center relative z-20">
-            {/* The Purple Box */}
+         {/* CTA Card with Aurora */}
+         <section className="w-full bg-white px-4 md:px-12 py-16 md:py-32 flex flex-col items-center relative z-20">
             <motion.div 
-               initial={{ opacity: 0, scale: 0.95 }}
-               whileInView={{ opacity: 1, scale: 1 }}
+               initial={{ opacity: 0, y: 40 }}
+               whileInView={{ opacity: 1, y: 0 }}
                viewport={{ once: true }}
-               transition={{ duration: 0.6, type: "spring" }}
-               className="w-full max-w-[320px] md:max-w-[800px] bg-[#46237a] md:bg-gradient-to-tr md:from-[#401f70] md:to-[#672cb9] rounded-[24px] md:rounded-[40px] pt-8 md:pt-14 pb-10 md:pb-14 px-6 md:px-20 flex flex-col items-center text-center shadow-[0_20px_40px_rgba(70,35,122,0.25)] relative overflow-hidden group"
+               transition={{ duration: 0.7, ease: "easeOut" }}
+               className="w-full max-w-[1000px] rounded-[32px] md:rounded-[48px] overflow-hidden shadow-[0_20px_60px_rgba(103,44,185,0.15)] relative"
             >
-               {/* Radial Mesh Background for CTA */}
-               <div className="absolute top-[-50%] left-[-20%] w-[300px] h-[300px] bg-[#ffa515] rounded-full blur-[100px] opacity-20 group-hover:opacity-40 transition-opacity duration-700"></div>
-               <div className="absolute bottom-[-50%] right-[-20%] w-[300px] h-[300px] bg-[#c876b5] rounded-full blur-[100px] opacity-20 group-hover:opacity-40 transition-opacity duration-700"></div>
-               
-               {/* Happy Robot Face SVG Image */}
-               <motion.div 
-                  animate={{ rotate: [0, -10, 10, 0] }}
-                  transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
-                  className="w-[70px] h-[70px] md:w-[100px] md:h-[100px] mb-4 md:mb-8 relative z-10"
-               >
-                  <Image src="/assets/ai-cta.svg" alt="Robot AI Cta" width={100} height={100} className="w-full h-full object-contain drop-shadow-[0_10px_20px_rgba(0,0,0,0.3)]" />
-               </motion.div>
+               <AuroraBackground className="w-full py-16 md:py-24 px-6 md:px-12 flex flex-col items-center text-center !min-h-[450px]">
+                  {/* Glowing decoration */}
+                  <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-[400px] h-[200px] bg-[#ffa515]/20 blur-[80px] rounded-full pointer-events-none mix-blend-screen"></div>
 
-               <h3 className="text-white font-bold text-[18px] md:text-[38px] tracking-tight mb-2 md:mb-5 leading-[1.3] md:leading-[1.2] relative z-10">
-                  Siap Revolusi Cara<br className="md:hidden"/> Belajarmu?
-               </h3>
-               
-               <p className="text-white/80 text-[11px] md:text-[16px] leading-[1.6] md:leading-[1.8] mb-8 md:mb-10 font-['Montserrat',sans-serif] px-1 max-w-[500px] relative z-10">
-                  Bergabung dengan puluhan ribu pelajar dan profesional yang telah merasakan kemudahan memahami dokumen kompleks bersama OtakEncer.
-               </p>
-               
-               <motion.button 
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="w-full max-w-[180px] md:max-w-[240px] h-[48px] md:h-[60px] bg-white text-[#672cb9] font-bold text-[13px] md:text-[16px] rounded-[16px] transition-transform shadow-xl relative z-10"
-               >
-                  Mulai Disini
-               </motion.button>
+                  <motion.div 
+                     animate={{ y: [0, -10, 0] }}
+                     transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
+                     className="w-[80px] h-[80px] md:w-[120px] md:h-[120px] mb-6 md:mb-8 relative z-10 bg-white/10 p-5 rounded-3xl backdrop-blur-sm border border-white/20 shadow-xl"
+                  >
+                     <Image src="/assets/ai-cta.svg" alt="Robot AI Cta" width={100} height={100} className="w-full h-full object-contain" />
+                  </motion.div>
+
+                  <h3 className="text-white font-bold text-[28px] md:text-[46px] lg:text-[52px] tracking-tight mb-4 md:mb-6 leading-[1.2] relative z-10 drop-shadow-md">
+                     Siap Revolusi Cara<br className="md:hidden"/> Belajarmu?
+                  </h3>
+                  
+                  <p className="text-white/90 text-[14px] md:text-[18px] leading-[1.6] md:leading-[1.8] mb-8 md:mb-10 font-['Montserrat',sans-serif] px-2 max-w-[600px] relative z-10 font-medium">
+                     Bergabung dengan puluhan ribu pelajar dan profesional yang telah merasakan kemudahan memahami dokumen kompleks bersama OtakEncer.
+                  </p>
+                  
+                  <div className="flex flex-col sm:flex-row gap-4 relative z-10 w-full sm:w-auto px-4">
+                     <motion.button 
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        className="w-full sm:w-auto px-8 md:px-10 h-[50px] md:h-[60px] bg-white text-[#672cb9] font-bold text-[15px] md:text-[16px] rounded-full transition-all shadow-[0_8px_25px_rgba(255,255,255,0.2)] hover:shadow-[0_12px_35px_rgba(255,255,255,0.3)] flex items-center justify-center gap-2"
+                     >
+                        Mulai Sekarang Gratis
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                     </motion.button>
+                     <motion.button 
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        className="w-full sm:w-auto px-8 md:px-10 h-[50px] md:h-[60px] bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 text-white font-bold text-[15px] md:text-[16px] rounded-full transition-all flex items-center justify-center"
+                     >
+                        Hubungi Sales
+                     </motion.button>
+                  </div>
+               </AuroraBackground>
             </motion.div>
          </section>
 
-         {/* Footer */}
-         <footer className="w-full bg-[#0d0714] text-white rounded-t-[40px] md:rounded-t-[80px] pt-12 md:pt-24 pb-8 md:pb-12 px-6 md:px-20 mt-0 flex flex-col items-start border-b-[6px] md:border-b-[8px] border-[#ffa515] relative z-20">
-            <div className="max-w-[1200px] w-full mx-auto flex flex-col md:flex-row md:justify-between items-start">
-               
-               <div className="flex flex-col w-full md:w-auto mb-10 md:mb-0">
-                  <div className="flex items-center gap-3 mb-8 md:mb-10">
-                     <div className="bg-transparent w-8 h-8 md:w-12 md:h-12 flex items-center justify-center relative">
-                        <Image src="/assets/logo.png" alt="Logo" fill className="object-contain invert brightness-0" />
+         {/* Modern Footer */}
+         <footer className="w-full bg-[#08020d] border-t border-white/10 text-white pt-16 md:pt-24 pb-8 md:pb-10 relative z-20 overflow-hidden">
+            {/* Ambient glows for the footer */}
+            <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-[#672cb9]/15 rounded-full blur-[120px] pointer-events-none"></div>
+            <div className="absolute bottom-[-100px] right-1/4 w-[400px] h-[400px] bg-[#ffa515]/10 rounded-full blur-[100px] pointer-events-none"></div>
+            <div className="absolute top-[20%] right-10 w-[300px] h-[300px] bg-[#c876b5]/10 rounded-full blur-[100px] pointer-events-none"></div>
+
+            <div className="max-w-[1240px] w-full mx-auto px-6 md:px-12 flex flex-col relative z-10">
+               {/* Main Footer Content */}
+               <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 mb-16 lg:mb-20">
+                  
+                  {/* Brand Column */}
+                  <div className="col-span-1 lg:col-span-5 flex flex-col items-start">
+                     <Link href="#beranda" className="flex items-center gap-3 mb-6 group">
+                        <div className="bg-white/10 border border-white/20 w-12 h-12 flex items-center justify-center rounded-2xl group-hover:bg-white/20 transition-all shadow-lg backdrop-blur-sm">
+                           <Image src="/assets/logo.png" alt="Logo" width={28} height={28} className="object-contain invert brightness-0 group-hover:scale-110 transition-transform" />
+                        </div>
+                        <span className="font-bold text-[24px] md:text-[28px] tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white to-white/80">OtakEncer</span>
+                     </Link>
+                     <p className="text-white/60 text-[14px] md:text-[15px] leading-[1.7] max-w-[380px] mb-8 font-['Montserrat',sans-serif]">
+                        Platform AI pintar yang mengubah dokumen kompleks menjadi materi interaktif siap pelajari. Belajar lebih cerdas, tingkatkan produktivitasmu.
+                     </p>
+                     
+                     <div className="flex gap-4">
+                        <Link href="#" className="w-11 h-11 flex items-center justify-center hover:-translate-y-1 bg-white/5 hover:bg-[#672cb9] border border-white/10 rounded-full transition-all group shadow-sm hover:shadow-[0_10px_20px_rgba(103,44,185,0.4)]">
+                           <Image src="/assets/twitter-icon.svg" alt="X" width={18} height={18} className="brightness-0 invert group-hover:scale-110 transition-transform" />
+                        </Link>
+                        <Link href="#" className="w-11 h-11 flex items-center justify-center hover:-translate-y-1 bg-white/5 hover:bg-[#672cb9] border border-white/10 rounded-full transition-all group shadow-sm hover:shadow-[0_10px_20px_rgba(103,44,185,0.4)]">
+                           <Image src="/assets/facebook-icon.svg" alt="FB" width={18} height={18} className="brightness-0 invert group-hover:scale-110 transition-transform" />
+                        </Link>
+                        <Link href="#" className="w-11 h-11 flex items-center justify-center hover:-translate-y-1 bg-white/5 hover:bg-[#672cb9] border border-white/10 rounded-full transition-all group shadow-sm hover:shadow-[0_10px_20px_rgba(103,44,185,0.4)]">
+                           <Image src="/assets/instagram-social.svg" alt="IG" width={18} height={18} className="brightness-0 invert group-hover:scale-110 transition-transform" />
+                        </Link>
                      </div>
-                     <span className="font-semibold text-[20px] md:text-[28px] tracking-tight">OtakEncer</span>
                   </div>
 
-                  <h4 className="font-medium text-[13px] md:text-[16px] mb-4 text-white uppercase tracking-wider">Quick Links</h4>
-                  <div className="flex flex-col gap-3 font-['Montserrat',sans-serif] text-[12px] md:text-[15px] text-gray-400">
-                     <Link href="#" className="w-fit hover:text-white transition-colors">Beranda</Link>
-                     <Link href="#" className="w-fit hover:text-white transition-colors">Neura AI</Link>
-                     <Link href="#" className="w-fit hover:text-white transition-colors">Testimoni</Link>
-                     <Link href="#" className="w-fit hover:text-white transition-colors">Kontak</Link>
+                  {/* Links Columns */}
+                  <div className="col-span-1 lg:col-span-7 grid grid-cols-2 md:grid-cols-3 gap-10 md:gap-8">
+                     <div className="flex flex-col">
+                        <h4 className="font-bold text-[16px] md:text-[18px] mb-6 text-white">Produk</h4>
+                        <div className="flex flex-col gap-4 font-['Montserrat',sans-serif] text-[14px] md:text-[15px] text-white/60">
+                           <Link href="#neura" className="hover:text-[#ffa515] hover:translate-x-1 transition-all w-fit">Neura AI</Link>
+                           <Link href="#fitur" className="hover:text-[#ffa515] hover:translate-x-1 transition-all w-fit">Fitur Flashcard</Link>
+                           <Link href="#" className="hover:text-[#ffa515] hover:translate-x-1 transition-all w-fit">Ringkasan Dokumen</Link>
+                           <Link href="#" className="hover:text-[#ffa515] hover:translate-x-1 transition-all w-fit">Integrasi YouTube</Link>
+                        </div>
+                     </div>
+                     <div className="flex flex-col">
+                        <h4 className="font-bold text-[16px] md:text-[18px] mb-6 text-white">Perusahaan</h4>
+                        <div className="flex flex-col gap-4 font-['Montserrat',sans-serif] text-[14px] md:text-[15px] text-white/60">
+                           <Link href="#" className="hover:text-[#ffa515] hover:translate-x-1 transition-all w-fit">Tentang Kami</Link>
+                           <Link href="#comment" className="hover:text-[#ffa515] hover:translate-x-1 transition-all w-fit">Testimoni</Link>
+                           <Link href="#" className="hover:text-[#ffa515] hover:translate-x-1 transition-all w-fit">Blog</Link>
+                           <Link href="#" className="hover:text-[#ffa515] hover:translate-x-1 transition-all w-fit">Karir</Link>
+                        </div>
+                     </div>
+                     <div className="flex flex-col col-span-2 md:col-span-1">
+                        <h4 className="font-bold text-[16px] md:text-[18px] mb-6 text-white">Dukungan</h4>
+                        <div className="flex flex-col gap-4 font-['Montserrat',sans-serif] text-[14px] md:text-[15px] text-white/60">
+                           <Link href="#" className="hover:text-[#ffa515] hover:translate-x-1 transition-all w-fit">Pusat Bantuan</Link>
+                           <Link href="#" className="hover:text-[#ffa515] hover:translate-x-1 transition-all w-fit">Syarat & Ketentuan</Link>
+                           <Link href="#" className="hover:text-[#ffa515] hover:translate-x-1 transition-all w-fit">Kebijakan Privasi</Link>
+                           <Link href="#" className="hover:text-[#ffa515] hover:translate-x-1 transition-all w-fit">Kontak</Link>
+                        </div>
+                     </div>
                   </div>
                </div>
 
-               <div className="flex flex-col w-full md:w-auto items-start md:items-end justify-between h-full">
-                  <div className="flex gap-4 md:gap-5 mb-8 md:mb-0 md:mt-16">
-                     <Link href="#" className="w-6 h-6 md:w-10 md:h-10 flex items-center justify-center hover:opacity-80 bg-white/5 rounded-full p-1.5 md:p-2.5 transition-all">
-                        <Image src="/assets/twitter-icon.svg" alt="X" width={24} height={24} className="brightness-0 invert" />
-                     </Link>
-                     <Link href="#" className="w-6 h-6 md:w-10 md:h-10 flex items-center justify-center hover:opacity-80 bg-white/5 rounded-full p-1.5 md:p-2.5 transition-all">
-                        <Image src="/assets/facebook-icon.svg" alt="FB" width={24} height={24} className="brightness-0 invert" />
-                     </Link>
-                     <Link href="#" className="w-6 h-6 md:w-10 md:h-10 flex items-center justify-center hover:opacity-80 bg-white/5 rounded-full p-1.5 md:p-2.5 transition-all">
-                        <Image src="/assets/instagram-social.svg" alt="IG" width={24} height={24} className="brightness-0 invert" />
-                     </Link>
-                  </div>
-
-                  <div className="text-left md:text-right flex flex-col gap-1 md:mt-20">
-                     <p className="text-[11px] md:text-[14px] font-['Montserrat',sans-serif] text-gray-500 font-medium">
-                        Created By Pasti Sukses
-                     </p>
-                     <p className="text-[11px] md:text-[14px] font-['Montserrat',sans-serif] text-gray-500 font-medium">
-                        @TechSprint Innovation Cup 2026
-                     </p>
-                  </div>
+               {/* Bottom Bar */}
+               <div className="flex flex-col md:flex-row items-center justify-between pt-8 border-t border-white/10 gap-4">
+                  <p className="text-[13px] md:text-[14px] font-['Montserrat',sans-serif] text-white/50 text-center md:text-left">
+                     &copy; 2026 OtakEncer. All rights reserved.
+                  </p>
+                  <p className="text-[13px] md:text-[14px] font-['Montserrat',sans-serif] text-white/50 flex items-center justify-center md:justify-end gap-1 flex-wrap">
+                     Created by <span className="font-semibold text-white/80">Pasti Sukses</span> @TechSprint Innovation Cup 2026
+                  </p>
                </div>
             </div>
          </footer>
