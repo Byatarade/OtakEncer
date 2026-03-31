@@ -313,7 +313,7 @@ export default function Home() {
          </section>
 
          {/* Feature Section - Natural Student-Centric Style */}
-         <section id="fitur" className="relative w-full flex flex-col items-center pt-24 md:pt-36 pb-12 md:pb-24 bg-[#08020d] rounded-t-[40px] md:rounded-t-[80px] mt-16 md:mt-24 z-20 border-t border-white/5 overflow-hidden">
+         <section id="fitur" className="relative w-full flex flex-col items-center pt-24 md:pt-36 pb-12 md:pb-24 bg-[#08020d] rounded-[40px] md:rounded-[80px] mt-16 md:mt-24 z-20 border border-white/5 shadow-[0_20px_50px_rgba(0,0,0,0.3)] overflow-hidden">
             
             {/* Elegant Aurora Purple Background */}
             <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
@@ -526,80 +526,68 @@ export default function Home() {
             </div>
          </section>
 
-         {/* Quote Bar-Chart Section */}
-         <section className="relative w-full py-16 md:py-32 px-6 flex items-center justify-center bg-white overflow-hidden min-h-[460px] md:min-h-[580px] z-10">
-            {/* The Quote text */}
-            <motion.h2 
-               initial={{ opacity: 0, y: 30 }}
-               whileInView={{ opacity: 1, y: 0 }}
-               viewport={{ once: true, margin: "-100px" }}
-               transition={{ duration: 0.6, ease: "easeOut" }}
-               className="text-[32px] md:text-[56px] font-black text-[#170a29] z-20 max-w-[320px] md:max-w-[800px] leading-[1.1] text-left relative drop-shadow-sm font-['Montserrat',sans-serif] tracking-[-0.02em]"
-            >
-               <motion.span 
-                  initial={{ opacity: 0, scale: 0.5, rotate: -20 }}
-                  whileInView={{ opacity: 1, scale: 1, rotate: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 0.3, duration: 0.5, type: "spring" }}
-                  className="text-[#a368dd] md:absolute md:-left-12 -top-4 text-[42px] md:text-[80px] font-serif leading-none opacity-80 inline-block"
-               >“</motion.span>
-               Belajarlah<br/>
-               yang tinggi<br/>
-               agar tidak<br/>
-               mudah di<br className="md:hidden"/>
-               bodoh bodoh i
-               <motion.span 
-                  initial={{ opacity: 0, scale: 0.5, rotate: 20 }}
-                  whileInView={{ opacity: 1, scale: 1, rotate: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 0.5, duration: 0.5, type: "spring" }}
-                  className="text-[#a368dd] font-serif text-[32px] md:text-[50px] leading-none opacity-80 inline-block"
-               >”</motion.span>
-            </motion.h2>
-
-            {/* Confetti particles */}
-            <div className="absolute top-[10%] right-[10%] w-[120px] h-[180px] opacity-60 pointer-events-none md:scale-150 origin-top-right">
-               {Array.from({length: 45}).map((_, i) => (
-                  <div key={i} className="absolute w-[5px] h-[5px] md:w-[8px] md:h-[8px] bg-[#672cb9] rounded-sm"
-                       style={{
-                          left: `${Math.abs(Math.sin(i * 1.5)) * 100}%`,
-                          top: `${Math.abs(Math.cos(i * 2.3)) * 100}%`,
-                          opacity: Math.abs(Math.sin(i * 3.1)),
-                          transform: `scale(${Math.abs(Math.cos(i * 1.1)) * 1.5})`
-                       }}>
-                  </div>
-               ))}
-               {Array.from({length: 20}).map((_, i) => (
-                  <div key={`y-${i}`} className="absolute w-[4px] h-[4px] md:w-[6px] md:h-[6px] bg-[#ffa515] rounded-sm"
-                       style={{
-                          left: `${Math.abs(Math.cos(i * 2.5)) * 100}%`,
-                          top: `${Math.abs(Math.sin(i * 1.7)) * 100}%`,
-                          opacity: Math.abs(Math.cos(i * 3.4)) * 0.7,
-                          transform: `scale(${Math.abs(Math.sin(i * 2.1))})`
-                       }}>
-                  </div>
-               ))}
-            </div>
-
-            {/* Vertical Bar Chart Background matching mobile SS perfectly */}
-            <div className="absolute bottom-0 w-full left-1/2 -translate-x-1/2 h-[50%] md:h-[55%] flex items-end justify-center px-4 md:px-0 gap-[3px] md:gap-[5px] z-10 pointer-events-none opacity-90">
-               {Array.from({ length: 85 }).map((_, i) => {
-                  const isYellow = i % 5 === 0 || i % 8 === 0;
-                  const isLightPurple = i % 3 === 0;
-                  const color = isYellow ? 'bg-[#ffa515]/90' : isLightPurple ? 'bg-[#a368dd]/80' : 'bg-[#672cb9]/90';
-                  // Create a wave shape
-                  const wave1 = Math.sin(i * 0.15) * 30;
-                  const wave2 = Math.cos(i * 0.4) * 15;
-                  const height = 20 + Math.abs(wave1 + wave2) + Math.abs(Math.sin(i * 5.1)) * 15;
+         {/* Modern Professional Quote Section - Redesigned to match image */}
+         <section className="relative w-full py-24 md:py-40 flex items-center justify-start bg-transparent overflow-hidden z-10">
+            {/* Background Purple Squares */}
+            <div className="absolute inset-0 pointer-events-none z-0">
+               {Array.from({ length: 150 }).map((_, i) => {
+                  const pseudoRandom = (seed: number) => {
+                     const x = Math.sin(seed) * 10000;
+                     return x - Math.floor(x);
+                  };
+                  // Concentrate more squares towards the right and middle
+                  const xProb = pseudoRandom(i);
+                  const left = xProb > 0.35 ? 40 + pseudoRandom(i + 50) * 60 : pseudoRandom(i + 50) * 50; 
+                  const top = -10 + pseudoRandom(i + 100) * 120; 
+                  const w = 6 + pseudoRandom(i + 200) * 22;
+                  const h = w * (0.7 + pseudoRandom(i + 300) * 0.8);
+                  const opacity = 0.2 + pseudoRandom(i + 400) * 0.7;
+                  
+                  const colors = ['#672cb9', '#a368dd', '#c876b5', '#4c1d95', '#8b5cf6', '#d8b4e2'];
+                  const color = colors[Math.floor(pseudoRandom(i + 500) * colors.length)];
+                  
                   return (
-                     <div key={`bar-${i}`} className={`w-[8px] md:w-[14px] rounded-t-[3px] ${color}`} style={{ height: `${height}%` }}></div>
+                     <motion.div
+                        key={i}
+                        initial={{ opacity: 0, scale: 0.5, y: 15 }}
+                        whileInView={{ opacity, scale: 1, y: 0 }}
+                        viewport={{ once: true, margin: "-50px" }}
+                        transition={{ delay: pseudoRandom(i + 600) * 0.4, duration: 0.6, ease: "easeOut" }}
+                        className="absolute"
+                        style={{
+                           left: `${left}%`,
+                           top: `${top}%`,
+                           width: `${w}px`,
+                           height: `${h}px`,
+                           backgroundColor: color,
+                        }}
+                     />
                   );
                })}
+               {/* Fade out squares behind the text completely using a white gradient */}
+               <div className="absolute inset-0 bg-gradient-to-r from-white via-white/80 to-transparent w-[80%] md:w-[60%]"></div>
+            </div>
+
+            <div className="relative z-10 w-full max-w-[1240px] mx-auto flex flex-col justify-center text-left pl-6 pr-6 md:pl-24 md:pr-12">
+               <motion.h2 
+                  initial={{ opacity: 0, x: -40 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true, margin: "-100px" }}
+                  transition={{ duration: 0.8, ease: "easeOut" }}
+                  className="text-[36px] sm:text-[46px] md:text-[64px] lg:text-[80px] font-extrabold text-[#0f0f0f] leading-[1.1] tracking-tight"
+                  style={{ textShadow: "0 0 40px rgba(255,255,255,1), 0 0 20px rgba(255,255,255,0.9)" }}
+               >
+                  “Belajarlah<br/> 
+                  yang tinggi<br/> 
+                  agar tidak<br/> 
+                  mudah di<br/> 
+                  bodoh bodoh i”
+               </motion.h2>
             </div>
          </section>
 
          {/* Kisah Sukses (Testimonial - Infinite Marquee) */}
-         <section id="comment" className="w-full bg-white flex flex-col items-center pt-24 pb-16 md:py-32 overflow-hidden z-20">
+         <section id="comment" className="w-full bg-white flex flex-col items-center pt-20 pb-16 md:py-24 overflow-hidden z-20 relative border-t border-gray-100">
             <h2 className="text-[28px] md:text-[42px] font-black text-[#170a29] text-center leading-tight mb-4 tracking-[-0.02em]">
                Kisah Sukses Mereka
             </h2>
@@ -715,7 +703,7 @@ export default function Home() {
          </section>
 
          {/* Modern Footer */}
-         <footer className="w-full bg-[#08020d] border-t border-white/10 text-white pt-16 md:pt-24 pb-8 md:pb-10 relative z-20 overflow-hidden">
+         <footer className="w-full bg-[#08020d] rounded-t-[40px] md:rounded-t-[80px] border-t border-white/10 text-white pt-16 md:pt-24 pb-8 md:pb-10 relative z-20 overflow-hidden">
             {/* Ambient glows for the footer */}
             <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-[#672cb9]/15 rounded-full blur-[120px] pointer-events-none"></div>
             <div className="absolute bottom-[-100px] right-1/4 w-[400px] h-[400px] bg-[#ffa515]/10 rounded-full blur-[100px] pointer-events-none"></div>
