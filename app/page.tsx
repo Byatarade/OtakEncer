@@ -668,9 +668,9 @@ export default function Home() {
                   <motion.div 
                      animate={{ y: [0, -10, 0] }}
                      transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
-                     className="w-[80px] h-[80px] md:w-[120px] md:h-[120px] mb-6 md:mb-8 relative z-10 bg-white/10 p-5 rounded-3xl backdrop-blur-sm border border-white/20 shadow-xl"
+                     className="w-[280px] h-[280px] md:w-[400px] md:h-[400px] mb-0 md:mb-0 relative z-10"
                   >
-                     <Image src="/assets/ai-cta.svg" alt="Robot AI Cta" width={100} height={100} className="w-full h-full object-contain" />
+                     <Image src="/assets/ai-cta.svg" alt="Robot AI Cta" width={120} height={120} className="w-full h-full object-contain" />
                   </motion.div>
 
                   <h3 className="text-white font-bold text-[28px] md:text-[46px] lg:text-[52px] tracking-tight mb-4 md:mb-6 leading-[1.2] relative z-10 drop-shadow-md">
