@@ -716,15 +716,10 @@ export default function Home() {
                </motion.div>
             </div>
 
-            {/* Minimalist Graphic Transition to Testimonials (Badge Removed per Request) */}
-            <div className="absolute bottom-[-1px] left-0 w-full h-[140px] z-40 flex flex-col justify-center items-center pointer-events-none">
-               {/* Center glowing aurora spread */}
-               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] md:w-[700px] h-[100px] bg-gradient-to-r from-transparent via-[#c876b5]/30 to-transparent blur-[30px]"></div>
-               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[50%] md:w-[350px] h-[60px] bg-gradient-to-r from-transparent via-[#ffa515]/40 to-transparent blur-[25px]"></div>
-               
-               {/* Elegant Ultra-thin glowing lines spanning full width */}
-               <div className="absolute top-1/2 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[#a368dd]/50 to-transparent"></div>
-               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[30%] h-[2px] bg-gradient-to-r from-transparent via-[#ffa515]/80 to-transparent shadow-[0_0_20px_rgba(255,165,21,1)]"></div>
+            {/* Elegant & Clean Seamless Transition to Testimonials */}
+            <div className="absolute bottom-0 left-0 w-full h-[150px] bg-gradient-to-b from-transparent to-[#fcf9fc] pointer-events-none z-40 flex flex-col justify-end">
+               {/* Razor-thin, ultra-subtle separator line (Premium SaaS Aesthetic) */}
+               <div className="w-full h-[1px] bg-gradient-to-r from-transparent via-[#672cb9]/15 to-transparent"></div>
             </div>
          </section>
 
@@ -795,31 +790,31 @@ export default function Home() {
          </section>
 
          {/* CTA Card with Aurora */}
-         <section className="w-full bg-white px-4 md:px-12 py-16 md:py-32 flex flex-col items-center relative z-20">
+         <section className="w-full bg-white px-4 md:px-12 py-12 md:py-20 flex flex-col items-center relative z-20">
             <motion.div 
                initial={{ opacity: 0, y: 40 }}
                whileInView={{ opacity: 1, y: 0 }}
                viewport={{ once: true }}
                transition={{ duration: 0.7, ease: "easeOut" }}
-               className="w-full max-w-[1000px] rounded-[32px] md:rounded-[48px] overflow-hidden shadow-[0_20px_60px_rgba(103,44,185,0.15)] relative"
+               className="w-full max-w-[900px] rounded-[32px] md:rounded-[48px] overflow-hidden shadow-[0_20px_60px_rgba(103,44,185,0.15)] relative"
             >
-               <AuroraBackground className="w-full py-16 md:py-24 px-6 md:px-12 flex flex-col items-center text-center !min-h-[450px]">
+               <AuroraBackground className="w-full py-12 md:py-16 px-6 md:px-12 flex flex-col items-center text-center !min-h-[400px]">
                   {/* Glowing decoration */}
                   <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-[400px] h-[200px] bg-[#ffa515]/20 blur-[80px] rounded-full pointer-events-none mix-blend-screen"></div>
 
                   <motion.div 
                      animate={{ y: [0, -10, 0] }}
                      transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
-                     className="w-[280px] h-[280px] md:w-[400px] md:h-[400px] mb-0 md:mb-0 relative z-10"
+                     className="w-[220px] h-[220px] md:w-[320px] md:h-[320px] mb-0 md:mb-0 relative z-10"
                   >
                      <Image src="/assets/ai-cta.svg" alt="Robot AI Cta" width={120} height={120} className="w-full h-full object-contain" />
                   </motion.div>
 
-                  <h3 className="text-white font-bold text-[28px] md:text-[46px] lg:text-[52px] tracking-tight mb-4 md:mb-6 leading-[1.2] relative z-10 drop-shadow-md">
+                  <h3 className="text-white font-bold text-[24px] md:text-[38px] lg:text-[44px] tracking-tight mb-4 md:mb-6 leading-[1.2] relative z-10 drop-shadow-md">
                      Siap Revolusi Cara<br className="md:hidden"/> Belajarmu?
                   </h3>
                   
-                  <p className="text-white/90 text-[14px] md:text-[18px] leading-[1.6] md:leading-[1.8] mb-8 md:mb-10 font-['Montserrat',sans-serif] px-2 max-w-[600px] relative z-10 font-medium">
+                  <p className="text-white/90 text-[14px] md:text-[16px] leading-[1.6] md:leading-[1.8] mb-8 md:mb-10 font-['Montserrat',sans-serif] px-2 max-w-[540px] relative z-10 font-medium">
                      Bergabung dengan puluhan ribu pelajar dan profesional yang telah merasakan kemudahan memahami dokumen kompleks bersama OtakEncer.
                   </p>
                   
@@ -827,7 +822,7 @@ export default function Home() {
                      <motion.button 
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
-                        className="w-full sm:w-auto px-8 md:px-10 h-[50px] md:h-[60px] bg-white text-[#672cb9] font-bold text-[15px] md:text-[16px] rounded-full transition-all shadow-[0_8px_25px_rgba(255,255,255,0.2)] hover:shadow-[0_12px_35px_rgba(255,255,255,0.3)] flex items-center justify-center gap-2"
+                        className="w-full sm:w-auto px-8 md:px-10 h-[48px] md:h-[56px] bg-white text-[#672cb9] font-bold text-[15px] md:text-[16px] rounded-full transition-all shadow-[0_8px_25px_rgba(255,255,255,0.2)] hover:shadow-[0_12px_35px_rgba(255,255,255,0.3)] flex items-center justify-center gap-2"
                      >
                         Mulai Sekarang Gratis
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
@@ -835,7 +830,7 @@ export default function Home() {
                      <motion.button 
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
-                        className="w-full sm:w-auto px-8 md:px-10 h-[50px] md:h-[60px] bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 text-white font-bold text-[15px] md:text-[16px] rounded-full transition-all flex items-center justify-center"
+                        className="w-full sm:w-auto px-8 md:px-10 h-[48px] md:h-[56px] bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 text-white font-bold text-[15px] md:text-[16px] rounded-full transition-all flex items-center justify-center"
                      >
                         Hubungi Sales
                      </motion.button>
