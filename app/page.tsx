@@ -45,25 +45,25 @@ export default function Home() {
       name: "Hezzam",
       role: "Investor Videy",
       text: "OtakEncer benar-benar mengubah cara saya mempelajari dokumen puluhan halaman menjadi ringkasan yang to the point.",
-      avatar: "/assets/testimonial-avatar.png"
+      avatar: "/assets/testimonial-avatar.svg"
     },
     {
       name: "Sinta R.",
       role: "Mahasiswi IT",
       text: "Materi ujian dari jurnal PDF sekarang bisa saya pelajari 3x lebih cepat. Sangat membantu untuk yang sering begadang!",
-      avatar: "/assets/testimonial-avatar.png" // placeholder
+      avatar: "/assets/testimonial-avatar.svg" // placeholder
     },
     {
       name: "Bima C.",
       role: "Developer",
       text: "Fitur tanya jawab dengan Neura AI sangat interaktif. Saya bisa bertanya langsung ke dalam dokumen teknis saya.",
-      avatar: "/assets/testimonial-avatar.png" // placeholder
+      avatar: "/assets/testimonial-avatar.svg" // placeholder
     },
     {
       name: "Aulia K.",
       role: "Content Creator",
       text: "Rangkuman dari audio dan YouTube sangat menghemat waktu riset bahan konten saya. Terbaik!",
-      avatar: "/assets/testimonial-avatar.png" // placeholder
+      avatar: "/assets/testimonial-avatar.svg" // placeholder
     }
   ];
 
@@ -212,7 +212,7 @@ export default function Home() {
                     className="absolute top-[8%] right-[5%] w-[88%] h-[80%] rounded-xl overflow-hidden shadow-[0_10px_40px_rgba(0,0,0,0.3)] bg-white z-10"
                   >
                      <Image
-                        src="/assets/hero-image-main.png"
+                        src="/assets/hero-image-main.svg"
                         alt="Dashboard Main"
                         fill
                         className="object-cover object-left-top"
@@ -226,7 +226,7 @@ export default function Home() {
                     whileHover={{ scale: 1.05 }}
                     className="absolute top-[40%] left-[2%] w-[42%] h-[38%] rounded-xl shadow-[0_15px_30px_rgba(0,0,0,0.15)] bg-white overflow-hidden z-20 cursor-pointer"
                   >
-                     <Image src="/assets/hero-image-left.png" alt="Left Panel" fill className="object-cover" />
+                     <Image src="/assets/hero-image-left.svg" alt="Left Panel" fill className="object-cover" />
                   </motion.div>
 
                   {/* Top Right Floating Menu (Invite Teammates) */}
@@ -236,7 +236,7 @@ export default function Home() {
                     whileHover={{ scale: 1.05 }}
                     className="absolute top-[2%] right-[10%] w-[40%] h-[38%] rounded-xl shadow-[0_15px_30px_rgba(0,0,0,0.2)] bg-white overflow-hidden z-30 cursor-pointer"
                   >
-                     <Image src="/assets/hero-image-top.png" alt="Top Panel" fill className="object-cover" />
+                     <Image src="/assets/hero-image-top.svg" alt="Top Panel" fill className="object-cover" />
                   </motion.div>
 
                   {/* Bottom Right Floating Card (Darkish list) */}
@@ -246,7 +246,7 @@ export default function Home() {
                     whileHover={{ scale: 1.05 }}
                     className="absolute bottom-[0%] right-[5%] w-[38%] h-[35%] rounded-xl shadow-[0_15px_30px_rgba(0,0,0,0.2)] bg-white overflow-hidden z-30 cursor-pointer"
                   >
-                     <Image src="/assets/hero-image-right.png" alt="Bottom Right Panel" fill className="object-cover" />
+                     <Image src="/assets/hero-image-right.svg" alt="Bottom Right Panel" fill className="object-cover" />
                   </motion.div>
                </motion.div>
              </div>
