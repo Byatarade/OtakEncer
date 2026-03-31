@@ -2,55 +2,164 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { useState } from "react";
+import { motion, useScroll, useMotionValueEvent } from "framer-motion";
+import { AuroraBackground } from "@/components/ui/aurora-background";
 
 export default function Home() {
+  const { scrollY } = useScroll();
+  const [hidden, setHidden] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  useMotionValueEvent(scrollY, "change", (latest) => {
+    const previous = scrollY.getPrevious() || 0;
+    // Don't hide navbar if mobile menu is open
+    if (latest > previous && latest > 150) {
+      if (!isMobileMenuOpen) setHidden(true); 
+    } else {
+      setHidden(false); 
+    }
+  });
+
+  const handleScroll = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
+    e.preventDefault();
+    const href = e.currentTarget.href;
+    const targetId = href.replace(/.*\#/, "");
+    const elem = document.getElementById(targetId);
+    if (elem) {
+      // Get the element's position relative to the viewport
+      const targetPosition = elem.getBoundingClientRect().top + window.scrollY;
+      // Subtract navbar height (approx 80px) and some padding
+      const offsetPosition = targetPosition - 100;
+  
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: "smooth"
+      });
+    }
+    setIsMobileMenuOpen(false);
+  };
+
+  const testimonials = [
+    {
+      name: "Hezzam",
+      role: "Investor Videy",
+      text: "OtakEncer benar-benar mengubah cara saya mempelajari dokumen puluhan halaman menjadi ringkasan yang to the point.",
+      avatar: "/assets/testimonial-avatar.png"
+    },
+    {
+      name: "Sinta R.",
+      role: "Mahasiswi IT",
+      text: "Materi ujian dari jurnal PDF sekarang bisa saya pelajari 3x lebih cepat. Sangat membantu untuk yang sering begadang!",
+      avatar: "/assets/testimonial-avatar.png" // placeholder
+    },
+    {
+      name: "Bima C.",
+      role: "Developer",
+      text: "Fitur tanya jawab dengan Neura AI sangat interaktif. Saya bisa bertanya langsung ke dalam dokumen teknis saya.",
+      avatar: "/assets/testimonial-avatar.png" // placeholder
+    },
+    {
+      name: "Aulia K.",
+      role: "Content Creator",
+      text: "Rangkuman dari audio dan YouTube sangat menghemat waktu riset bahan konten saya. Terbaik!",
+      avatar: "/assets/testimonial-avatar.png" // placeholder
+    }
+  ];
+
   return (
     <div className="bg-white min-h-screen text-black font-['Montserrat',sans-serif] overflow-x-hidden flex flex-col items-center">
-      
-      {/* Navbar Container */}
-      <nav className="flex items-center justify-between px-6 md:px-12 py-5 w-full max-w-[1440px] z-50 bg-white">
-        <div className="flex items-center gap-2">
-          <div className="relative w-8 h-8">
-            <Image
-              src="/assets/logo.png"
-              alt="Logo"
-              fill
-              className="object-contain"
-            />
-          </div>
-          <span className="font-semibold text-[18px] md:text-[20px] tracking-tight text-[#170a29]">
-            OtakEncer
-          </span>
-        </div>
-        
-        {/* Right Nav Action */}
-        <div className="flex items-center gap-3">
-           <button className="hidden md:flex items-center justify-center bg-black text-white px-5 py-2.5 rounded-[12px] font-medium text-[13px] gap-2 hover:bg-gray-800 transition-colors">
-             <Image src="/assets/google-icon-nav.svg" alt="G" width={16} height={16} className="invert" />
-             Mulai Gratis
-           </button>
-           <button className="md:hidden flex items-center justify-center bg-black text-white px-4 py-2 rounded-full font-medium text-[11px] gap-2">
-             <Image src="/assets/google-icon-nav.svg" alt="G" width={12} height={12} className="invert" />
-             Mulai Gratis
-           </button>
-           <button className="p-1">
-             <Image src="/assets/menu-icon.svg" alt="Menu" width={24} height={24} />
-           </button>
-        </div>
-      </nav>
 
-      <main className="w-full flex flex-col items-center max-w-[1440px] relative">
-         
+      {/* Navbar Container */}
+      <div className="w-full flex justify-center fixed top-2 md:top-6 z-[100] px-4 md:px-8 pointer-events-none">
+        <motion.nav
+          initial="visible"
+          variants={{
+            visible: { y: 0, opacity: 1 },
+            hidden: { y: "-150%", opacity: 0 }
+          }}
+          animate={hidden && !isMobileMenuOpen ? "hidden" : "visible"}
+          transition={{ duration: 0.3, ease: "easeInOut" }}
+          className="flex flex-col w-full max-w-[900px] bg-white/40 hover:bg-white/50 backdrop-blur-2xl border border-white/50 shadow-[0_8px_32px_rgba(0,0,0,0.1)] pointer-events-auto overflow-hidden rounded-[32px] md:rounded-full"
+        >
+          <div className="flex items-center justify-between px-4 md:px-6 py-3 w-full">
+            {/* Logo */}
+            <Link href="#beranda" className="flex items-center gap-2">
+            <div className="relative w-7 h-7 md:w-8 md:h-8">
+              <Image
+                src="/assets/logo.png"
+                alt="Logo"
+                fill
+                className="object-contain"
+              />
+            </div>
+            <span className="font-bold text-[16px] md:text-[18px] tracking-tight text-gray-900">
+              OtakEncer
+            </span>
+          </Link>
+
+          {/* Desktop Navigation Links */}
+          <div className="hidden md:flex items-center gap-6 lg:gap-8 font-medium text-[13px] md:text-[14px]">
+            <Link onClick={handleScroll} href="#beranda" className="text-gray-900 font-bold transition-colors">Beranda</Link>
+            <Link onClick={handleScroll} href="#neura" className="text-gray-700 hover:text-black transition-colors">Neura AI</Link>
+            <Link onClick={handleScroll} href="#fitur" className="text-gray-700 hover:text-black transition-colors">Fitur</Link>
+            <Link onClick={handleScroll} href="#comment" className="text-gray-700 hover:text-black transition-colors">Comment</Link>
+          </div>
+
+          {/* Right Nav Action */}
+          <div className="flex items-center gap-3 md:gap-4">
+             {/* Desktop Login & Signup */}
+             <div className="hidden md:flex items-center gap-4 mr-1">
+               <Link href="#" className="text-[13px] font-bold text-gray-800 hover:text-black transition-colors">Masuk</Link>
+             </div>
+             
+             <button className="hidden md:flex items-center justify-center bg-gray-900 hover:bg-black text-white px-5 py-2.5 rounded-full font-medium text-[12px] md:text-[13px] gap-2 transition-transform hover:scale-105 shadow-md">
+               <Image src="/assets/google-icon-nav.svg" alt="G" width={14} height={14} className="invert" />
+               Mulai Gratis
+             </button>
+             <button className="md:hidden flex items-center justify-center bg-gray-900 text-white px-4 py-2 rounded-full font-medium text-[11px] gap-2 shadow-md">
+               <Image src="/assets/google-icon-nav.svg" alt="G" width={12} height={12} className="invert" />
+               Mulai Gratis
+             </button>
+             {/* Mobile Hamburger Menu Icon */}
+             <button 
+               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+               className="p-2 md:hidden bg-white/40 rounded-full border border-white/50 backdrop-blur-md transition-colors hover:bg-white/60 focus:outline-none"
+             >
+               <Image src="/assets/menu-icon.svg" alt="Menu" width={18} height={18} />
+             </button>
+          </div>
+          </div>
+
+          {/* Mobile Navigation Dropdown */}
+          <motion.div 
+            initial={false}
+            animate={{ height: isMobileMenuOpen ? "auto" : 0, opacity: isMobileMenuOpen ? 1 : 0 }}
+            transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+            className="overflow-hidden md:hidden w-full"
+          >
+            <div className="flex flex-col items-center gap-4 px-4 pb-6 pt-2 border-t border-gray-200/50">
+              <Link onClick={handleScroll} href="#beranda" className="text-gray-900 font-bold text-[14px]">Beranda</Link>
+              <Link onClick={handleScroll} href="#neura" className="text-gray-700 font-medium hover:text-gray-900 text-[14px]">Neura AI</Link>
+              <Link onClick={handleScroll} href="#fitur" className="text-gray-700 font-medium hover:text-gray-900 text-[14px]">Fitur</Link>
+              <Link onClick={handleScroll} href="#comment" className="text-gray-700 font-medium hover:text-gray-900 text-[14px]">Comment</Link>
+              <div className="w-full h-px bg-gray-200/50 my-1"></div>
+              <Link onClick={() => setIsMobileMenuOpen(false)} href="#" className="text-gray-900 font-bold text-[14px]">Masuk</Link>
+            </div>
+          </motion.div>
+        </motion.nav>
+      </div>
+
+      <main id="beranda" className="w-full flex flex-col items-center max-w-[1440px] relative mt-20">
+
          {/* Hero Section */}
-         <motion.section 
+         <motion.section
            initial={{ opacity: 0, y: 30 }}
            animate={{ opacity: 1, y: 0 }}
            transition={{ duration: 0.6 }}
            className="w-full px-4 md:px-8 mt-2 md:mt-4 flex flex-col items-center relative z-20"
          >
-           {/* Purple Hero Card */}
-           <div className="relative w-full rounded-[24px] md:rounded-[32px] bg-[#672cb9] md:bg-gradient-to-r md:from-[#672cb9] md:to-[#8d4acf] overflow-hidden pt-12 pb-16 md:pt-[70px] md:pb-[70px] px-4 md:px-14 lg:px-20 flex flex-col md:flex-row items-center md:items-start gap-10 md:gap-0 min-h-[540px]">
+           <AuroraBackground className="w-full rounded-[24px] md:rounded-[32px] overflow-hidden pt-12 pb-16 md:pt-[70px] md:pb-[70px] px-4 md:px-14 lg:px-20 flex flex-col md:flex-row items-center md:items-start gap-10 md:gap-0 min-h-[540px]">
              
              {/* Text Content */}
              <div className="flex flex-col items-center md:items-start z-30 w-full md:w-[45%] text-center md:text-left">
@@ -68,58 +177,88 @@ export default function Home() {
                </p>
 
                {/* Buttons row - Matches Screenshot exactly */}
-               <div className="flex flex-row items-center justify-center md:justify-start gap-3 md:gap-4 mt-8 md:mt-10 z-10 w-full px-1 md:px-0">
-                 <button className="flex-1 max-w-[160px] md:w-auto bg-[#4d2691] hover:bg-[#3f1e78] text-white px-2 md:px-6 py-3.5 md:py-4 rounded-[10px] md:rounded-[12px] font-bold text-[12px] md:text-[14px] flex items-center justify-center gap-2 border border-[#5d31a8] transition-colors shadow-lg shadow-black/20">
-                   <Image src="/assets/google-icon.svg" alt="G" width={14} height={14} className="md:w-[16px] md:h-[16px]" />
+               <div className="flex flex-row flex-wrap items-center justify-center md:justify-start gap-3 md:gap-5 mt-8 md:mt-10 z-10 w-full px-1 md:px-0">
+                 <motion.button 
+                   whileHover={{ scale: 1.05 }}
+                   whileTap={{ scale: 0.95 }}
+                   className="whitespace-nowrap bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 text-white px-6 md:px-8 py-3.5 md:py-4 rounded-[16px] md:rounded-[20px] font-bold text-[13px] md:text-[15px] flex items-center justify-center gap-2 md:gap-3 transition-all shadow-[0_8px_32px_rgba(255,255,255,0.1)]">
+                   <Image src="/assets/google-icon.svg" alt="G" width={16} height={16} className="md:w-[18px] md:h-[18px]" />
                    Mulai Gratis
-                 </button>
-                 <button className="flex-1 max-w-[160px] md:w-auto bg-transparent hover:bg-white/10 text-white border border-[#ffa515] px-2 md:px-6 py-3.5 md:py-4 rounded-[10px] md:rounded-[12px] font-bold text-[12px] md:text-[14px] transition-colors shadow-lg shadow-black/10">
+                 </motion.button>
+                 <motion.button 
+                   whileHover={{ scale: 1.05 }}
+                   whileTap={{ scale: 0.95 }}
+                   className="whitespace-nowrap bg-white/5 hover:bg-white/10 backdrop-blur-md border border-white/10 hover:border-white/20 text-white px-6 md:px-8 py-3.5 md:py-4 rounded-[16px] md:rounded-[20px] font-bold text-[13px] md:text-[15px] flex items-center justify-center transition-all shadow-[0_8px_32px_rgba(255,255,255,0.05)]">
                    Lihat Demo
-                 </button>
+                 </motion.button>
                </div>
              </div>
 
              {/* FIXED BUG: Hero Mockup Images absolute positioning mapped neatly */}
-                   <div className="w-full md:w-[55%] flex justify-center md:justify-end items-center mt-2 md:mt-0 z-20 h-auto">
+                   <div className="w-full md:w-[55%] flex justify-center md:justify-end items-center mt-2 md:mt-0 z-20 h-auto perspective-[1000px]">
                
                       {/* Proportional Container for accurate icon positioning unaffected by screen stretches */}
-                      <div className="relative w-full max-w-[420px] md:max-w-[550px] aspect-[1.05/1] md:aspect-[1.15/1]">
+                      <motion.div 
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ duration: 0.8, delay: 0.2 }}
+                        className="relative w-full max-w-[420px] md:max-w-[550px] aspect-[1.05/1] md:aspect-[1.15/1] shadow-2xl rounded-xl transform-style-3d"
+                      >
                   
                   {/* Main Dashboard - Back layer */}
-                  <div className="absolute top-[8%] right-[5%] w-[88%] h-[80%] rounded-xl overflow-hidden shadow-[0_10px_40px_rgba(0,0,0,0.3)] bg-white z-10">
+                  <motion.div 
+                    animate={{ y: [0, -8, 0] }}
+                    transition={{ repeat: Infinity, duration: 6, ease: "easeInOut" }}
+                    className="absolute top-[8%] right-[5%] w-[88%] h-[80%] rounded-xl overflow-hidden shadow-[0_10px_40px_rgba(0,0,0,0.3)] bg-white z-10"
+                  >
                      <Image
                         src="/assets/hero-image-main.png"
                         alt="Dashboard Main"
                         fill
                         className="object-cover object-left-top"
                      />
-                  </div>
+                  </motion.div>
 
                   {/* Left Floating Menu (Funnel/Retention/Flows) */}
-                  <div className="absolute top-[40%] left-[2%] w-[42%] h-[38%] rounded-xl shadow-[0_15px_30px_rgba(0,0,0,0.15)] bg-white overflow-hidden z-20 transition-transform duration-500 hover:-translate-y-2">
+                  <motion.div 
+                    animate={{ y: [0, 10, 0] }}
+                    transition={{ repeat: Infinity, duration: 5, ease: "easeInOut", delay: 1 }}
+                    whileHover={{ scale: 1.05 }}
+                    className="absolute top-[40%] left-[2%] w-[42%] h-[38%] rounded-xl shadow-[0_15px_30px_rgba(0,0,0,0.15)] bg-white overflow-hidden z-20 cursor-pointer"
+                  >
                      <Image src="/assets/hero-image-left.png" alt="Left Panel" fill className="object-cover" />
-                  </div>
+                  </motion.div>
 
                   {/* Top Right Floating Menu (Invite Teammates) */}
-                  <div className="absolute top-[2%] right-[10%] w-[40%] h-[38%] rounded-xl shadow-[0_15px_30px_rgba(0,0,0,0.2)] bg-white overflow-hidden z-30 transition-transform duration-500 hover:-translate-y-2">
+                  <motion.div 
+                    animate={{ y: [0, -12, 0] }}
+                    transition={{ repeat: Infinity, duration: 5.5, ease: "easeInOut", delay: 0.5 }}
+                    whileHover={{ scale: 1.05 }}
+                    className="absolute top-[2%] right-[10%] w-[40%] h-[38%] rounded-xl shadow-[0_15px_30px_rgba(0,0,0,0.2)] bg-white overflow-hidden z-30 cursor-pointer"
+                  >
                      <Image src="/assets/hero-image-top.png" alt="Top Panel" fill className="object-cover" />
-                  </div>
+                  </motion.div>
 
                   {/* Bottom Right Floating Card (Darkish list) */}
-                  <div className="absolute bottom-[0%] right-[5%] w-[38%] h-[35%] rounded-xl shadow-[0_15px_30px_rgba(0,0,0,0.2)] bg-white overflow-hidden z-30 transition-transform duration-500 hover:-translate-y-2">
+                  <motion.div 
+                    animate={{ y: [0, 8, 0] }}
+                    transition={{ repeat: Infinity, duration: 4.5, ease: "easeInOut", delay: 1.5 }}
+                    whileHover={{ scale: 1.05 }}
+                    className="absolute bottom-[0%] right-[5%] w-[38%] h-[35%] rounded-xl shadow-[0_15px_30px_rgba(0,0,0,0.2)] bg-white overflow-hidden z-30 cursor-pointer"
+                  >
                      <Image src="/assets/hero-image-right.png" alt="Bottom Right Panel" fill className="object-cover" />
-                  </div>
-               </div>
+                  </motion.div>
+               </motion.div>
              </div>
              
-           </div>
+           </AuroraBackground>
          </motion.section>
 
          {/* Neura Block Section */}
-         <section className="relative w-full px-4 md:px-0 mt-8 md:mt-24 mb-6 h-auto md:h-[500px] flex flex-col items-center justify-center overflow-visible">
+         <section id="neura" className="relative w-full px-4 md:px-0 mt-8 md:mt-24 mb-6 h-auto md:h-[500px] flex flex-col items-center justify-center overflow-visible">
             {/* Background "NEURA" Text */}
             <div className="absolute top-[10%] md:top-[10%] left-1/2 -translate-x-1/2 w-full text-center z-0">
-               <h2 className="text-[120px] md:text-[260px] lg:text-[280px] font-black tracking-[-0.02em] leading-none pointer-events-none select-none text-transparent bg-clip-text bg-gradient-to-r from-[#ffa515] via-[#c876b5] to-[#672cb9]">
+               <h2 className="text-[120px] md:text-[260px] lg:text-[280px] font-black tracking-[-0.02em] leading-none pointer-events-none select-none text-transparent bg-clip-text bg-gradient-to-r from-[#ffa515] via-[#c876b5] to-[#672cb9] animate-gradient-x bg-[length:200%_auto]">
                  NEURA
                </h2>
             </div>
@@ -136,15 +275,31 @@ export default function Home() {
                </motion.div>
 
                {/* Left Card */}
-               <div className="md:absolute md:left-[2%] lg:-left-[2%] md:bottom-[10%] bg-white rounded-[16px] md:rounded-[24px] p-6 lg:p-8 w-[240px] md:w-[280px] lg:w-[320px] shadow-[0_15px_40px_rgba(0,0,0,0.08)] z-30 border border-gray-100 transition-transform hover:scale-105 mt-[-40px] md:mt-0 relative">
+               <motion.div 
+                 initial={{ opacity: 0, x: -50 }}
+                 whileInView={{ opacity: 1, x: 0 }}
+                 viewport={{ once: true }}
+                 transition={{ duration: 0.6 }}
+                 className="md:absolute md:left-[2%] lg:-left-[2%] md:bottom-[10%] bg-white rounded-[16px] md:rounded-[24px] p-6 lg:p-8 w-[240px] md:w-[280px] lg:w-[320px] shadow-[0_15px_40px_rgba(0,0,0,0.08)] z-30 border border-gray-100 hover:scale-105 transition-transform mt-[-40px] md:mt-0 relative"
+               >
                  <p className="font-['Montserrat',sans-serif] text-[18px] md:text-[24px] lg:text-[28px] leading-[1.15] font-light md:font-normal text-[#333] text-left tracking-tight">
                    Bingung?<br/> Tanyakan<br/> tentang<br/> fitur kami<br/> pada Neura
                  </p>
-               </div>
+               </motion.div>
 
                {/* Right Pill Button */}
-               <div className="md:absolute md:right-[2%] lg:right-[0%] md:bottom-[12%] z-30 mt-6 md:mt-0 transition-transform hover:scale-105">
-                 <button className="bg-[#672cb9] hover:bg-[#522199] transition-colors rounded-full pl-2 pr-6 md:pr-10 py-2 md:py-2.5 flex items-center gap-3 shadow-[0_8px_24px_rgba(103,44,185,0.4)]">
+               <motion.div 
+                 initial={{ opacity: 0, x: 50 }}
+                 whileInView={{ opacity: 1, x: 0 }}
+                 viewport={{ once: true }}
+                 transition={{ duration: 0.6 }}
+                 className="md:absolute md:right-[2%] lg:right-[0%] md:bottom-[12%] z-30 mt-6 md:mt-0"
+               >
+                 <motion.button 
+                   whileHover={{ scale: 1.05 }}
+                   whileTap={{ scale: 0.95 }}
+                   className="bg-[#672cb9] hover:bg-[#522199] transition-all duration-300 rounded-full pl-2 pr-6 md:pr-10 py-2 md:py-2.5 flex items-center gap-3 shadow-[0_8px_24px_rgba(103,44,185,0.4)] hover:shadow-[0_12px_32px_rgba(103,44,185,0.6)]"
+                 >
                     <div className="w-[44px] h-[44px] md:w-[56px] md:h-[56px] bg-white rounded-full flex items-center justify-center overflow-hidden p-[4px] md:p-[6px]">
                        <Image src="/assets/ai-robot-svg.svg" alt="AI" width={36} height={36} className="w-full h-full object-cover scale-110 md:scale-100" />
                     </div>
@@ -152,124 +307,275 @@ export default function Home() {
                        <span className="text-[12px] md:text-[14px] text-white/90 leading-tight font-medium mb-[2px]">Tanya Pada</span>
                        <span className="text-[20px] md:text-[28px] text-white leading-none font-bold tracking-wide">NEURA</span>
                     </div>
-                 </button>
-               </div>
+                 </motion.button>
+               </motion.div>
             </div>
          </section>
 
-         {/* FIXED BUG: Dark Features Dome uses solid padding instead of overlapping Absolute bg which causes white-text on white-bg */}
-         <section className="relative w-full flex flex-col items-center pt-24 md:pt-36 bg-[#110524] rounded-t-[50px] md:rounded-t-[100px] mt-16 md:mt-24 shadow-[0_-20px_50px_rgba(17,5,36,0.3)] z-20">
+         {/* Feature Section - Natural Student-Centric Style */}
+         <section id="fitur" className="relative w-full flex flex-col items-center pt-24 md:pt-36 pb-12 md:pb-24 bg-[#08020d] rounded-t-[40px] md:rounded-t-[80px] mt-16 md:mt-24 z-20 border-t border-white/5 overflow-hidden">
             
-            <div className="w-full max-w-[1100px] flex flex-col items-center justify-center z-20 px-6 md:px-12 pb-24 md:pb-32">
+            {/* Elegant Aurora Purple Background */}
+            <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
+               {/* Base Dark Deep Purple */}
+               <div className="absolute inset-0 bg-gradient-to-b from-[#08020d] via-[#10031c] to-[#08020d]"></div>
                
-               {/* Heading Text Centered ALWAYS */}
-               <div className="w-full flex flex-col items-center text-center text-white">
-                  <h2 className="text-[28px] md:text-[42px] lg:text-[48px] font-bold leading-[1.2] tracking-tight">
-                     Temukan Fitur <br className="md:hidden"/>
-                     Yang Kamu <br className="md:hidden"/>
-                     Butuhkan!
-                  </h2>
-                  <p className="text-[14px] md:text-[16px] lg:text-[18px] text-white/70 max-w-[340px] md:max-w-[500px] lg:max-w-[600px] mt-6 md:mt-4 leading-[1.6]">
-                     Tingkatkan efisiensi belajar dengan alat yang disesuaikan untuk mengubah dokumen menjadi bahan belajar siap pakai, kapan saja.
-                  </p>
-               </div>
-
-               {/* Flowchart Icons Network (Centered ALWAYS) */}
-               <div className="w-full flex flex-col items-center mt-12 md:mt-16 z-20 relative">
-                  
-                  {/* Icons Container with Border */}
-                  <div className="relative border border-[#ffa515]/80 rounded-[24px] md:rounded-[40px] px-8 py-8 md:px-16 md:py-12 flex flex-col items-center z-30 mb-[40px] md:mb-[60px] bg-[#1a0c33]/20 backdrop-blur-sm">
-                     
-                     {/* Top Row Icons */}
-                     <div className="flex gap-4 md:gap-8 z-30">
-                        <div className="w-[52px] h-[52px] md:w-[68px] md:h-[68px] bg-[#1a0c33] border border-[#ffa515]/30 rounded-[14px] flex items-center justify-center shadow-[0_5px_15px_rgba(0,0,0,0.5)]">
-                           <Image src="/assets/pdf-icon.svg" alt="PDF" width={28} height={28} className="md:w-[36px] md:h-[36px]" />
-                        </div>
-                        <div className="w-[52px] h-[52px] md:w-[68px] md:h-[68px] bg-[#1a0c33] border border-[#ffa515]/30 rounded-[14px] flex items-center justify-center shadow-[0_5px_15px_rgba(0,0,0,0.5)]">
-                           <Image src="/assets/excel-icon.svg" alt="Excel" width={28} height={28} className="md:w-[36px] md:h-[36px]" />
-                        </div>
-                        <div className="w-[52px] h-[52px] md:w-[68px] md:h-[68px] bg-[#1a0c33] border border-[#ffa515]/30 rounded-[14px] flex items-center justify-center shadow-[0_5px_15px_rgba(0,0,0,0.5)]">
-                           <Image src="/assets/word-icon.svg" alt="Word" width={28} height={28} className="md:w-[36px] md:h-[36px]" />
-                        </div>
-                     </div>
-
-                     {/* Bottom Row Icons */}
-                     <div className="flex gap-4 md:gap-8 mt-5 md:mt-8 z-30">
-                        <div className="w-[52px] h-[52px] md:w-[68px] md:h-[68px] bg-[#1a0c33] border border-[#ffa515]/30 rounded-[14px] flex items-center justify-center shadow-[0_5px_15px_rgba(0,0,0,0.5)]">
-                           <Image src="/assets/youtube-icon.svg" alt="YouTube" width={28} height={28} className="md:w-[36px] md:h-[36px]" />
-                        </div>
-                        <div className="w-[52px] h-[52px] md:w-[68px] md:h-[68px] bg-[#1a0c33] border border-[#ffa515]/30 rounded-[14px] flex items-center justify-center shadow-[0_5px_15px_rgba(0,0,0,0.5)]">
-                           <Image src="/assets/instagram-icon.svg" alt="Instagram" width={28} height={28} className="md:w-[36px] md:h-[36px]" />
-                        </div>
-                     </div>
-
-                     {/* Vertical Connecting Line to Brain */}
-                     <div className="absolute -bottom-[40px] md:-bottom-[60px] left-1/2 -translate-x-1/2 w-px h-[40px] md:h-[60px] bg-[#ffa515] z-10"></div>
-                  </div>
-
-                  {/* Brain AI Core */}
-                  <div className="relative z-30 w-[64px] h-[64px] md:w-[94px] md:h-[94px] flex items-center justify-center">
-                     <div className="absolute inset-0 bg-transparent rounded-full border border-[#ffa515]/60 border-dashed animate-[spin_8s_linear_infinite]"></div>
-                     <div className="absolute inset-2 border border-[#854acb]/80 rounded-full"></div>
-                     <div className="absolute inset-4 border border-[#672cb9] rounded-full"></div>
-                     <div className="w-[42px] h-[42px] md:w-[50px] md:h-[50px] bg-[#a368dd]/40 rounded-full flex items-center justify-center overflow-hidden z-20 shadow-[0_0_20px_#a368dd]">
-                        <Image src="/assets/gemini-bot.png" alt="Brain AI Core" width={28} height={28} className="md:w-[32px] md:h-[32px] object-contain drop-shadow-md brightness-110" />
-                     </div>
-                  </div>
-
-                  {/* Feature Actions (Visible Mobile & Desktop below brain) */}
-                  <div className="flex flex-col gap-3 md:gap-4 mt-12 md:mt-20 w-full max-w-[280px] md:max-w-[340px]">
-                     <button className="w-full bg-[#1a0c33] border border-[#2e1d4a] hover:bg-[#2e1d4a] text-white text-[13px] md:text-[14px] font-medium py-3.5 md:py-4 rounded-[12px] transition-colors shadow-lg">
-                        Login Dan Coba Sekarang
-                     </button>
-                     <button className="w-full bg-[#ffa515] text-[#1a0c33] text-[13px] md:text-[14px] font-bold py-3.5 md:py-4 rounded-[12px] shadow-[0_5px_15px_rgba(255,165,21,0.3)] hover:bg-[#ffb53f] transition-colors">
-                        Pelajari Dengan Neura
-                     </button>
-                  </div>
-               </div>
+               {/* Sweeping Aurora Waves */}
+               <div className="absolute top-[-20%] right-[-10%] w-[70vw] h-[600px] bg-[radial-gradient(ellipse_at_center,rgba(114,35,204,0.15)_0%,transparent_60%)] rounded-[100%] rotate-[-15deg] blur-[80px]"></div>
+               <div className="absolute bottom-[-10%] left-[-20%] w-[80vw] h-[700px] bg-[radial-gradient(ellipse_at_center,rgba(63,16,134,0.2)_0%,transparent_60%)] rounded-[100%] rotate-[25deg] blur-[100px]"></div>
+               <div className="absolute top-[30%] left-[20%] w-[50vw] h-[400px] bg-[radial-gradient(ellipse_at_center,rgba(163,104,221,0.1)_0%,transparent_70%)] rounded-[100%] blur-[90px]"></div>
+               
+               {/* Noise Texture layer for organic feel */}
+               <div className="absolute inset-0 opacity-[0.03] mix-blend-overlay" style={{backgroundImage: "url('data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E')"}}></div>
             </div>
 
-            {/* Gradients to base white underneath Dome - FIXED inside section layout */}
-            <div className="w-full h-[120px] md:h-[180px] flex flex-col justify-end mt-auto z-10">
-               <div className="w-full h-[30px] md:h-[50px] bg-[#3d1b6e]/80"></div>
-               <div className="w-full h-[20px] md:h-[30px] bg-[#532694]/70"></div>
-               <div className="w-full h-[20px] md:h-[30px] bg-[#703bba]/50"></div>
-               <div className="w-full h-[15px] md:h-[25px] bg-[#8957c9]/40"></div>
-               <div className="w-full h-[15px] md:h-[20px] bg-[#cca5f5]/30"></div>
+            {/* Diamond Ambient Grid with Radial Mask */}
+            <div className="absolute inset-0 pointer-events-none z-0" 
+                 style={{ 
+                    backgroundImage: 'linear-gradient(45deg, rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(-45deg, rgba(255,255,255,0.02) 1px, transparent 1px)', 
+                    backgroundSize: '80px 80px', 
+                    backgroundPosition: 'center center',
+                    WebkitMaskImage: 'radial-gradient(ellipse at 50% 40%, black 20%, transparent 70%)',
+                    maskImage: 'radial-gradient(ellipse at 50% 40%, black 20%, transparent 70%)'
+                 }}>
+            </div>
+
+            {/* Subdued Central Highlighting over Aurora */}
+            <div className="absolute top-[20%] left-1/2 -translate-x-1/2 w-[500px] h-[300px] bg-[#9d4edd]/15 blur-[100px] rounded-[100%] pointer-events-none z-0"></div>
+            
+            {/* Subtle base fade out at bottom */}
+            <div className="absolute bottom-0 left-0 right-0 h-[200px] bg-gradient-to-t from-[#08020d] to-transparent pointer-events-none z-10"></div>
+
+            <div className="w-full max-w-[1240px] flex flex-col items-center justify-center z-20 px-6 md:px-12 relative flex-1">
+               
+               {/* Heading Text dengan sentuhan "Scribble" Ala Pelajar */}
+               <div className="w-full flex flex-col items-center text-center text-white mb-16 md:mb-20">
+                  <motion.h2 
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.1 }}
+                    className="text-[34px] md:text-[48px] lg:text-[60px] font-bold leading-[1.2] tracking-tight text-white mb-4 relative"
+                  >
+                     Dari Dokumen Kusut <br className="hidden md:block"/> 
+                     Jadi <span className="relative inline-block text-[#ffa515] italic pr-2 font-serif">Nilai A+
+                        {/* Hand-drawn underline SVG */}
+                        <svg className="absolute -bottom-2 left-0 w-full h-[12px] text-[#a368dd]" viewBox="0 0 100 20" preserveAspectRatio="none" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round">
+                           <path d="M5,15 Q 40,5 95,15" />
+                        </svg>
+                     </span>
+                  </motion.h2>
+                  <motion.p 
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.2 }}
+                    className="text-[15px] md:text-[18px] text-white/70 max-w-[340px] md:max-w-[560px] leading-[1.6]"
+                  >
+                     Tinggalkan cara lama. Gabungkan semua catatan, jurnal, atau video materimu, dan biarkan AI meraciknya menjadi flashcard & ringkasan interaktif.
+                  </motion.p>
+               </div>
+
+               {/* Natural 3-Step Study Flow */}
+               <div className="w-full flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-6 relative z-30">
+                  
+                  {/* Step 1: Kumpulkan Bahan */}
+                  <motion.div 
+                     initial={{ opacity: 0, y: 30 }}
+                     whileInView={{ opacity: 1, y: 0 }}
+                     viewport={{ once: true }}
+                     whileHover={{ y: -5 }}
+                     transition={{ duration: 0.5 }}
+                     className="w-full lg:w-1/3 flex flex-col bg-[#1c0f2e]/80 border border-white/10 rounded-[24px] p-8 backdrop-blur-sm relative"
+                  >
+                     <div className="w-10 h-10 rounded-full bg-[#672cb9] flex items-center justify-center mb-6 font-bold text-lg text-white shadow-lg absolute -top-5 -left-2 border-4 border-[#0d0415] rotate-[-5deg]">1</div>
+                     
+                     <h3 className="text-white font-bold text-[20px] mb-2">Tumpuk Materimu</h3>
+                     <p className="text-white/50 text-[13px] mb-8 leading-[1.5]">
+                        Upload PDF, Word, atau Paste Link YouTube dosenmu ke dalam satu folder belajar.
+                     </p>
+                     
+                     {/* Visual: Stack of floating papers */}
+                     <div className="relative h-[140px] w-full flex justify-center items-center mt-auto">
+                        <motion.div animate={{ y: [0, -4, 0] }} transition={{ repeat: Infinity, duration: 4 }} className="absolute w-[100px] h-[120px] bg-white rounded-lg shadow-xl border border-gray-200 rotate-[-12deg] -translate-x-6 flex flex-col p-2 gap-2">
+                           <div className="w-[80%] h-2 bg-[#ff6b6b]/20 rounded-full"></div>
+                           <div className="w-full h-2 bg-gray-100 rounded-full"></div>
+                           <div className="w-[60%] h-2 bg-gray-100 rounded-full"></div>
+                           <div className="mt-auto self-end text-[#ff6b6b]"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+                        </motion.div>
+                        <motion.div animate={{ y: [0, 4, 0] }} transition={{ repeat: Infinity, duration: 3.5 }} className="absolute w-[100px] h-[120px] bg-white rounded-lg shadow-xl border border-gray-200 rotate-[8deg] translate-x-6 flex flex-col p-2 gap-2">
+                           <div className="w-[80%] h-2 bg-[#4dabf7]/20 rounded-full"></div>
+                           <div className="w-full h-2 bg-gray-100 rounded-full"></div>
+                           <div className="w-[90%] h-2 bg-gray-100 rounded-full"></div>
+                           <div className="mt-auto self-end text-[#4dabf7]"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 22h14a2 2 0 0 0 2-2V7.5L14.5 2H6a2 2 0 0 0-2 2v4"/><polyline points="14 2 14 8 20 8"/></svg></div>
+                        </motion.div>
+                        <motion.div animate={{ y: [0, -6, 0] }} transition={{ repeat: Infinity, duration: 4.5 }} className="absolute w-[110px] h-[130px] bg-gradient-to-br from-[#1c0f2e] to-[#2a1744] border border-[#672cb9]/50 rounded-lg shadow-2xl z-10 flex items-center justify-center">
+                           <div className="bg-white/10 p-3 rounded-full backdrop-blur-md">
+                              <svg className="text-[#ffa515]" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                           </div>
+                        </motion.div>
+                     </div>
+                  </motion.div>
+
+                  {/* Hand-drawn Arrow (Desktop only) */}
+                  <div className="hidden lg:block w-[40px] text-white/30">
+                     <svg viewBox="0 0 100 20" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeDasharray="5,5">
+                        <path d="M0,10 Q50,0 90,10" />
+                        <polyline points="80,0 95,12 75,20" />
+                     </svg>
+                  </div>
+
+                  {/* Step 2: Neura AI Memproses */}
+                   <motion.div 
+                     initial={{ opacity: 0, y: 30 }}
+                     whileInView={{ opacity: 1, y: 0 }}
+                     viewport={{ once: true }}
+                     whileHover={{ y: -5 }}
+                     transition={{ duration: 0.5, delay: 0.2 }}
+                     className="w-full lg:w-1/3 flex flex-col bg-[#1c0f2e]/80 border border-white/10 rounded-[24px] p-8 backdrop-blur-sm relative"
+                  >
+                     <div className="w-10 h-10 rounded-full bg-[#672cb9] flex items-center justify-center mb-6 font-bold text-lg text-white shadow-lg absolute -top-5 -left-2 border-4 border-[#0d0415] rotate-[5deg]">2</div>
+                     
+                     <h3 className="text-white font-bold text-[20px] mb-2">Biar Neura Merangkum</h3>
+                     <p className="text-white/50 text-[13px] mb-8 leading-[1.5]">
+                        AI kami akan membaca ribuan kata dan menyaring poin-poin terpenting layaknya spidol ajaib.
+                     </p>
+
+                     {/* Visual: Book/Text with Highlighter Scanner */}
+                     <div className="relative h-[140px] w-full flex justify-center items-center mt-auto">
+                        <div className="w-[160px] h-[120px] bg-white/5 border border-white/10 rounded-xl p-4 flex flex-col gap-3 relative overflow-hidden">
+                           <div className="w-[40%] h-2 bg-white/20 rounded-full"></div>
+                           <div className="w-full h-2 bg-white/10 rounded-full"></div>
+                           <div className="w-[85%] h-2 bg-white/10 rounded-full"></div>
+                           <div className="w-[70%] h-2 bg-white/10 rounded-full"></div>
+                           <div className="w-full h-2 bg-white/10 rounded-full"></div>
+                           
+                           {/* Highlighter Scanner Effect */}
+                           <motion.div 
+                              animate={{ y: [0, 80, 0] }}
+                              transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
+                              className="absolute top-0 left-0 w-full h-[20px] bg-gradient-to-b from-[#ffa515]/0 via-[#ffa515]/30 to-[#ffa515]/0 border-b border-[#ffa515]/50 flex items-center shadow-[0_0_15px_#ffa515]"
+                           >
+                           </motion.div>
+                        </div>
+                        {/* Little sparkle */}
+                        <motion.div animate={{ scale: [1, 1.5, 1], opacity: [0.5, 1, 0.5] }} transition={{ repeat: Infinity, duration: 2 }} className="absolute -top-2 -right-2 text-[#ffa515]">
+                           <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 7.6L22 12l-7.6 2.4L12 22l-2.4-7.6L2 12l7.6-2.4L12 2z"/></svg>
+                        </motion.div>
+                     </div>
+                  </motion.div>
+
+                  {/* Hand-drawn Arrow (Desktop only) */}
+                  <div className="hidden lg:block w-[40px] text-white/30">
+                     <svg viewBox="0 0 100 20" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeDasharray="5,5">
+                        <path d="M0,10 Q50,20 90,10" />
+                        <polyline points="80,0 95,8 85,20" />
+                     </svg>
+                  </div>
+
+                  {/* Step 3: Siap Dipelajari */}
+                  <motion.div 
+                     initial={{ opacity: 0, y: 30 }}
+                     whileInView={{ opacity: 1, y: 0 }}
+                     viewport={{ once: true }}
+                     whileHover={{ y: -5 }}
+                     transition={{ duration: 0.5, delay: 0.4 }}
+                     className="w-full lg:w-1/3 flex flex-col bg-[#1c0f2e]/80 border border-[#ffa515]/30 rounded-[24px] p-8 backdrop-blur-sm relative shadow-[0_10px_30px_rgba(255,165,21,0.1)]"
+                  >
+                     <div className="absolute inset-0 bg-gradient-to-br from-[#ffa515]/5 to-transparent rounded-[24px] pointer-events-none"></div>
+
+                     <div className="w-10 h-10 rounded-full bg-[#ffa515] flex items-center justify-center mb-6 font-bold text-lg text-[#0d0415] shadow-lg absolute -top-5 -left-2 border-4 border-[#0d0415] rotate-[-5deg]">3</div>
+                     
+                     <h3 className="text-white font-bold text-[20px] mb-2 z-10">Materi Siap Ujian</h3>
+                     <p className="text-white/50 text-[13px] mb-8 leading-[1.5] z-10">
+                        Hasil akhirnya berupa Flashcard interaktif dan Rangkuman rapi yang siap kamu pelajari di mana saja.
+                     </p>
+
+                     {/* Visual: Flashcards with checkmark */}
+                     <div className="relative h-[140px] w-full flex justify-center items-center mt-auto group">
+                        <motion.div className="absolute w-[120px] h-[80px] bg-white border border-gray-200 rounded-xl shadow-lg rotate-[-10deg] -translate-x-4 translate-y-4 group-hover:-translate-x-8 transition-transform duration-300 flex items-center justify-center opacity-70">
+                        </motion.div>
+                        <motion.div className="absolute w-[120px] h-[80px] bg-white border border-gray-200 rounded-xl shadow-xl rotate-[5deg] translate-x-4 translate-y-2 group-hover:translate-x-8 transition-transform duration-300 flex items-center justify-center opacity-90">
+                        </motion.div>
+                        <motion.div className="absolute w-[130px] h-[90px] bg-white border border-[#672cb9]/30 rounded-xl shadow-2xl z-10 flex flex-col px-4 py-3 justify-center items-center text-center group-hover:-translate-y-4 transition-transform duration-300">
+                           <span className="text-[#672cb9] font-bold text-[14px]">Flashcard</span>
+                           <span className="text-gray-400 text-[10px] mt-1">Tap/Flip to Reveal</span>
+                           <div className="absolute -top-3 -right-3 w-8 h-8 bg-[#51cf66] text-white rounded-full flex items-center justify-center border-2 border-white shadow-md">
+                              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                           </div>
+                        </motion.div>
+                     </div>
+                  </motion.div>
+
+               </div>
+
+               {/* Bottom CTA Actions */}
+               <motion.div 
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.6 }}
+                  className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-16 md:mt-20 w-full"
+               >
+                  <Link href="#comment" className="w-full sm:w-auto bg-white/10 hover:bg-white/20 border border-white/10 text-white text-[15px] font-medium py-4 px-8 rounded-full transition-all flex items-center justify-center gap-3 backdrop-blur-md">
+                     Lihat kata mereka
+                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                  </Link>
+               </motion.div>
+
             </div>
          </section>
 
          {/* Quote Bar-Chart Section */}
          <section className="relative w-full py-16 md:py-32 px-6 flex items-center justify-center bg-white overflow-hidden min-h-[460px] md:min-h-[580px] z-10">
             {/* The Quote text */}
-            <h2 className="text-[32px] md:text-[56px] font-black text-[#170a29] z-20 max-w-[320px] md:max-w-[800px] leading-[1.1] text-left relative drop-shadow-sm font-['Montserrat',sans-serif] tracking-[-0.02em]">
-               <span className="text-[#a368dd] md:absolute md:-left-12 -top-4 text-[42px] md:text-[80px] font-serif leading-none opacity-80">“</span>
+            <motion.h2 
+               initial={{ opacity: 0, y: 30 }}
+               whileInView={{ opacity: 1, y: 0 }}
+               viewport={{ once: true, margin: "-100px" }}
+               transition={{ duration: 0.6, ease: "easeOut" }}
+               className="text-[32px] md:text-[56px] font-black text-[#170a29] z-20 max-w-[320px] md:max-w-[800px] leading-[1.1] text-left relative drop-shadow-sm font-['Montserrat',sans-serif] tracking-[-0.02em]"
+            >
+               <motion.span 
+                  initial={{ opacity: 0, scale: 0.5, rotate: -20 }}
+                  whileInView={{ opacity: 1, scale: 1, rotate: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.3, duration: 0.5, type: "spring" }}
+                  className="text-[#a368dd] md:absolute md:-left-12 -top-4 text-[42px] md:text-[80px] font-serif leading-none opacity-80 inline-block"
+               >“</motion.span>
                Belajarlah<br/>
                yang tinggi<br/>
                agar tidak<br/>
                mudah di<br className="md:hidden"/>
-               bodoh bodoh i<span className="text-[#a368dd] font-serif text-[32px] md:text-[50px] leading-none opacity-80">”</span>
-            </h2>
+               bodoh bodoh i
+               <motion.span 
+                  initial={{ opacity: 0, scale: 0.5, rotate: 20 }}
+                  whileInView={{ opacity: 1, scale: 1, rotate: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.5, duration: 0.5, type: "spring" }}
+                  className="text-[#a368dd] font-serif text-[32px] md:text-[50px] leading-none opacity-80 inline-block"
+               >”</motion.span>
+            </motion.h2>
 
             {/* Confetti particles */}
             <div className="absolute top-[10%] right-[10%] w-[120px] h-[180px] opacity-60 pointer-events-none md:scale-150 origin-top-right">
                {Array.from({length: 45}).map((_, i) => (
                   <div key={i} className="absolute w-[5px] h-[5px] md:w-[8px] md:h-[8px] bg-[#672cb9] rounded-sm"
                        style={{
-                          left: `${Math.random() * 100}%`,
-                          top: `${Math.random() * 100}%`,
-                          opacity: Math.random(),
-                          transform: `scale(${Math.random() * 1.5})`
+                          left: `${Math.abs(Math.sin(i * 1.5)) * 100}%`,
+                          top: `${Math.abs(Math.cos(i * 2.3)) * 100}%`,
+                          opacity: Math.abs(Math.sin(i * 3.1)),
+                          transform: `scale(${Math.abs(Math.cos(i * 1.1)) * 1.5})`
                        }}>
                   </div>
                ))}
                {Array.from({length: 20}).map((_, i) => (
                   <div key={`y-${i}`} className="absolute w-[4px] h-[4px] md:w-[6px] md:h-[6px] bg-[#ffa515] rounded-sm"
                        style={{
-                          left: `${Math.random() * 100}%`,
-                          top: `${Math.random() * 100}%`,
-                          opacity: Math.random() * 0.7,
-                          transform: `scale(${Math.random()})`
+                          left: `${Math.abs(Math.cos(i * 2.5)) * 100}%`,
+                          top: `${Math.abs(Math.sin(i * 1.7)) * 100}%`,
+                          opacity: Math.abs(Math.cos(i * 3.4)) * 0.7,
+                          transform: `scale(${Math.abs(Math.sin(i * 2.1))})`
                        }}>
                   </div>
                ))}
@@ -284,7 +590,7 @@ export default function Home() {
                   // Create a wave shape
                   const wave1 = Math.sin(i * 0.15) * 30;
                   const wave2 = Math.cos(i * 0.4) * 15;
-                  const height = 20 + Math.abs(wave1 + wave2) + Math.random() * 15;
+                  const height = 20 + Math.abs(wave1 + wave2) + Math.abs(Math.sin(i * 5.1)) * 15;
                   return (
                      <div key={`bar-${i}`} className={`w-[8px] md:w-[14px] rounded-t-[3px] ${color}`} style={{ height: `${height}%` }}></div>
                   );
@@ -292,95 +598,109 @@ export default function Home() {
             </div>
          </section>
 
-         {/* Kisah Sukses (Testimonial) */}
-         <section className="w-full bg-white flex flex-col items-center pt-24 pb-16 md:py-32 px-6 md:px-12 z-20">
-            <h2 className="text-[22px] md:text-[36px] font-bold text-[#672cb9] text-center leading-tight mb-10 md:mb-16 tracking-tight">
-               Kisah Sukses <br className="md:hidden"/>
-               Mereka
+         {/* Kisah Sukses (Testimonial - Infinite Marquee) */}
+         <section id="comment" className="w-full bg-white flex flex-col items-center pt-24 pb-16 md:py-32 overflow-hidden z-20">
+            <h2 className="text-[28px] md:text-[42px] font-black text-[#170a29] text-center leading-tight mb-4 tracking-[-0.02em]">
+               Kisah Sukses Mereka
             </h2>
+            <p className="text-[14px] md:text-[16px] text-gray-500 mb-10 md:mb-16 text-center px-4 max-w-[500px]">
+               Ribuan pelajar dan profesional telah membuktikan bagaimana OtakEncer meningkatkan produktivitas mereka.
+            </p>
             
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-10 w-full max-w-[1100px] mt-4">
-               
-               {/* Fixed Card with exact dimensions and text from image */}
-               <div className="w-full bg-white border border-[#eae0f5] rounded-[24px] pt-12 pb-6 px-8 md:px-10 relative shadow-[0_8px_30px_rgba(103,44,185,0.06)] flex flex-col justify-between">
-                  <div className="absolute -top-3 left-6 text-[#672cb9] bg-white rounded-full p-1 border border-white">
-                     <Image src="/assets/quote-avatar-left.svg" alt="" width={20} height={20} className="md:w-[28px] md:h-[28px]" />
-                  </div>
-                  <div className="absolute -bottom-3 right-6 text-[#672cb9] bg-white rounded-full p-1 border border-white">
-                     <Image src="/assets/quote-avatar-right.svg" alt="" width={20} height={20} className="md:w-[28px] md:h-[28px]" />
-                  </div>
-                  
-                  <p className="text-[12px] md:text-[14px] text-gray-500 text-center leading-[1.8] font-['Montserrat',sans-serif] px-1 mb-8">
-                     Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                  </p>
-                  <div className="flex flex-col items-center gap-1.5 mt-auto">
-                     <div className="w-[42px] h-[42px] md:w-[50px] md:h-[50px] rounded-full overflow-hidden border border-gray-100 shadow-sm relative mb-0.5">
-                        <Image src="/assets/testimonial-avatar.png" alt="Hezzam" fill className="object-cover" />
-                     </div>
-                     <h4 className="text-[13px] md:text-[15px] font-bold text-[#672cb9] leading-none">Hezzam</h4>
-                     <p className="text-[10px] md:text-[11px] text-gray-400 font-medium leading-none mt-1">Investor Videy</p>
-                  </div>
-               </div>
+            <div className="relative flex w-full max-w-[100vw] overflow-hidden group">
+               {/* Fade Gradients for edge masking */}
+               <div className="absolute top-0 left-0 w-[100px] md:w-[250px] h-full bg-gradient-to-r from-white to-transparent z-10 pointer-events-none"></div>
+               <div className="absolute top-0 right-0 w-[100px] md:w-[250px] h-full bg-gradient-to-l from-white to-transparent z-10 pointer-events-none"></div>
 
-               {/* Desktop Fillers */}
-               <div className="w-full bg-white border border-[#eae0f5] rounded-[24px] pt-12 pb-6 px-8 md:px-10 relative shadow-[0_8px_30px_rgba(103,44,185,0.06)] flex-col justify-between hidden md:flex">
-                     <div className="absolute -top-3 left-6 text-[#672cb9] bg-white rounded-full p-1"><Image src="/assets/quote-avatar-left.svg" alt="" width={28} height={28} /></div>
-                     <div className="absolute -bottom-3 right-6 text-[#672cb9] bg-white rounded-full p-1"><Image src="/assets/quote-avatar-right.svg" alt="" width={28} height={28} /></div>
-                  <p className="text-[14px] text-gray-500 text-center leading-[1.8] font-['Montserrat',sans-serif] px-1 mb-8">
-                     Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                  </p>
-                  <div className="flex flex-col items-center gap-1.5 mt-auto">
-                     <div className="w-[50px] h-[50px] rounded-full overflow-hidden bg-gray-100 border border-gray-100 shadow-sm relative mb-0.5"></div>
-                     <h4 className="text-[15px] font-bold text-[#672cb9] leading-none">Sinta R.</h4>
-                     <p className="text-[11px] text-gray-400 font-medium leading-none mt-1">Mahasiswi IT</p>
-                  </div>
-               </div>
-
-               <div className="w-full bg-white border border-[#eae0f5] rounded-[24px] pt-12 pb-6 px-8 md:px-10 relative shadow-[0_8px_30px_rgba(103,44,185,0.06)] flex-col justify-between hidden md:flex">
-                     <div className="absolute -top-3 left-6 text-[#672cb9] bg-white rounded-full p-1"><Image src="/assets/quote-avatar-left.svg" alt="" width={28} height={28} /></div>
-                     <div className="absolute -bottom-3 right-6 text-[#672cb9] bg-white rounded-full p-1"><Image src="/assets/quote-avatar-right.svg" alt="" width={28} height={28} /></div>
-                  <p className="text-[14px] text-gray-500 text-center leading-[1.8] font-['Montserrat',sans-serif] px-1 mb-8">
-                     Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-                  </p>
-                  <div className="flex flex-col items-center gap-1.5 mt-auto">
-                     <div className="w-[50px] h-[50px] rounded-full overflow-hidden bg-gray-100 border border-gray-100 shadow-sm relative mb-0.5"></div>
-                     <h4 className="text-[15px] font-bold text-[#672cb9] leading-none">Bima C.</h4>
-                     <p className="text-[11px] text-gray-400 font-medium leading-none mt-1">Developer</p>
-                  </div>
-               </div>
-
+               {/* Scrolling Marquee Container */}
+               <motion.div 
+                  className="flex gap-8 md:gap-12 min-w-max px-4 py-12 items-center"
+                  animate={{ x: ["0%", "-50%"] }}
+                  transition={{ ease: "linear", duration: 35, repeat: Infinity }}
+               >
+                  {/* Duplicate array to ensure seamless infinite looping */}
+                  {[...testimonials, ...testimonials].map((testimonial, idx) => (
+                     <motion.div 
+                        key={idx}
+                        whileHover={{ y: -10, scale: 1.02 }}
+                        transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                        className="w-[320px] md:w-[480px] bg-white border-[2.5px] border-[#672cb9] rounded-[32px] pt-12 pb-10 px-8 md:px-12 relative flex flex-col justify-between shrink-0 cursor-pointer"
+                     >
+                        {/* Top Left Quote */}
+                        <div className="absolute -top-7 md:-top-9 left-10 md:left-12 bg-white px-2 md:px-4 text-[#672cb9] text-[56px] md:text-[72px] font-black leading-none font-serif select-none flex items-center justify-center">
+                           “
+                        </div>
+                        
+                        {/* Bottom Right Quote */}
+                        <div className="absolute -bottom-8 md:-bottom-10 right-10 md:right-12 bg-white px-2 md:px-4 text-[#672cb9] text-[56px] md:text-[72px] font-black leading-none font-serif select-none flex items-center justify-center">
+                           ”
+                        </div>
+                        
+                        <p className="text-[15px] md:text-[18px] text-[#2c1d42] text-center leading-[1.6] md:leading-[1.7] mb-10 md:mb-12 font-medium">
+                           {testimonial.text}
+                        </p>
+                        
+                        <div className="flex items-center justify-center gap-4 mt-auto">
+                           <div className="w-[45px] h-[45px] md:w-[60px] md:h-[60px] rounded-full overflow-hidden relative shadow-sm">
+                              <Image src={testimonial.avatar} alt={testimonial.name} fill className="object-cover" />
+                           </div>
+                           <div className="flex flex-col text-left">
+                              <h4 className="text-[16px] md:text-[20px] font-bold text-[#672cb9] leading-tight capitalize">{testimonial.name}</h4>
+                              <p className="text-[12px] md:text-[14px] text-gray-500 font-medium leading-tight">{testimonial.role}</p>
+                           </div>
+                        </div>
+                     </motion.div>
+                  ))}
+               </motion.div>
             </div>
 
-            {/* Pagination Dots (Mobile) */}
-            <div className="flex md:hidden gap-1.5 mt-8 items-center justify-center">
-               <div className="w-1.5 h-1.5 rounded-full bg-[#ffa515]"></div>
-               <div className="w-5 h-1.5 rounded-full bg-[#672cb9]"></div>
-               <div className="w-1.5 h-1.5 rounded-full bg-[#ffa515]"></div>
+            {/* Pagination Decoration */}
+            <div className="flex justify-center items-center gap-3 mt-8 md:mt-12">
+               <div className="w-3 h-3 md:w-4 md:h-4 bg-[#ffa515] rounded-full"></div>
+               <div className="w-10 h-3 md:w-14 md:h-4 bg-[#672cb9] rounded-full"></div>
+               <div className="w-3 h-3 md:w-4 md:h-4 bg-[#ffa515] rounded-full"></div>
             </div>
          </section>
 
          {/* CTA Card over Peach background */}
          <section className="w-full bg-[#fff2de] px-4 md:px-12 py-16 md:py-24 flex flex-col items-center relative z-20">
             {/* The Purple Box */}
-            <div className="w-full max-w-[320px] md:max-w-[800px] bg-[#46237a] md:bg-gradient-to-tr md:from-[#401f70] md:to-[#672cb9] rounded-[24px] md:rounded-[40px] pt-8 md:pt-14 pb-10 md:pb-14 px-6 md:px-20 flex flex-col items-center text-center shadow-[0_20px_40px_rgba(70,35,122,0.25)]">
+            <motion.div 
+               initial={{ opacity: 0, scale: 0.95 }}
+               whileInView={{ opacity: 1, scale: 1 }}
+               viewport={{ once: true }}
+               transition={{ duration: 0.6, type: "spring" }}
+               className="w-full max-w-[320px] md:max-w-[800px] bg-[#46237a] md:bg-gradient-to-tr md:from-[#401f70] md:to-[#672cb9] rounded-[24px] md:rounded-[40px] pt-8 md:pt-14 pb-10 md:pb-14 px-6 md:px-20 flex flex-col items-center text-center shadow-[0_20px_40px_rgba(70,35,122,0.25)] relative overflow-hidden group"
+            >
+               {/* Radial Mesh Background for CTA */}
+               <div className="absolute top-[-50%] left-[-20%] w-[300px] h-[300px] bg-[#ffa515] rounded-full blur-[100px] opacity-20 group-hover:opacity-40 transition-opacity duration-700"></div>
+               <div className="absolute bottom-[-50%] right-[-20%] w-[300px] h-[300px] bg-[#c876b5] rounded-full blur-[100px] opacity-20 group-hover:opacity-40 transition-opacity duration-700"></div>
                
                {/* Happy Robot Face SVG Image */}
-               <div className="w-[70px] h-[70px] md:w-[100px] md:h-[100px] mb-4 md:mb-8">
-                  <Image src="/assets/ai-cta.svg" alt="Robot AI Cta" width={100} height={100} className="w-full h-full object-contain" />
-               </div>
+               <motion.div 
+                  animate={{ rotate: [0, -10, 10, 0] }}
+                  transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
+                  className="w-[70px] h-[70px] md:w-[100px] md:h-[100px] mb-4 md:mb-8 relative z-10"
+               >
+                  <Image src="/assets/ai-cta.svg" alt="Robot AI Cta" width={100} height={100} className="w-full h-full object-contain drop-shadow-[0_10px_20px_rgba(0,0,0,0.3)]" />
+               </motion.div>
 
-               <h3 className="text-white font-bold text-[18px] md:text-[38px] tracking-tight mb-2 md:mb-5 leading-[1.3] md:leading-[1.2]">
+               <h3 className="text-white font-bold text-[18px] md:text-[38px] tracking-tight mb-2 md:mb-5 leading-[1.3] md:leading-[1.2] relative z-10">
                   Siap Revolusi Cara<br className="md:hidden"/> Belajarmu?
                </h3>
                
-               <p className="text-white/80 text-[11px] md:text-[16px] leading-[1.6] md:leading-[1.8] mb-8 md:mb-10 font-['Montserrat',sans-serif] px-1 max-w-[500px]">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+               <p className="text-white/80 text-[11px] md:text-[16px] leading-[1.6] md:leading-[1.8] mb-8 md:mb-10 font-['Montserrat',sans-serif] px-1 max-w-[500px] relative z-10">
+                  Bergabung dengan puluhan ribu pelajar dan profesional yang telah merasakan kemudahan memahami dokumen kompleks bersama OtakEncer.
                </p>
                
-               <button className="w-full max-w-[180px] md:max-w-[240px] h-[48px] md:h-[60px] bg-white text-[#672cb9] font-bold text-[13px] md:text-[16px] rounded-[16px] transition-transform hover:scale-105 shadow-lg">
+               <motion.button 
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="w-full max-w-[180px] md:max-w-[240px] h-[48px] md:h-[60px] bg-white text-[#672cb9] font-bold text-[13px] md:text-[16px] rounded-[16px] transition-transform shadow-xl relative z-10"
+               >
                   Mulai Disini
-               </button>
-            </div>
+               </motion.button>
+            </motion.div>
          </section>
 
          {/* Footer */}
