@@ -2,14 +2,75 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
-import { motion, useScroll, useMotionValueEvent } from "framer-motion";
+import { useState, useRef } from "react";
+import { motion, useScroll, useMotionValueEvent, useTransform, useSpring } from "framer-motion";
 import { AuroraBackground } from "@/components/ui/aurora-background";
 
 export default function Home() {
   const { scrollY } = useScroll();
   const [hidden, setHidden] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  // Parallax Setup for the Quotes Section
+  const quotesRef = useRef<HTMLElement>(null);
+  const { scrollYProgress: quotesScrollProgress } = useScroll({
+    target: quotesRef,
+    offset: ["start end", "end start"]
+  });
+
+  // Create depth layers for boxes and text giving true Mobbin parallax effect
+  // Extreme smooth spring physics for buttery scroll lag
+  const springConfig = { stiffness: 50, damping: 20, mass: 1.2 };
+
+  // Text anchor: mostly solid base, we will rely on a staggered entry trigger for the text reveal
+  const quotesTextYRaw = useTransform(quotesScrollProgress, [0, 1], [30, -30]);
+  const quotesTextY = useSpring(quotesTextYRaw, springConfig);
+
+  // Line-by-Line Scrubbable Text Transforms
+  // We map tight 8% scroll windows to make it 'pop' (trigger-like) while remaining fully bound to bidirectional scroll progress
+  const ts = { stiffness: 120, damping: 20, mass: 0.8 }; // Snappy spring config
+  
+  const textOp1Raw = useTransform(quotesScrollProgress, [0.35, 0.43], [0, 1]);
+  const textY1Raw = useTransform(quotesScrollProgress, [0.35, 0.43], [60, 0]);
+  const textOp1 = useSpring(textOp1Raw, ts);
+  const textY1 = useSpring(textY1Raw, ts);
+
+  const textOp2Raw = useTransform(quotesScrollProgress, [0.40, 0.48], [0, 1]);
+  const textY2Raw = useTransform(quotesScrollProgress, [0.40, 0.48], [60, 0]);
+  const textOp2 = useSpring(textOp2Raw, ts);
+  const textY2 = useSpring(textY2Raw, ts);
+
+  const textOp3Raw = useTransform(quotesScrollProgress, [0.45, 0.53], [0, 1]);
+  const textY3Raw = useTransform(quotesScrollProgress, [0.45, 0.53], [60, 0]);
+  const textOp3 = useSpring(textOp3Raw, ts);
+  const textY3 = useSpring(textY3Raw, ts);
+
+  const textOp4Raw = useTransform(quotesScrollProgress, [0.50, 0.58], [0, 1]);
+  const textY4Raw = useTransform(quotesScrollProgress, [0.50, 0.58], [60, 0]);
+  const textOp4 = useSpring(textOp4Raw, ts);
+  const textY4 = useSpring(textY4Raw, ts);
+
+  const textOp5Raw = useTransform(quotesScrollProgress, [0.55, 0.63], [0, 1]);
+  const textY5Raw = useTransform(quotesScrollProgress, [0.55, 0.63], [60, 0]);
+  const textOp5 = useSpring(textOp5Raw, ts);
+  const textY5 = useSpring(textY5Raw, ts);
+
+  // 5 Background lag layers mapping foreground vs background (bigger numbers = more movement)
+  // Layer 1: Very small distant objects
+  const layer1YRaw = useTransform(quotesScrollProgress, [0, 1], [-80, 80]);
+  const layer1Y = useSpring(layer1YRaw, springConfig);
+  // Layer 2: Mid-background
+  const layer2YRaw = useTransform(quotesScrollProgress, [0, 1], [150, -150]);
+  const layer2Y = useSpring(layer2YRaw, springConfig);
+  // Layer 3: Standard focal point
+  const layer3YRaw = useTransform(quotesScrollProgress, [0, 1], [300, -300]);
+  const layer3Y = useSpring(layer3YRaw, springConfig);
+  // Layer 4: Close foreground
+  const layer4YRaw = useTransform(quotesScrollProgress, [0, 1], [550, -550]);
+  const layer4Y = useSpring(layer4YRaw, springConfig);
+  // Layer 5: Extreme foreground
+  const layer5YRaw = useTransform(quotesScrollProgress, [0, 1], [850, -850]);
+  const layer5Y = useSpring(layer5YRaw, springConfig);
 
   useMotionValueEvent(scrollY, "change", (latest) => {
     const previous = scrollY.getPrevious() || 0;
@@ -313,7 +374,7 @@ export default function Home() {
          </section>
 
          {/* Feature Section - Natural Student-Centric Style */}
-         <section id="fitur" className="relative w-full flex flex-col items-center pt-24 md:pt-36 pb-12 md:pb-24 bg-[#08020d] rounded-[40px] md:rounded-[80px] mt-16 md:mt-24 z-20 border border-white/5 shadow-[0_20px_50px_rgba(0,0,0,0.3)] overflow-hidden">
+         <section id="fitur" className="relative w-full flex flex-col items-center pt-24 md:pt-36 pb-12 md:pb-24 bg-[#08020d] rounded-t-[40px] md:rounded-t-[80px] mt-16 md:mt-24 z-20 border-t border-white/5 overflow-hidden">
             
             {/* Elegant Aurora Purple Background */}
             <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
@@ -526,68 +587,122 @@ export default function Home() {
             </div>
          </section>
 
-         {/* Modern Professional Quote Section - Redesigned to match image */}
-         <section className="relative w-full py-24 md:py-40 flex items-center justify-start bg-transparent overflow-hidden z-10">
-            {/* Background Purple Squares */}
-            <div className="absolute inset-0 pointer-events-none z-0">
-               {Array.from({ length: 150 }).map((_, i) => {
+         {/* Modern Professional Quote Section - Redesigned to match image layered transition and Mobbin animated text trigger */}
+         <section ref={quotesRef} className="relative w-full min-h-screen pt-40 pb-36 md:pt-[300px] md:pb-48 flex flex-col justify-center items-start bg-[#fcfcfc] overflow-visible z-10 font-['Montserrat',sans-serif]">
+            
+            {/* Top Layered Paper Transition */}
+            <div className="absolute top-[-1px] left-0 w-full flex flex-col z-30 pointer-events-none">
+               {/* Layer 1 - Deep Purple matching bottom of previous section */}
+               <div className="h-[20px] md:h-[32px] w-full bg-[#1b0a33] shadow-[0_12px_15px_-3px_rgba(0,0,0,0.6)] z-50 relative"></div>
+               {/* Layer 2 - Deep Violet */}
+               <div className="h-[16px] md:h-[28px] w-full bg-[#3d245c] shadow-[0_12px_15px_-3px_rgba(0,0,0,0.4)] z-40 relative"></div>
+               {/* Layer 3 - Metallic Purple */}
+               <div className="h-[16px] md:h-[28px] w-full bg-[#6a4299] shadow-[0_12px_15px_-3px_rgba(0,0,0,0.25)] z-30 relative"></div>
+               {/* Layer 4 - Lilac */}
+               <div className="h-[16px] md:h-[28px] w-full bg-[#9f88bd] shadow-[0_12px_15px_-3px_rgba(0,0,0,0.15)] z-20 relative"></div>
+               {/* Layer 5 - Very Light Lilac */}
+               <div className="h-[16px] md:h-[28px] w-full bg-[#dacfec] shadow-[0_12px_15px_-3px_rgba(0,0,0,0.08)] z-10 relative"></div>
+               {/* Layer 6 - Off White */}
+               <div className="h-[16px] md:h-[28px] w-full bg-[#f6effb] shadow-[0_12px_15px_-3px_rgba(0,0,0,0.03)] z-0 relative"></div>
+            </div>
+
+            {/* Floating Purple Parallax Rectangles */}
+            <div className="absolute inset-x-0 bottom-[140px] top-[140px] pointer-events-none z-0 overflow-hidden">
+               {Array.from({ length: 60 }).map((_, i) => {
                   const pseudoRandom = (seed: number) => {
                      const x = Math.sin(seed) * 10000;
                      return x - Math.floor(x);
                   };
-                  // Concentrate more squares towards the right and middle
-                  const xProb = pseudoRandom(i);
-                  const left = xProb > 0.35 ? 40 + pseudoRandom(i + 50) * 60 : pseudoRandom(i + 50) * 50; 
-                  const top = -10 + pseudoRandom(i + 100) * 120; 
-                  const w = 6 + pseudoRandom(i + 200) * 22;
-                  const h = w * (0.7 + pseudoRandom(i + 300) * 0.8);
-                  const opacity = 0.2 + pseudoRandom(i + 400) * 0.7;
                   
-                  const colors = ['#672cb9', '#a368dd', '#c876b5', '#4c1d95', '#8b5cf6', '#d8b4e2'];
-                  const color = colors[Math.floor(pseudoRandom(i + 500) * colors.length)];
+                  // Distribute uniformly around the screen
+                  const left = pseudoRandom(i + 10) * 100; 
+                  const top = pseudoRandom(i + 20) * 100;
+                  
+                  // Boxes sizes (Squares & Rectangles) - Reduced size for smaller 'pixels'
+                  const w = 8 + pseudoRandom(i + 30) * 28;
+                  const h = w * (0.8 + pseudoRandom(i + 40) * 1.5); // Range from squarish to taller vertically
+                  
+                  // Assign layer based on size: Bigger elements simulate closer proximity, hence move faster!
+                  let yTransform;
+                  if (w > 32) yTransform = layer5Y;
+                  else if (w > 26) yTransform = layer4Y;
+                  else if (w > 18) yTransform = layer3Y;
+                  else if (w > 12) yTransform = layer2Y;
+                  else yTransform = layer1Y;
+                  
+                  const delay = pseudoRandom(i + 70) * 0.4;
+                  
+                  // Solid Purple colors as requested
+                  const palettes = [
+                     '#9b59b6', '#8e44ad', '#a29bfe', '#6c5ce7', 
+                     '#7d5fff', '#cd84f1', '#c56cf0',
+                  ];
+                  const bg = palettes[Math.floor(pseudoRandom(i + 80) * palettes.length)];
                   
                   return (
                      <motion.div
                         key={i}
-                        initial={{ opacity: 0, scale: 0.5, y: 15 }}
-                        whileInView={{ opacity, scale: 1, y: 0 }}
-                        viewport={{ once: true, margin: "-50px" }}
-                        transition={{ delay: pseudoRandom(i + 600) * 0.4, duration: 0.6, ease: "easeOut" }}
-                        className="absolute"
+                        initial={{ opacity: 0, scale: 0 }}
+                        whileInView={{ opacity: 0.8, scale: 1 }}
+                        viewport={{ once: true, margin: "50px" }}
+                        transition={{ 
+                           opacity: { duration: 0.5, delay },
+                           scale: { duration: 0.6, delay, type: "spring", bounce: 0.4 }
+                        }}
+                        className="absolute mix-blend-multiply"
                         style={{
                            left: `${left}%`,
                            top: `${top}%`,
                            width: `${w}px`,
                            height: `${h}px`,
-                           backgroundColor: color,
+                           background: bg,
+                           borderRadius: '0px', 
+                           y: yTransform, // Pure scroll parallax
                         }}
                      />
                   );
                })}
-               {/* Fade out squares behind the text completely using a white gradient */}
-               <div className="absolute inset-0 bg-gradient-to-r from-white via-white/80 to-transparent w-[80%] md:w-[60%]"></div>
+               
+               {/* Center white radial glow to ensure typography remains highly readable */}
+               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] md:w-[70%] h-[90%] bg-[radial-gradient(circle_at_center,rgba(252,252,252,0.95)_0%,rgba(252,252,252,0.6)_50%,transparent_100%)] pointer-events-none z-0"></div>
             </div>
 
-            <div className="relative z-10 w-full max-w-[1240px] mx-auto flex flex-col justify-center text-left pl-6 pr-6 md:pl-24 md:pr-12">
-               <motion.h2 
-                  initial={{ opacity: 0, x: -40 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true, margin: "-100px" }}
-                  transition={{ duration: 0.8, ease: "easeOut" }}
-                  className="text-[36px] sm:text-[46px] md:text-[64px] lg:text-[80px] font-extrabold text-[#0f0f0f] leading-[1.1] tracking-tight"
-                  style={{ textShadow: "0 0 40px rgba(255,255,255,1), 0 0 20px rgba(255,255,255,0.9)" }}
-               >
-                  “Belajarlah<br/> 
-                  yang tinggi<br/> 
-                  agar tidak<br/> 
-                  mudah di<br/> 
-                  bodoh bodoh i”
-               </motion.h2>
+            <div className="relative z-10 w-full flex-1 max-w-[1240px] mx-auto flex flex-col justify-center items-center text-center px-6 md:px-12 pointer-events-none mt-[-20px] md:mt-[-40px]">
+               <motion.div style={{ y: quotesTextY }}>
+                  <h2 className="flex flex-col items-center justify-center text-[32px] sm:text-[40px] md:text-[56px] lg:text-[64px] font-bold text-[#1f1f1f] leading-[1.2] tracking-tight relative z-20">
+                     <motion.span 
+                        style={{ opacity: textOp1, y: textY1, textShadow: "0 0 30px rgba(252,252,252,1), 0 0 10px rgba(252,252,252,0.9)" }}
+                     >“Belajarlah</motion.span>
+                     <motion.span 
+                        style={{ opacity: textOp2, y: textY2, textShadow: "0 0 30px rgba(252,252,252,1), 0 0 10px rgba(252,252,252,0.9)" }}
+                     >yang tinggi</motion.span>
+                     <motion.span 
+                        style={{ opacity: textOp3, y: textY3, textShadow: "0 0 30px rgba(252,252,252,1), 0 0 10px rgba(252,252,252,0.9)" }}
+                     >agar tidak</motion.span>
+                     <motion.span 
+                        style={{ opacity: textOp4, y: textY4, textShadow: "0 0 30px rgba(252,252,252,1), 0 0 10px rgba(252,252,252,0.9)" }}
+                     >mudah di</motion.span>
+                     <motion.span 
+                        style={{ opacity: textOp5, y: textY5, textShadow: "0 0 30px rgba(252,252,252,1), 0 0 10px rgba(252,252,252,0.9)" }}
+                     >bodoh bodoh i”</motion.span>
+                  </h2>
+               </motion.div>
+            </div>
+
+            {/* Minimalist Graphic Transition to Testimonials (Badge Removed per Request) */}
+            <div className="absolute bottom-[-1px] left-0 w-full h-[140px] z-40 flex flex-col justify-center items-center pointer-events-none">
+               {/* Center glowing aurora spread */}
+               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] md:w-[700px] h-[100px] bg-gradient-to-r from-transparent via-[#c876b5]/30 to-transparent blur-[30px]"></div>
+               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[50%] md:w-[350px] h-[60px] bg-gradient-to-r from-transparent via-[#ffa515]/40 to-transparent blur-[25px]"></div>
+               
+               {/* Elegant Ultra-thin glowing lines spanning full width */}
+               <div className="absolute top-1/2 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[#a368dd]/50 to-transparent"></div>
+               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[30%] h-[2px] bg-gradient-to-r from-transparent via-[#ffa515]/80 to-transparent shadow-[0_0_20px_rgba(255,165,21,1)]"></div>
             </div>
          </section>
 
          {/* Kisah Sukses (Testimonial - Infinite Marquee) */}
-         <section id="comment" className="w-full bg-white flex flex-col items-center pt-20 pb-16 md:py-24 overflow-hidden z-20 relative border-t border-gray-100">
+         <section id="comment" className="w-full bg-[#fcf9fc] flex flex-col items-center pt-24 pb-16 md:pt-28 md:pb-28 overflow-hidden z-20 relative">
             <h2 className="text-[28px] md:text-[42px] font-black text-[#170a29] text-center leading-tight mb-4 tracking-[-0.02em]">
                Kisah Sukses Mereka
             </h2>
