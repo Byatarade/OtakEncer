@@ -1,6 +1,6 @@
 "use client";
 
-import { Search, Bell, Plus, Filter, LogOut, Settings, HelpCircle, ChevronDown } from 'lucide-react';
+import { Search, Bell, Plus, Filter, LogOut, Settings, HelpCircle, ChevronDown, Calendar, Eye, FileText, CheckCircle2 } from 'lucide-react';
 import Image from 'next/image';
 import { useAuth } from '@/components/AuthProvider';
 import { useRouter } from 'next/navigation';
@@ -38,7 +38,7 @@ export default function Dashboard() {
 
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 py-2">
-        <h1 className="text-[28px] font-bold text-[#0f172a] tracking-tight whitespace-nowrap">Hi, {user.name.split(' ')[0]}! ??</h1>
+        <h1 className="text-[28px] font-bold text-[#0f172a] tracking-tight whitespace-nowrap">Hi, {user.name.split(' ')[0]}! 👋</h1>
         
         <div className="flex flex-wrap items-center gap-3 md:gap-4 justify-end">
           
@@ -124,9 +124,138 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Konten Dashboard (Placeholder) */}
-      <div className="bg-white border text-center border-slate-200/60 rounded-[32px] p-10 flex flex-col items-center justify-center min-h-[500px] shadow-sm mt-4">
-         <p className="text-slate-400 font-medium pb-2 text-[15px]">Ruang Kerjamu Masih Kosong.</p>
+      {/* Konten Dashboard Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-4">
+        
+        {/* Total Visits Card */}
+        <div className="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-slate-100 flex flex-col justify-between">
+          <div className="flex items-start gap-4">
+            <div className="bg-[#f8f5fd] p-3 rounded-2xl">
+              <Calendar size={40} className="text-[#672cb9]" strokeWidth={1.5} />
+            </div>
+            <div>
+              <p className="text-slate-500 font-medium text-[15px]">Total Visits</p>
+              <h2 className="text-4xl font-bold text-slate-800 mt-1">145 Visits</h2>
+            </div>
+          </div>
+          
+          <div className="flex items-center gap-2 lg:gap-3 mt-8">
+            {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((day, idx) => (
+              <div key={idx} className="flex flex-col items-center gap-2 flex-1">
+                <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-bold text-[14px] transition-colors
+                  ${['M', 'T', 'W', 'F', 'S'].includes(day) && (idx !== 3 && idx !== 6) 
+                    ? 'bg-[#672cb9] text-white' 
+                    : 'border border-slate-200 text-slate-400'}`}>
+                  {day}
+                </div>
+                {['M', 'T', 'W', 'F', 'S'].includes(day) && (idx !== 3 && idx !== 6) && (
+                  <CheckCircle2 size={16} className="text-[#672cb9]" />
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Daily Tokens Card */}
+        <div className="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-slate-100">
+          <h3 className="text-[20px] font-bold text-[#672cb9] mb-6">Daily Tokens</h3>
+          
+          <div className="flex justify-between items-end mb-3">
+            <div>
+              <p className="text-slate-800 font-medium">Tokens Available: <span className="font-bold">3/5</span></p>
+            </div>
+            <p className="text-slate-800 font-bold text-[15px]">3 tokens <span className="font-normal">left today</span></p>
+          </div>
+          
+          <div className="w-full h-3.5 bg-indigo-50 rounded-full overflow-hidden mb-6">
+            <div className="h-full bg-[#672cb9] rounded-full" style={{ width: '60%' }}></div>
+          </div>
+          
+          <div className="inline-flex py-2 px-4 bg-indigo-50 rounded-xl text-[#672cb9] text-[14px] font-medium">
+            3 tokens left today
+          </div>
+        </div>
+
+        {/* Recent Activity Card */}
+        <div className="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-slate-100 relative">
+          <h3 className="text-[20px] font-bold text-[#672cb9] mb-6">Recent Activity</h3>
+          
+          <div className="space-y-6 relative z-10">
+            <div className="flex gap-4 items-start">
+              <div className="bg-[#f4effa] p-2.5 rounded-full shrink-0">
+                <Eye size={20} className="text-[#672cb9]" />
+              </div>
+              <div className="flex-1">
+                <p className="text-slate-800 font-medium">Viewed "Introduction to Python"</p>
+                <p className="text-slate-400 text-[13px] mt-0.5">2 minutes ago</p>
+              </div>
+            </div>
+            
+            <div className="flex gap-4 items-start">
+              <div className="bg-[#f4effa] p-2.5 rounded-full shrink-0">
+                <FileText size={20} className="text-[#672cb9]" />
+              </div>
+              <div className="flex-1">
+                <p className="text-slate-800 font-medium">Uploaded "Project Proposal.pdf"</p>
+                <p className="text-slate-400 text-[13px] mt-0.5">3 minutes ago</p>
+              </div>
+            </div>
+            
+            <div className="flex gap-4 items-start">
+              <div className="bg-[#672cb9] p-2.5 rounded-full shrink-0">
+                <CheckCircle2 size={20} className="text-white" />
+              </div>
+              <div className="flex-1">
+                <p className="text-slate-800 font-medium">Completed quiz "Math 101"</p>
+                <p className="text-slate-400 text-[13px] mt-0.5">3 minutes ago</p>
+              </div>
+            </div>
+            
+            <div className="flex gap-4 items-start">
+              <div className="bg-[#672cb9] p-2.5 rounded-full shrink-0">
+                <CheckCircle2 size={20} className="text-white" />
+              </div>
+              <div className="flex-1">
+                <p className="text-slate-800 font-medium">Completed quiz "Project Proposal.pdf"</p>
+                <p className="text-slate-400 text-[13px] mt-0.5">3 minutes ago</p>
+              </div>
+            </div>
+          </div>
+          
+          {/* Vertical line indicator */}
+          <div className="absolute right-8 top-1/2 -translate-y-1/2 w-1 h-32 bg-slate-200 rounded-full"></div>
+        </div>
+
+        {/* Leaderboard Rank Card */}
+        <div className="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-slate-100">
+          <h3 className="text-[20px] font-bold text-[#672cb9] mb-4">Leaderboard Rank</h3>
+          
+          <div className="mb-6 space-y-1">
+            <p className="text-slate-800 font-medium">Current Rank: <span className="font-bold">#12</span></p>
+            <p className="text-slate-800 font-medium">Points: <span className="font-bold">4500</span></p>
+          </div>
+          
+          <div className="space-y-1">
+            {[
+              { rank: 1, name: 'User A', points: 5200, isCurrentUser: false, initial: 'A', bg: 'bg-yellow-400' },
+              { rank: 2, name: 'User B', points: 4900, isCurrentUser: false, initial: 'B', bg: 'bg-slate-300' },
+              { rank: 3, name: 'User C', points: 4700, isCurrentUser: false, initial: 'C', bg: 'bg-orange-600' },
+              { rank: 4, name: 'Hilmi', points: 4500, isCurrentUser: true, initial: 'H', bg: 'bg-[#1e1e1e]' },
+            ].map((item) => (
+              <div key={item.rank} className={`flex items-center justify-between p-3 rounded-xl ${item.isCurrentUser ? 'bg-[#f4effa]' : 'hover:bg-slate-50 transition-colors'}`}>
+                <div className="flex items-center gap-4">
+                  <span className="text-slate-500 font-medium w-4">{item.rank}.</span>
+                  <div className={`w-8 h-8 rounded-full ${item.bg} flex items-center justify-center text-white text-[13px] font-bold`}>
+                    {item.initial}
+                  </div>
+                  <span className={`font-medium ${item.isCurrentUser ? 'text-[#0f172a]' : 'text-slate-700'}`}>{item.name}</span>
+                </div>
+                <span className={`font-bold ${item.isCurrentUser ? 'text-[#0f172a]' : 'text-slate-800'}`}>{item.points}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
       </div>
 
     </div>
