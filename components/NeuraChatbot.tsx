@@ -114,7 +114,7 @@ export default function NeuraChatbot({ showTrigger = true }: NeuraChatbotProps) 
           <div className="w-[42px] h-[42px] md:w-[56px] md:h-[56px] flex items-center justify-center overflow-visible z-10">
             <img
               alt="AI"
-              src="/assets/MASKOT NEURA AI FULL.svg"
+              src="/assets/maskot-neura.svg"
               className="w-full h-full object-contain scale-125 md:scale-135"
             />
           </div>
@@ -145,7 +145,7 @@ export default function NeuraChatbot({ showTrigger = true }: NeuraChatbotProps) 
             <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center overflow-hidden shrink-0">
               <img
                 alt="AI"
-                src="/assets/MASKOT NEURA AI FULL.svg"
+                src="/assets/maskot-neura.svg"
                 className="w-8 h-8 object-contain scale-125"
               />
             </div>
