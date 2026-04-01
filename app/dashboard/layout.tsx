@@ -19,7 +19,7 @@ export default function DashboardLayout({
           <aside className="w-[280px] bg-[#672cb9] text-white hidden md:flex flex-col relative z-20 shrink-0 py-6">
             {/* Logo Section */}
             <div className="pt-4 pb-12 px-10 shrink-0">
-              <Link href="/dashboard" className="flex items-center gap-3">
+              <Link href="/?view=landing" className="flex items-center gap-3">
                 <div className="w-8 h-8 relative flex items-center justify-center p-0.5">
                   <Image src="/assets/logo.svg" alt="Logo" fill className="object-contain brightness-0 invert" />
                 </div>
@@ -44,7 +44,7 @@ export default function DashboardLayout({
 
           {/* Mobile Header (Only visible on small screens) */}
           <header className="h-16 bg-[#672cb9] text-white flex items-center justify-between px-4 sticky top-0 z-30 md:hidden absolute w-full shadow-md">
-            <Link href="/dashboard" className="flex items-center gap-2">
+            <Link href="/?view=landing" className="flex items-center gap-2">
               <div className="relative w-8 h-8 flex items-center justify-center">
                 <Image src="/assets/logo.png" alt="OtakEncer Logo" fill className="object-contain brightness-0 invert p-1" />
               </div>

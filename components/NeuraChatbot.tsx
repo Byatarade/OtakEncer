@@ -135,7 +135,7 @@ export default function NeuraChatbot({ showTrigger = true }: NeuraChatbotProps) 
       )}
 
       <div
-        className={`fixed z-[10000] bottom-0 right-0 md:bottom-24 md:right-8 w-full md:w-[400px] h-[85vh] md:h-[550px] bg-white md:rounded-2xl shadow-2xl flex flex-col transition-transform duration-300 origin-bottom-right ${
+        className={`fixed z-[10000] bottom-0 right-0 md:bottom-6 md:right-6 w-full md:w-[400px] h-[85vh] md:h-[550px] bg-white md:rounded-2xl shadow-2xl flex flex-col transition-transform duration-300 origin-bottom-right ${
           isOpen ? "scale-100 translate-y-0" : "scale-0 md:translate-y-8 translate-y-full"
         }`}
       >
