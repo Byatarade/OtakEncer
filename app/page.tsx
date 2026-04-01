@@ -366,9 +366,9 @@ export default function Home() {
          </motion.section>
 
          {/* Neura Block Section */}
-         <section ref={neuraRef} id="neura" className="relative w-full px-4 md:px-0 mt-8 md:mt-24 mb-6 h-auto md:h-[500px] flex flex-col items-center justify-center overflow-visible">
+         <section ref={neuraRef} id="neura" className="relative w-full px-4 md:px-0 mt-8 md:mt-24 mb-6 h-auto md:h-[520px] flex flex-col items-center justify-center overflow-visible">
             {/* Background "NEURA" Text */}
-            <div className="absolute top-[10%] md:top-[10%] left-1/2 -translate-x-1/2 w-full text-center z-0">
+            <div className="absolute top-[8%] md:top-[8%] left-1/2 -translate-x-1/2 w-full text-center z-0">
                <h2 className="text-[120px] md:text-[260px] lg:text-[280px] font-black tracking-[-0.02em] leading-none pointer-events-none select-none text-transparent bg-clip-text bg-gradient-to-r from-[#ffa515] via-[#c876b5] to-[#672cb9] animate-gradient-x bg-[length:200%_auto]">
                  NEURA
                </h2>
@@ -376,25 +376,28 @@ export default function Home() {
             
             <div className="relative z-10 flex flex-col items-center justify-center w-full max-w-[1040px] h-full mt-10 md:mt-16">
                
-               {/* Center Mascot */}
+               {/* Center Mascot — lowered to show body over NEURA text */}
                <motion.div 
                  animate={{ y: [0, -10, 0] }}
                  transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
-                 className="relative w-[300px] h-[360px] md:w-[400px] md:h-[500px] z-20"
+                 className="relative w-[360px] h-[420px] md:w-[500px] md:h-[580px] z-20 mt-[20px] md:mt-[10px]"
+                 style={{
+                   filter: "drop-shadow(-10px 18px 22px rgba(0,0,0,0.20)) drop-shadow(0px 6px 10px rgba(0,0,0,0.12))"
+                 }}
                >
-                 <Image src="/assets/MASKOT NEURA AI FULL.svg" alt="Neura Mascot" fill className="object-contain" />
+                 <Image src="/assets/MASKOT NEURA AI FULL.svg" alt="Neura Mascot" fill className="object-contain object-bottom" />
                </motion.div>
 
-               {/* Left Card */}
+               {/* Left Card — repositioned to left-center like reference */}
                <motion.div 
                  initial={{ opacity: 0, x: -50 }}
                  whileInView={{ opacity: 1, x: 0 }}
                  viewport={{ once: true }}
                  transition={{ duration: 0.6 }}
-                 className="md:absolute md:left-[2%] lg:-left-[2%] md:bottom-[10%] bg-white rounded-[16px] md:rounded-[24px] p-6 lg:p-8 w-[240px] md:w-[280px] lg:w-[320px] shadow-[0_15px_40px_rgba(0,0,0,0.08)] z-30 border border-gray-100 hover:scale-105 transition-transform mt-[-40px] md:mt-0 relative"
+                 className="md:absolute md:left-[0%] lg:left-[2%] md:top-[30%] bg-white rounded-[16px] md:rounded-[20px] p-5 lg:p-6 w-[200px] md:w-[240px] lg:w-[270px] shadow-[0_12px_32px_rgba(103,44,185,0.10)] z-30 border-[2px] border-[#e0d0f8] hover:scale-105 hover:border-[#c9a8f0] transition-all mt-[-30px] md:mt-0 relative"
                >
-                 <p className="font-['Montserrat',sans-serif] text-[18px] md:text-[24px] lg:text-[28px] leading-[1.15] font-light md:font-normal text-[#333] text-left tracking-tight">
-                   Bingung?<br/> Tanyakan<br/> tentang<br/> fitur kami<br/> pada Neura
+                 <p className="font-['Montserrat',sans-serif] text-[16px] md:text-[18px] lg:text-[20px] leading-[1.4] font-semibold text-[#2c1d42] text-left tracking-tight">
+                   Bingung?<br/>Tanyakan<br/>tentang<br/>fitur kami<br/><span className="text-[#672cb9]">pada Neura</span>
                  </p>
                </motion.div>
 
@@ -619,7 +622,7 @@ export default function Home() {
          </section>
 
          {/* Modern Professional Quote Section - Redesigned to match image layered transition and Mobbin animated text trigger */}
-         <section ref={quotesRef} className="relative w-full min-h-screen pt-40 pb-[320px] md:pt-[300px] md:pb-[420px] lg:pb-[520px] flex flex-col justify-center items-start bg-[#fcfcfc] overflow-visible z-10 font-['Montserrat',sans-serif]">
+         <section ref={quotesRef} className="relative w-full min-h-screen pt-40 pb-[300px] md:pt-[300px] md:pb-[440px] lg:pb-[520px] flex flex-col justify-center items-start bg-[#fcfcfc] overflow-visible z-10 font-['Montserrat',sans-serif]">
             
             {/* Top Layered Paper Transition */}
             <div className="absolute top-[-1px] left-0 w-full flex flex-col z-30 pointer-events-none">
@@ -723,7 +726,7 @@ export default function Home() {
             </div>
 
             {/* Dynamic Pixel Wave Transition to Testimonials */}
-            <div className="absolute bottom-[-1px] left-0 w-full z-40 flex items-center justify-center h-[200px] sm:h-[260px] md:h-[380px] lg:h-[460px] gap-[3px] sm:gap-[4px] md:gap-[6px] px-2 md:px-6 pointer-events-none overflow-hidden pb-[40px] pt-[20px] translate-y-[30px] md:translate-y-[60px]">
+            <div className="absolute bottom-[-1px] left-0 w-full z-40 flex items-center justify-center h-[140px] sm:h-[180px] md:h-[260px] lg:h-[340px] gap-[2px] sm:gap-[3px] md:gap-[5px] px-2 md:px-4 pointer-events-none overflow-hidden pb-[16px] pt-[12px]">
                {Array.from({ length: 36 }).map((_, i) => {
                   const pseudoRandom = (seed: number) => {
                      const x = Math.sin(seed) * 10000;
@@ -1010,19 +1013,19 @@ export default function Home() {
          initial={{ x: "150%" }}
          animate={{ x: showNeuraFab ? 0 : "150%" }}
          transition={{ duration: 0.6, type: "spring", stiffness: 100, damping: 20 }}
-         className="fixed right-4 bottom-4 md:right-6 md:bottom-6 z-[9999]"
+         className="fixed right-0 bottom-12 md:bottom-20 z-[9999]"
       >
          <motion.button 
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="bg-[#672cb9] hover:bg-[#522199] transition-all duration-300 rounded-full pl-2 pr-6 md:pr-10 py-2 md:py-2.5 flex items-center gap-3 shadow-[0_8px_24px_rgba(103,44,185,0.4)] hover:shadow-[0_12px_32px_rgba(103,44,185,0.6)]"
+            whileHover={{ x: -8 }}
+            whileTap={{ scale: 0.98 }}
+            className="bg-[#672cb9] hover:bg-[#522199] transition-all duration-300 rounded-l-[40px] rounded-r-none pl-4 pr-10 md:pl-5 md:pr-14 py-2 md:py-2.5 flex items-center gap-3 md:gap-4 shadow-[-10px_4px_28px_rgba(103,44,185,0.4)] hover:shadow-[-14px_6px_36px_rgba(103,44,185,0.6)]"
          >
-            <div className="w-[44px] h-[44px] md:w-[56px] md:h-[56px] bg-white rounded-full flex items-center justify-center overflow-hidden p-[4px] md:p-[6px]">
-               <Image src="/assets/MASKOT NEURA AI FULL.svg" alt="AI" width={36} height={36} className="w-full h-full object-cover scale-110 md:scale-100" />
+            <div className="w-[42px] h-[42px] md:w-[56px] md:h-[56px] flex items-center justify-center overflow-visible z-10">
+               <Image src="/assets/MASKOT NEURA AI FULL.svg" alt="AI" width={60} height={60} className="w-full h-full object-contain scale-125 md:scale-135" />
             </div>
-            <div className="flex flex-col items-start justify-center pr-2">
-               <span className="text-[12px] md:text-[14px] text-white/90 leading-tight font-medium mb-[2px]">Tanya Pada</span>
-               <span className="text-[20px] md:text-[28px] text-white leading-none font-bold tracking-wide">NEURA</span>
+            <div className="flex flex-col items-start justify-center pr-1">
+               <span className="text-[12px] md:text-[14px] text-white/90 leading-tight font-medium mb-[0px] md:mb-[1px] tracking-tight">Tanya Pada</span>
+               <span className="text-[22px] md:text-[32px] text-white leading-[1.1] font-black tracking-normal">NEURA</span>
             </div>
          </motion.button>
       </motion.div>
