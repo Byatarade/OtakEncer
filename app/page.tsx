@@ -131,28 +131,32 @@ export default function Home() {
 
   const testimonials = [
     {
-      name: "Hezzam",
-      role: "Investor Videy",
-      text: "OtakEncer benar-benar mengubah cara saya mempelajari dokumen puluhan halaman menjadi ringkasan yang to the point.",
-      avatar: "/assets/testimonial-avatar.svg"
+      id: 1,
+      name: "John Doe",
+      role: "Head of Customer Experience at FinTech Global",
+      text: "Integrating OtakEncer has been a game-changer for our customer support workflow. We've seen a 40% decrease in response times and a significant uptick in customer satisfaction scores. The AI's ability to understand and process complex queries has freed our team to handle more nuanced issues.",
+      avatar: ""
     },
     {
-      name: "Sinta R.",
-      role: "Mahasiswi IT",
-      text: "Materi ujian dari jurnal PDF sekarang bisa saya pelajari 3x lebih cepat. Sangat membantu untuk yang sering begadang!",
-      avatar: "/assets/testimonial-avatar.svg" // placeholder
+      id: 2,
+      name: "Elijah Ramirez",
+      role: "Director of Operations at EcoHome Solutions",
+      text: "OtakEncer's chatbot isn't just another tool; it's like having a highly skilled assistant that's learning and improving every day. Our customers love the instant and accurate information it provides, and we've been thrilled with the deep insights into our customer interactions.",
+      avatar: ""
     },
     {
-      name: "Bima C.",
-      role: "Developer",
-      text: "Fitur tanya jawab dengan Neura AI sangat interaktif. Saya bisa bertanya langsung ke dalam dokumen teknis saya.",
-      avatar: "/assets/testimonial-avatar.svg" // placeholder
+      id: 3,
+      name: "Mia Song",
+      role: "CTO at HealthBridgeTech",
+      text: "We were amazed at how quickly OtakEncer adapted to our unique industry jargon and data. The customizable cards have added a layer of interactivity that keeps our users engaged and satisfied. It's not just the technology; it's the people behind it offering unparalleled support every step of the way.",
+      avatar: ""
     },
     {
-      name: "Aulia K.",
-      role: "Content Creator",
-      text: "Rangkuman dari audio dan YouTube sangat menghemat waktu riset bahan konten saya. Terbaik!",
-      avatar: "/assets/testimonial-avatar.svg" // placeholder
+       id: 4,
+       name: "Sarah Jenkins",
+       role: "Product Manager at EduTech Pro",
+       text: "Using OtakEncer for student document summaries has doubled our student engagement. The precision in highlighting key learning points from complex academic papers is unmatched by any other tool we have tested in the past few years.",
+       avatar: ""
     }
   ];
 
@@ -398,7 +402,7 @@ export default function Home() {
                  className="md:absolute md:left-[0%] lg:left-[2%] md:top-[30%] bg-white rounded-[16px] md:rounded-[20px] p-5 lg:p-6 w-[200px] md:w-[240px] lg:w-[270px] shadow-[0_12px_32px_rgba(103,44,185,0.10)] z-30 border-[2px] border-[#e0d0f8] hover:scale-105 hover:border-[#c9a8f0] transition-all mt-[-30px] md:mt-0 relative"
                >
                  <p className="font-['Montserrat',sans-serif] text-[16px] md:text-[18px] lg:text-[20px] leading-[1.4] font-semibold text-[#2c1d42] text-left tracking-tight">
-                   Bingung?<br/>Tanyakan<br/>tentang<br/>fitur kami<br/><span className="text-[#672cb9]">pada Neura</span>
+                   Bingung?<br/>Tanyakan<br/>tentang<br/>fitur kami<br/>pada Neura
                  </p>
                </motion.div>
 
@@ -812,69 +816,71 @@ export default function Home() {
             </div>
          </section>
 
-         {/* Kisah Sukses (Testimonial - Infinite Marquee) */}
-         <section id="comment" className="w-full bg-[#fcf9fc] flex flex-col items-center pt-24 pb-16 md:pt-28 md:pb-28 overflow-hidden z-20 relative">
-            <h2 className="text-[28px] md:text-[42px] font-black text-[#170a29] text-center leading-tight mb-4 tracking-[-0.02em]">
-               Kisah Sukses Mereka
-            </h2>
-            <p className="text-[14px] md:text-[16px] text-gray-500 mb-10 md:mb-16 text-center px-4 max-w-[500px]">
-               Ribuan pelajar dan profesional telah membuktikan bagaimana OtakEncer meningkatkan produktivitas mereka.
-            </p>
+         {/* Ultra-Compact Uniform Minimalist Testimonial Section */}
+         <section id="comment" className="w-full bg-[#fdfaff] flex flex-col items-center pt-14 pb-10 md:pt-16 md:pb-16 overflow-hidden z-20 relative">
             
-            <div className="relative flex w-full max-w-[100vw] overflow-hidden group">
-               {/* Fade Gradients for edge masking */}
-               <div className="absolute top-0 left-0 w-[100px] md:w-[250px] h-full bg-gradient-to-r from-white to-transparent z-10 pointer-events-none"></div>
-               <div className="absolute top-0 right-0 w-[100px] md:w-[250px] h-full bg-gradient-to-l from-white to-transparent z-10 pointer-events-none"></div>
-
-               {/* Scrolling Marquee Container */}
+            <div className="text-center mb-8 md:mb-12 px-6">
                <motion.div 
-                  className="flex gap-6 md:gap-8 min-w-max px-4 py-12 items-center"
-                  animate={{ x: ["0%", "-50%"] }}
-                  transition={{ ease: "linear", duration: 35, repeat: Infinity }}
+                 initial={{ opacity: 0, scale: 0.8 }}
+                 whileInView={{ opacity: 1, scale: 1 }}
+                 className="inline-block px-3 py-1 bg-[#7c3aed]/5 text-[#7c3aed] rounded-full text-[9px] font-bold uppercase tracking-[0.2em] mb-3 border border-[#7c3aed]/10"
                >
-                  {/* Duplicate array to ensure seamless infinite looping */}
-                  {[...testimonials, ...testimonials].map((testimonial, idx) => (
-                     <motion.div 
-                        key={idx}
-                        whileHover={{ y: -6, scale: 1.02 }}
-                        transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                        className="w-[280px] md:w-[360px] h-[280px] md:h-[320px] bg-white border-[2.5px] border-[#672cb9] rounded-[24px] md:rounded-[28px] pt-10 pb-8 px-6 md:px-10 relative flex flex-col justify-between shrink-0 cursor-pointer shadow-[0_12px_24px_rgba(103,44,185,0.05)] hover:shadow-[0_20px_40px_rgba(103,44,185,0.12)]"
-                     >
-                        {/* Top Left Quote */}
-                        <div className="absolute -top-6 md:-top-7 left-6 md:left-8 bg-white px-2 md:px-4 text-[#672cb9] text-[48px] md:text-[60px] font-black leading-none font-serif select-none flex items-center justify-center">
-                           “
-                        </div>
-                        
-                        {/* Bottom Right Quote */}
-                        <div className="absolute -bottom-8 md:-bottom-9 right-6 md:right-8 bg-white px-2 md:px-4 text-[#672cb9] text-[48px] md:text-[60px] font-black leading-none font-serif select-none flex items-center justify-center">
-                           ”
-                        </div>
-                        
-                        <div className="flex-1 flex items-center justify-center pt-2">
-                           <p className="text-[14px] md:text-[16px] text-[#2c1d42] text-center leading-[1.6] md:leading-[1.7] font-bold md:font-medium italic">
-                              "{testimonial.text}"
-                           </p>
-                        </div>
-                        
-                        <div className="flex items-center justify-center gap-4 mt-auto border-t border-gray-100 pt-5">
-                           <div className="w-[48px] h-[48px] md:w-[60px] md:h-[60px] rounded-full overflow-hidden relative shadow-sm border-[2.5px] border-[#ffa515] shrink-0">
-                              <Image src={testimonial.avatar} alt={testimonial.name} fill className="object-cover" />
-                           </div>
-                           <div className="flex flex-col text-left">
-                              <h4 className="text-[16px] md:text-[18px] font-bold text-[#672cb9] leading-tight capitalize tracking-tight">{testimonial.name}</h4>
-                              <p className="text-[11px] md:text-[13px] text-[#ffa515] font-bold leading-none mt-1 uppercase tracking-wider">{testimonial.role}</p>
-                           </div>
-                        </div>
-                     </motion.div>
-                  ))}
+                 Testimonials
                </motion.div>
+               <h2 className="text-[24px] md:text-[30px] font-bold text-[#1e293b] leading-tight tracking-tight">
+                  Trusted by Global Teams
+               </h2>
             </div>
 
-            {/* Pagination Decoration */}
-            <div className="flex justify-center items-center gap-3 mt-8 md:mt-12">
-               <div className="w-3 h-3 md:w-4 md:h-4 bg-[#ffa515] rounded-full"></div>
-               <div className="w-10 h-3 md:w-14 md:h-4 bg-[#672cb9] rounded-full"></div>
-               <div className="w-3 h-3 md:w-4 md:h-4 bg-[#ffa515] rounded-full"></div>
+            <div className="relative flex w-full max-w-[100vw] overflow-hidden group">
+               {/* Professional Edge Masking */}
+               <div className="absolute top-0 left-0 w-[100px] md:w-[320px] h-full bg-gradient-to-r from-[#fdfaff] via-[#fdfaff]/50 to-transparent z-10 pointer-events-none"></div>
+               <div className="absolute top-0 right-0 w-[100px] md:w-[320px] h-full bg-gradient-to-l from-[#fdfaff] via-[#fdfaff]/50 to-transparent z-10 pointer-events-none"></div>
+
+               {/* Scrolling Marquee - Tripled for extra-wide screens */}
+               <motion.div 
+                  className="flex gap-6 md:gap-10 min-w-max px-4 py-8 items-center"
+                  animate={{ x: ["0%", "-50%"] }}
+                  transition={{ ease: "linear", duration: 50, repeat: Infinity }}
+               >
+                  {[...testimonials, ...testimonials, ...testimonials].map((t, idx) => (
+                     <div 
+                        key={idx}
+                        className="w-[240px] md:w-[320px] h-[220px] md:h-[280px] bg-white rounded-[20px] md:rounded-[32px] p-4 md:p-6 flex flex-col justify-between shrink-0 shadow-[0_8px_30px_-15px_rgba(103,44,185,0.06)] border border-gray-100/50"
+                     >
+                        <div className="w-full flex items-start justify-between">
+                           {/* Ultra-Small Quotation Marks */}
+                           <div className="text-[#d8c7f7] text-[35px] md:text-[50px] font-black leading-[0.5] font-serif select-none pointer-events-none">
+                              “
+                           </div>
+                           {/* 5-Star Rating (Pencocokan responsive) */}
+                           <div className="flex gap-0.5 pt-0.5">
+                              {[1, 2, 3, 4, 5].map((s) => (
+                                 <svg key={s} className="w-[10px] h-[10px] md:w-[13px] md:h-[13px]" viewBox="0 0 24 24" fill="none" stroke="#fcd34d" strokeWidth="1.5">
+                                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14l-5-4.87 6.91-1.01L12 2z"/>
+                                 </svg>
+                              ))}
+                           </div>
+                        </div>
+
+                        <div className="flex-1 flex flex-col justify-center my-2 md:my-3">
+                           <p className="text-[12px] md:text-[14px] text-gray-700 leading-[1.5] font-medium tracking-tight line-clamp-5 md:line-clamp-6 overflow-hidden">
+                              {t.text}
+                           </p>
+                        </div>
+
+                        <div className="flex items-center gap-3 pt-2">
+                           <div className="w-[30px] h-[30px] md:w-[40px] md:h-[40px] rounded-full bg-gray-100 flex items-center justify-center shrink-0 overflow-hidden relative shadow-sm border border-gray-50">
+                              <div className="w-full h-full bg-[#0a0a0a] border border-gray-200 rounded-full"></div>
+                           </div>
+                           <div className="flex flex-col">
+                              <h4 className="text-[13px] md:text-[15px] font-bold text-gray-900 leading-tight tracking-tight line-clamp-1">{t.name}</h4>
+                              <p className="text-[9px] md:text-[10px] text-gray-400 font-medium leading-tight mt-0.5 max-w-[120px] md:max-w-none line-clamp-1">{t.role}</p>
+                           </div>
+                        </div>
+                     </div>
+                  ))}
+               </motion.div>
             </div>
          </section>
 
