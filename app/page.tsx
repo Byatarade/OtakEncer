@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { motion, useScroll, useMotionValueEvent, useTransform, useSpring } from "framer-motion";
 import { AuroraBackground } from "@/components/ui/aurora-background";
 import { useAuth } from "@/components/AuthProvider";
+import NeuraChatbot from "@/components/NeuraChatbot";
 
 export default function Home() {
   const { user, isLoaded } = useAuth();
@@ -1009,26 +1010,7 @@ export default function Home() {
       </main>
 
       {/* Right Pill Button (Fixed FAB) Moved to top-level to avoid clipping/z-index issues */}
-      <motion.div 
-         initial={{ x: "150%" }}
-         animate={{ x: showNeuraFab ? 0 : "150%" }}
-         transition={{ duration: 0.6, type: "spring", stiffness: 100, damping: 20 }}
-         className="fixed right-0 bottom-12 md:bottom-20 z-[9999]"
-      >
-         <motion.button 
-            whileHover={{ x: -8 }}
-            whileTap={{ scale: 0.98 }}
-            className="bg-[#672cb9] hover:bg-[#522199] transition-all duration-300 rounded-l-[40px] rounded-r-none pl-4 pr-10 md:pl-5 md:pr-14 py-2 md:py-2.5 flex items-center gap-3 md:gap-4 shadow-[-10px_4px_28px_rgba(103,44,185,0.4)] hover:shadow-[-14px_6px_36px_rgba(103,44,185,0.6)]"
-         >
-            <div className="w-[42px] h-[42px] md:w-[56px] md:h-[56px] flex items-center justify-center overflow-visible z-10">
-               <Image src="/assets/MASKOT NEURA AI FULL.svg" alt="AI" width={60} height={60} className="w-full h-full object-contain scale-125 md:scale-135" />
-            </div>
-            <div className="flex flex-col items-start justify-center pr-1">
-               <span className="text-[12px] md:text-[14px] text-white/90 leading-tight font-medium mb-[0px] md:mb-[1px] tracking-tight">Tanya Pada</span>
-               <span className="text-[22px] md:text-[32px] text-white leading-[1.1] font-black tracking-normal">NEURA</span>
-            </div>
-         </motion.button>
-      </motion.div>
+      <NeuraChatbot showTrigger={showNeuraFab} />
 
     </div>
   );
