@@ -610,7 +610,7 @@ export default function Home() {
          </section>
 
          {/* Modern Professional Quote Section - Redesigned to match image layered transition and Mobbin animated text trigger */}
-         <section ref={quotesRef} className="relative w-full min-h-screen pt-40 pb-36 md:pt-[300px] md:pb-48 flex flex-col justify-center items-start bg-[#fcfcfc] overflow-visible z-10 font-['Montserrat',sans-serif]">
+         <section ref={quotesRef} className="relative w-full min-h-screen pt-40 pb-[320px] md:pt-[300px] md:pb-[420px] lg:pb-[520px] flex flex-col justify-center items-start bg-[#fcfcfc] overflow-visible z-10 font-['Montserrat',sans-serif]">
             
             {/* Top Layered Paper Transition */}
             <div className="absolute top-[-1px] left-0 w-full flex flex-col z-30 pointer-events-none">
@@ -708,15 +708,94 @@ export default function Home() {
                      >mudah di</motion.span>
                      <motion.span 
                         style={{ opacity: textOp5, y: textY5, textShadow: "0 0 30px rgba(252,252,252,1), 0 0 10px rgba(252,252,252,0.9)" }}
-                     >bodoh bodoh i”</motion.span>
+                     >bodoh-bodohi”</motion.span>
                   </h2>
                </motion.div>
             </div>
 
-            {/* Elegant & Clean Seamless Transition to Testimonials */}
-            <div className="absolute bottom-0 left-0 w-full h-[150px] bg-gradient-to-b from-transparent to-[#fcf9fc] pointer-events-none z-40 flex flex-col justify-end">
-               {/* Razor-thin, ultra-subtle separator line (Premium SaaS Aesthetic) */}
-               <div className="w-full h-[1px] bg-gradient-to-r from-transparent via-[#672cb9]/15 to-transparent"></div>
+            {/* Dynamic Pixel Wave Transition to Testimonials */}
+            <div className="absolute bottom-[-1px] left-0 w-full z-40 flex items-center justify-center h-[200px] sm:h-[260px] md:h-[380px] lg:h-[460px] gap-[3px] sm:gap-[4px] md:gap-[6px] px-2 md:px-6 pointer-events-none overflow-hidden pb-[40px] pt-[20px] translate-y-[30px] md:translate-y-[60px]">
+               {Array.from({ length: 36 }).map((_, i) => {
+                  const pseudoRandom = (seed: number) => {
+                     const x = Math.sin(seed) * 10000;
+                     return x - Math.floor(x);
+                  };
+
+                  const x = i / 35;
+                  const wave1 = Math.sin(x * Math.PI * 2.5);
+                  const wave2 = Math.sin(x * Math.PI * 5);
+                  
+                  // Total height varies up and down (15% to 85%)
+                  const pRand = pseudoRandom(i + 42);
+                  const pBase = 35 + wave1 * 25 + wave2 * 10; 
+                  const totalHeight = Math.min(85, Math.max(15, pBase + pRand * 30));
+
+                  // Ratio of purple vs orange (orange is bottom part)
+                  const oRand = pseudoRandom(i + 13);
+                  const orangeRatio = 0.20 + oRand * 0.35; // 20% to 55% orange
+                  const purpleRatio = 1 - orangeRatio;
+
+                  const shades = [
+                     '#f3effb', '#e6ddf7', '#d3bcee', '#af8ce6', '#8e5ee0', '#672cb9'
+                   ];
+                  const colorIdx = Math.floor(pseudoRandom(i + 77) * shades.length);
+                  const purpleColor = shades[colorIdx];
+
+                  const fRand = pseudoRandom(i + 99);
+                  const hasFloat = fRand > 0.60;
+                  const floatGap = 6 + pseudoRandom(i + 11) * 20; // strict px gap above bar, increased for larger look
+                  const floatColor = shades[Math.floor(pseudoRandom(i + 33) * shades.length)];
+
+                  const animDelay = -pseudoRandom(i * 88) * 4;
+                  const duration = 2.5 + pseudoRandom(i * 55) * 2;
+
+                  return (
+                     <div key={i} className="flex-1 flex flex-col justify-center relative items-center h-full">
+
+                        {/* Staggered Entry Animation Container */}
+                        <motion.div
+                           initial={{ opacity: 0, y: 50 }}
+                           whileInView={{ opacity: 1, y: 0 }}
+                           viewport={{ once: true, margin: "100px" }}
+                           transition={{ duration: 0.7, delay: i * 0.015, ease: "easeOut" }}
+                           className="w-full h-full flex flex-col justify-center relative items-center"
+                        >
+                           {/* Floating Block Animated (Infinite) */}
+                           {hasFloat && (
+                              <motion.div 
+                                 animate={{ y: [0, -6, 0] }}
+                                 transition={{ duration, repeat: Infinity, ease: "easeInOut", delay: animDelay }}
+                                 className="w-full absolute rounded-[1px] md:rounded-[2px]" 
+                                 style={{ 
+                                    bottom: `calc(50% + ${totalHeight / 2}% + ${floatGap}px)`, 
+                                    height: `${4 + pseudoRandom(i) * 10}px`, 
+                                    backgroundColor: floatColor 
+                                 }} 
+                              />
+                           )}
+
+                           {/* Main Bar Container Animated (Infinite) */}
+                           <motion.div 
+                              className="w-full flex flex-col overflow-hidden rounded-[1px] md:rounded-[2px]"
+                              style={{ height: `${totalHeight}%`, originY: 0.5 }}
+                              animate={{ 
+                                 scaleY: [1, 1.15, 0.85, 1],
+                                 y: [0, -4, 4, 0]
+                              }}
+                              transition={{ 
+                                 duration, repeat: Infinity, ease: "easeInOut", delay: animDelay 
+                              }}
+                           >
+                              {/* Purple Top Half */}
+                              <div className="w-full transition-all" style={{ flex: purpleRatio, backgroundColor: purpleColor }} />
+                              
+                              {/* Orange Bottom Half */}
+                              <div className="w-full transition-all" style={{ flex: orangeRatio, backgroundColor: '#ffa515' }} />
+                           </motion.div>
+                        </motion.div>
+                     </div>
+                  );
+               })}
             </div>
          </section>
 
