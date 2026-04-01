@@ -67,7 +67,7 @@ export default function Dashboard() {
 
           <button className="flex items-center gap-2 bg-[#672cb9] text-white px-5 py-2.5 rounded-full text-[14px] font-bold shadow-md hover:bg-[#58249c] hover:shadow-lg transition-all transform hover:-translate-y-0.5 ml-2">
             <Plus size={18} strokeWidth={2.5}/>
-            <span className="hidden sm:inline">Create</span>
+            <span className="hidden sm:inline">Upload</span>
           </button>
           
           <div className="w-px h-8 bg-slate-200 mx-2 hidden sm:block"></div>

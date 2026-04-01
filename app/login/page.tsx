@@ -47,7 +47,7 @@ export default function LoginPage() {
         <div className="flex flex-col items-center mb-8">
           <Link href="/" className="flex items-center gap-3 mb-6 hover:opacity-80 transition-opacity">
             <div className="w-10 h-10 relative">
-              <Image src="/assets/logo.png" alt="Logo" fill className="object-contain" />
+              <Image src="/assets/logo.svg" alt="Logo" fill className="object-contain" />
             </div>
             <span className="text-[24px] font-extrabold text-slate-900 tracking-tight">OtakEncer</span>
           </Link>
