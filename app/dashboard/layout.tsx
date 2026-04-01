@@ -1,4 +1,6 @@
+"use client";
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { LayoutDashboard, Settings, Menu, Users, Library, Trophy } from 'lucide-react';
 import Image from 'next/image';
 import { AuthGuard } from '@/components/AuthProvider';
@@ -8,6 +10,8 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const pathname = usePathname();
+
   return (
     <AuthGuard>
       <div className="h-screen w-screen flex font-['Montserrat',sans-serif] bg-[#672cb9] overflow-hidden relative">
@@ -31,13 +35,13 @@ export default function DashboardLayout({
 
             {/* Navigation */}
             <nav className="flex-1 px-0 flex flex-col space-y-1">
-              <NavLink href="/dashboard" icon={<LayoutDashboard size={20} />} active>Dashboard</NavLink>
-              <NavLink href="/dashboard/library" icon={<Library size={20} />}>Library</NavLink>
-              <NavLink href="/dashboard/leaderboard" icon={<Trophy size={20} />}>Leaderboard</NavLink>
-              <NavLink href="/dashboard/kolaborasi" icon={<Users size={20} />}>Ruang Kolaborasi</NavLink>
+              <NavLink href="/dashboard" icon={<LayoutDashboard size={20} />} active={pathname === '/dashboard'}>Dashboard</NavLink>
+              <NavLink href="/dashboard/library" icon={<Library size={20} />} active={pathname.startsWith('/dashboard/library')}>Library</NavLink>
+              <NavLink href="/dashboard/leaderboard" icon={<Trophy size={20} />} active={pathname.startsWith('/dashboard/leaderboard')}>Leaderboard</NavLink>
+              <NavLink href="/dashboard/kolaborasi" icon={<Users size={20} />} active={pathname.startsWith('/dashboard/kolaborasi')}>Ruang Kolaborasi</NavLink>
 
               <div className="mt-auto pb-4">
-                <NavLink href="/dashboard/settings" icon={<Settings size={20} />}>Pengaturan</NavLink>
+                <NavLink href="/dashboard/settings" icon={<Settings size={20} />} active={pathname.startsWith('/dashboard/settings')}>Pengaturan</NavLink>
               </div>
             </nav>
           </aside>
@@ -71,7 +75,7 @@ export default function DashboardLayout({
 function NavLink({ href, icon, children, active = false }: { href: string, icon: React.ReactNode, children: React.ReactNode, active?: boolean }) {
   if (active) {
     return (
-      <div className="relative flex items-center pl-10 py-4 cursor-pointer text-[#672cb9]">
+      <Link href={href} className="relative flex items-center pl-10 py-4 cursor-pointer text-[#672cb9]">
         {/* Active Pill background connecting to the right edge */}
         <div className="absolute left-6 right-0 top-0 bottom-0 bg-[#f8fafc] rounded-l-full shadow-sm"></div>
         <div className="relative z-10 flex items-center gap-4 text-[#672cb9] font-bold w-full">
@@ -80,7 +84,7 @@ function NavLink({ href, icon, children, active = false }: { href: string, icon:
         </div>
         {/* Dot indicator on the right edge */}
         <div className="absolute right-6 w-2 h-2 rounded-full bg-[#672cb9] z-10"></div>
-      </div>
+      </Link>
     );
   }
 

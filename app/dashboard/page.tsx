@@ -48,7 +48,7 @@ export default function Dashboard() {
              <input 
                type="text" 
                placeholder="Cari..." 
-               className="w-full sm:w-[240px] bg-white border border-slate-200 text-[14px] font-medium rounded-full py-2.5 pl-11 pr-4 outline-none focus:border-[#672cb9] focus:ring-1 focus:ring-[#672cb9]/30 transition-all shadow-sm"
+               className="text-black w-full sm:w-[240px] bg-white border border-slate-200 text-[14px] font-medium rounded-full py-2.5 pl-11 pr-4 outline-none focus:border-[#672cb9] focus:ring-1 focus:ring-[#672cb9]/30 transition-all shadow-sm"
              />
           </div>
 
