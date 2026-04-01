@@ -291,6 +291,7 @@ export default function Home() {
                {/* Buttons row - Matches Screenshot exactly */}
                <div className="flex flex-row flex-wrap items-center justify-center md:justify-start gap-3 md:gap-5 mt-8 md:mt-10 z-10 w-full px-1 md:px-0">
                  <motion.button 
+                   onClick={() => router.push('/login')}
                    whileHover={{ scale: 1.05 }}
                    whileTap={{ scale: 0.95 }}
                    className="whitespace-nowrap bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 text-white px-6 md:px-8 py-3.5 md:py-4 rounded-[16px] md:rounded-[20px] font-bold text-[13px] md:text-[15px] flex items-center justify-center gap-2 md:gap-3 transition-all shadow-[0_8px_32px_rgba(255,255,255,0.1)]">
@@ -907,21 +908,15 @@ export default function Home() {
                      Bergabung dengan ribuan pelajar dan profesional yang telah merasakan kemudahan memahami dokumen kompleks bersama OtakEncer.
                   </p>
                   
-                  <div className="flex flex-col sm:flex-row gap-3 relative z-10 w-full sm:w-auto px-4">
+                  <div className="flex flex-col sm:flex-row items-center justify-center gap-3 relative z-10 w-full sm:w-auto px-4">
                      <motion.button 
+                        onClick={() => router.push('/login')}
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                         className="w-full sm:w-auto px-7 md:px-9 h-[44px] md:h-[50px] bg-white text-[#672cb9] font-bold text-[14px] md:text-[15px] rounded-full transition-all shadow-[0_8px_25px_rgba(255,255,255,0.2)] hover:shadow-[0_12px_35px_rgba(255,255,255,0.3)] flex items-center justify-center gap-2"
                      >
                         Mulai Sekarang Gratis
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-                     </motion.button>
-                     <motion.button 
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        className="w-full sm:w-auto px-7 md:px-9 h-[44px] md:h-[50px] bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 text-white font-bold text-[14px] md:text-[15px] rounded-full transition-all flex items-center justify-center"
-                     >
-                        Hubungi Sales
                      </motion.button>
                   </div>
                </AuroraBackground>
