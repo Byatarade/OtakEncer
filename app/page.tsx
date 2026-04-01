@@ -13,6 +13,10 @@ export default function Home() {
   const [hidden, setHidden] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
+  const [showNeuraFab, setShowNeuraFab] = useState(false);
+  const neuraRef = useRef<HTMLElement>(null);
+  const footerRef = useRef<HTMLElement>(null);
+
   // Parallax Setup for the Quotes Section
   const quotesRef = useRef<HTMLElement>(null);
   const { scrollYProgress: quotesScrollProgress } = useScroll({
@@ -81,6 +85,18 @@ export default function Home() {
       if (!isMobileMenuOpen) setHidden(true); 
     } else {
       setHidden(false); 
+    }
+
+    // Check Neura FAB visibility safely
+    if (neuraRef.current && footerRef.current) {
+      const neuraRect = neuraRef.current.getBoundingClientRect();
+      const footerRect = footerRef.current.getBoundingClientRect();
+      
+      // Start showing when NEURA is visible (top < viewport height)
+      // Stop showing when Footer comes into view (top <= viewport height)
+      const shouldShow = neuraRect.top < window.innerHeight && footerRect.top > window.innerHeight;
+      
+      setShowNeuraFab((prev) => (prev !== shouldShow ? shouldShow : prev));
     }
   });
 
@@ -341,7 +357,7 @@ export default function Home() {
          </motion.section>
 
          {/* Neura Block Section */}
-         <section id="neura" className="relative w-full px-4 md:px-0 mt-8 md:mt-24 mb-6 h-auto md:h-[500px] flex flex-col items-center justify-center overflow-visible">
+         <section ref={neuraRef} id="neura" className="relative w-full px-4 md:px-0 mt-8 md:mt-24 mb-6 h-auto md:h-[500px] flex flex-col items-center justify-center overflow-visible">
             {/* Background "NEURA" Text */}
             <div className="absolute top-[10%] md:top-[10%] left-1/2 -translate-x-1/2 w-full text-center z-0">
                <h2 className="text-[120px] md:text-[260px] lg:text-[280px] font-black tracking-[-0.02em] leading-none pointer-events-none select-none text-transparent bg-clip-text bg-gradient-to-r from-[#ffa515] via-[#c876b5] to-[#672cb9] animate-gradient-x bg-[length:200%_auto]">
@@ -373,28 +389,9 @@ export default function Home() {
                  </p>
                </motion.div>
 
-               {/* Right Pill Button */}
-               <motion.div 
-                 initial={{ opacity: 0, x: 50 }}
-                 whileInView={{ opacity: 1, x: 0 }}
-                 viewport={{ once: true }}
-                 transition={{ duration: 0.6 }}
-                 className="md:absolute md:right-[2%] lg:right-[0%] md:bottom-[12%] z-30 mt-6 md:mt-0"
-               >
-                 <motion.button 
-                   whileHover={{ scale: 1.05 }}
-                   whileTap={{ scale: 0.95 }}
-                   className="bg-[#672cb9] hover:bg-[#522199] transition-all duration-300 rounded-full pl-2 pr-6 md:pr-10 py-2 md:py-2.5 flex items-center gap-3 shadow-[0_8px_24px_rgba(103,44,185,0.4)] hover:shadow-[0_12px_32px_rgba(103,44,185,0.6)]"
-                 >
-                    <div className="w-[44px] h-[44px] md:w-[56px] md:h-[56px] bg-white rounded-full flex items-center justify-center overflow-hidden p-[4px] md:p-[6px]">
-                       <Image src="/assets/ai-robot-svg.svg" alt="AI" width={36} height={36} className="w-full h-full object-cover scale-110 md:scale-100" />
-                    </div>
-                    <div className="flex flex-col items-start justify-center pr-2">
-                       <span className="text-[12px] md:text-[14px] text-white/90 leading-tight font-medium mb-[2px]">Tanya Pada</span>
-                       <span className="text-[20px] md:text-[28px] text-white leading-none font-bold tracking-wide">NEURA</span>
-                    </div>
-                 </motion.button>
-               </motion.div>
+{/* naruh chatbot jadi di lapisan paling atas */}
+
+
             </div>
          </section>
 
@@ -696,7 +693,7 @@ export default function Home() {
 
             <div className="relative z-10 w-full flex-1 max-w-[1240px] mx-auto flex flex-col justify-center items-start text-left px-8 md:px-20 pointer-events-none mt-[-20px] md:mt-[-40px]">
                <motion.div style={{ y: quotesTextY }} className="w-full">
-                  <h2 className="flex flex-col items-start justify-center text-[32px] sm:text-[40px] md:text-[56px] lg:text-[64px] font-bold text-[#1f1f1f] leading-[1.2] tracking-tight relative z-20 w-full">
+                  <h2 className="flex flex-col items-start justify-center text-[32px] sm:text-[40px] md:text-[56px] lg:text-[64px] font-medium text-[#1f1f1f] leading-[1.2] tracking-tight relative z-20 w-full">
                      <motion.span 
                         style={{ opacity: textOp1, y: textY1, textShadow: "0 0 30px rgba(252,252,252,1), 0 0 10px rgba(252,252,252,0.9)" }}
                      >“Belajarlah</motion.span>
@@ -840,7 +837,7 @@ export default function Home() {
          </section>
 
          {/* Modern Footer */}
-         <footer className="w-full bg-[#08020d] rounded-t-[40px] md:rounded-t-[80px] border-t border-white/10 text-white pt-16 md:pt-24 pb-8 md:pb-10 relative z-20 overflow-hidden">
+         <footer ref={footerRef} className="w-full bg-[#08020d] rounded-t-[40px] md:rounded-t-[80px] border-t border-white/10 text-white pt-16 md:pt-24 pb-8 md:pb-10 relative z-20 overflow-hidden">
             {/* Ambient glows for the footer */}
             <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-[#672cb9]/15 rounded-full blur-[120px] pointer-events-none"></div>
             <div className="absolute bottom-[-100px] right-1/4 w-[400px] h-[400px] bg-[#ffa515]/10 rounded-full blur-[100px] pointer-events-none"></div>
@@ -919,6 +916,29 @@ export default function Home() {
             </div>
          </footer>
       </main>
+
+      {/* Right Pill Button (Fixed FAB) Moved to top-level to avoid clipping/z-index issues */}
+      <motion.div 
+         initial={{ x: "150%" }}
+         animate={{ x: showNeuraFab ? 0 : "150%" }}
+         transition={{ duration: 0.6, type: "spring", stiffness: 100, damping: 20 }}
+         className="fixed right-4 bottom-4 md:right-6 md:bottom-6 z-[9999]"
+      >
+         <motion.button 
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="bg-[#672cb9] hover:bg-[#522199] transition-all duration-300 rounded-full pl-2 pr-6 md:pr-10 py-2 md:py-2.5 flex items-center gap-3 shadow-[0_8px_24px_rgba(103,44,185,0.4)] hover:shadow-[0_12px_32px_rgba(103,44,185,0.6)]"
+         >
+            <div className="w-[44px] h-[44px] md:w-[56px] md:h-[56px] bg-white rounded-full flex items-center justify-center overflow-hidden p-[4px] md:p-[6px]">
+               <Image src="/assets/ai-robot-svg.svg" alt="AI" width={36} height={36} className="w-full h-full object-cover scale-110 md:scale-100" />
+            </div>
+            <div className="flex flex-col items-start justify-center pr-2">
+               <span className="text-[12px] md:text-[14px] text-white/90 leading-tight font-medium mb-[2px]">Tanya Pada</span>
+               <span className="text-[20px] md:text-[28px] text-white leading-none font-bold tracking-wide">NEURA</span>
+            </div>
+         </motion.button>
+      </motion.div>
+
     </div>
   );
 }
