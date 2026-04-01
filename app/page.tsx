@@ -12,12 +12,6 @@ import NeuraChatbot from "@/components/NeuraChatbot";
 export default function Home() {
   const { user, isLoaded } = useAuth();
   const router = useRouter();
-  
-  useEffect(() => {
-    if (isLoaded && user) {
-      router.replace('/dashboard');
-    }
-  }, [user, isLoaded, router]);
 
   const { scrollY } = useScroll();
   const [hidden, setHidden] = useState(false);
