@@ -373,7 +373,7 @@ export default function Home() {
                  transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
                  className="relative w-[300px] h-[360px] md:w-[400px] md:h-[500px] z-20"
                >
-                 <Image src="/assets/ai-robot.png" alt="Neura Mascot" fill className="object-contain" />
+                 <Image src="/assets/MASKOT NEURA AI FULL.svg" alt="Neura Mascot" fill className="object-contain" />
                </motion.div>
 
                {/* Left Card */}
@@ -866,47 +866,47 @@ export default function Home() {
          </section>
 
          {/* CTA Card with Aurora */}
-         <section className="w-full bg-white px-4 md:px-12 py-12 md:py-20 flex flex-col items-center relative z-20">
+         <section className="w-full bg-white px-4 md:px-12 py-8 md:py-12 flex flex-col items-center relative z-20">
             <motion.div 
                initial={{ opacity: 0, y: 40 }}
                whileInView={{ opacity: 1, y: 0 }}
                viewport={{ once: true }}
                transition={{ duration: 0.7, ease: "easeOut" }}
-               className="w-full max-w-[900px] rounded-[32px] md:rounded-[48px] overflow-hidden shadow-[0_20px_60px_rgba(103,44,185,0.15)] relative"
+               className="w-full max-w-[860px] rounded-[28px] md:rounded-[36px] overflow-hidden shadow-[0_16px_48px_rgba(103,44,185,0.15)] relative"
             >
-               <AuroraBackground className="w-full py-12 md:py-16 px-6 md:px-12 flex flex-col items-center text-center !min-h-[400px]">
+               <AuroraBackground className="w-full py-8 md:py-10 px-6 md:px-10 flex flex-col items-center text-center">
                   {/* Glowing decoration */}
-                  <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-[400px] h-[200px] bg-[#ffa515]/20 blur-[80px] rounded-full pointer-events-none mix-blend-screen"></div>
+                  <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-[360px] h-[160px] bg-[#ffa515]/20 blur-[70px] rounded-full pointer-events-none mix-blend-screen"></div>
 
                   <motion.div 
-                     animate={{ y: [0, -10, 0] }}
+                     animate={{ y: [0, -8, 0] }}
                      transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
-                     className="w-[220px] h-[220px] md:w-[320px] md:h-[320px] mb-0 md:mb-0 relative z-10"
+                     className="w-[110px] h-[110px] md:w-[180px] md:h-[180px] mb-2 md:mb-3 relative z-10"
                   >
-                     <Image src="/assets/ai-cta.svg" alt="Robot AI Cta" width={120} height={120} className="w-full h-full object-contain" />
+                     <Image src="/assets/MASKOT NEURA AI.svg" alt="Robot AI Cta" width={120} height={120} className="w-full h-full object-contain" />
                   </motion.div>
 
-                  <h3 className="text-white font-bold text-[24px] md:text-[38px] lg:text-[44px] tracking-tight mb-4 md:mb-6 leading-[1.2] relative z-10 drop-shadow-md">
+                  <h3 className="text-white font-bold text-[20px] md:text-[30px] lg:text-[36px] tracking-tight mb-3 md:mb-4 leading-[1.2] relative z-10 drop-shadow-md">
                      Siap Revolusi Cara<br className="md:hidden"/> Belajarmu?
                   </h3>
                   
-                  <p className="text-white/90 text-[14px] md:text-[16px] leading-[1.6] md:leading-[1.8] mb-8 md:mb-10 font-['Montserrat',sans-serif] px-2 max-w-[540px] relative z-10 font-medium">
-                     Bergabung dengan puluhan ribu pelajar dan profesional yang telah merasakan kemudahan memahami dokumen kompleks bersama OtakEncer.
+                  <p className="text-white/90 text-[13px] md:text-[15px] leading-[1.6] mb-5 md:mb-7 font-['Montserrat',sans-serif] px-2 max-w-[480px] relative z-10 font-medium">
+                     Bergabung dengan ribuan pelajar dan profesional yang telah merasakan kemudahan memahami dokumen kompleks bersama OtakEncer.
                   </p>
                   
-                  <div className="flex flex-col sm:flex-row gap-4 relative z-10 w-full sm:w-auto px-4">
+                  <div className="flex flex-col sm:flex-row gap-3 relative z-10 w-full sm:w-auto px-4">
                      <motion.button 
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
-                        className="w-full sm:w-auto px-8 md:px-10 h-[48px] md:h-[56px] bg-white text-[#672cb9] font-bold text-[15px] md:text-[16px] rounded-full transition-all shadow-[0_8px_25px_rgba(255,255,255,0.2)] hover:shadow-[0_12px_35px_rgba(255,255,255,0.3)] flex items-center justify-center gap-2"
+                        className="w-full sm:w-auto px-7 md:px-9 h-[44px] md:h-[50px] bg-white text-[#672cb9] font-bold text-[14px] md:text-[15px] rounded-full transition-all shadow-[0_8px_25px_rgba(255,255,255,0.2)] hover:shadow-[0_12px_35px_rgba(255,255,255,0.3)] flex items-center justify-center gap-2"
                      >
                         Mulai Sekarang Gratis
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
                      </motion.button>
                      <motion.button 
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
-                        className="w-full sm:w-auto px-8 md:px-10 h-[48px] md:h-[56px] bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 text-white font-bold text-[15px] md:text-[16px] rounded-full transition-all flex items-center justify-center"
+                        className="w-full sm:w-auto px-7 md:px-9 h-[44px] md:h-[50px] bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 text-white font-bold text-[14px] md:text-[15px] rounded-full transition-all flex items-center justify-center"
                      >
                         Hubungi Sales
                      </motion.button>
@@ -1009,7 +1009,7 @@ export default function Home() {
             className="bg-[#672cb9] hover:bg-[#522199] transition-all duration-300 rounded-full pl-2 pr-6 md:pr-10 py-2 md:py-2.5 flex items-center gap-3 shadow-[0_8px_24px_rgba(103,44,185,0.4)] hover:shadow-[0_12px_32px_rgba(103,44,185,0.6)]"
          >
             <div className="w-[44px] h-[44px] md:w-[56px] md:h-[56px] bg-white rounded-full flex items-center justify-center overflow-hidden p-[4px] md:p-[6px]">
-               <Image src="/assets/ai-robot-svg.svg" alt="AI" width={36} height={36} className="w-full h-full object-cover scale-110 md:scale-100" />
+               <Image src="/assets/MASKOT NEURA AI FULL.svg" alt="AI" width={36} height={36} className="w-full h-full object-cover scale-110 md:scale-100" />
             </div>
             <div className="flex flex-col items-start justify-center pr-2">
                <span className="text-[12px] md:text-[14px] text-white/90 leading-tight font-medium mb-[2px]">Tanya Pada</span>
