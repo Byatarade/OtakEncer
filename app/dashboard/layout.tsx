@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { LayoutDashboard, Settings, Menu, Users, Library, Trophy } from 'lucide-react';
 import Image from 'next/image';
+import { AuthGuard } from '@/components/AuthProvider';
 
 export default function DashboardLayout({
   children,
@@ -8,9 +9,10 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="h-screen w-screen flex font-['Montserrat',sans-serif] bg-[#672cb9] overflow-hidden relative">
-        
-        {/* Main Card Container wrapper */}
+    <AuthGuard>
+      <div className="h-screen w-screen flex font-['Montserrat',sans-serif] bg-[#672cb9] overflow-hidden relative">
+
+          {/* Main Card Container wrapper */}
         <div className="flex h-full w-full relative z-10">
           
           {/* Sidebar - Solid Color, Left part of the screen */}
@@ -59,9 +61,10 @@ export default function DashboardLayout({
           <main className="flex-1 min-w-0 h-full overflow-y-auto bg-[#f8fafc] md:rounded-l-[40px] shadow-[-10px_0_30px_rgba(0,0,0,0.1)] content-area-scroll w-full pt-16 md:pt-0">
             {children}
           </main>
-          
+
         </div>
-    </div>
+      </div>
+    </AuthGuard>
   );
 }
 

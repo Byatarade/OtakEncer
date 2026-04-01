@@ -2,13 +2,22 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { motion, useScroll, useMotionValueEvent, useTransform, useSpring } from "framer-motion";
 import { AuroraBackground } from "@/components/ui/aurora-background";
 import { useAuth } from "@/components/AuthProvider";
 
 export default function Home() {
-  const { user } = useAuth();
+  const { user, isLoaded } = useAuth();
+  const router = useRouter();
+  
+  useEffect(() => {
+    if (isLoaded && user) {
+      router.replace('/dashboard');
+    }
+  }, [user, isLoaded, router]);
+
   const { scrollY } = useScroll();
   const [hidden, setHidden] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
