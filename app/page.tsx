@@ -385,7 +385,7 @@ export default function Home() {
                    filter: "drop-shadow(-10px 18px 22px rgba(0,0,0,0.20)) drop-shadow(0px 6px 10px rgba(0,0,0,0.12))"
                  }}
                >
-                 <Image src="/assets/MASKOT NEURA AI FULL.svg" alt="Neura Mascot" fill className="object-contain object-bottom" />
+                 <Image src="/assets/maskot-neura.svg" alt="Neura Mascot" fill className="object-contain object-bottom" />
                </motion.div>
 
                {/* Left Card — repositioned to left-center like reference */}

@@ -34,7 +34,7 @@ export default function NotFound() {
           className="relative z-10 mb-8 w-[200px] h-[200px] md:w-[300px] md:h-[300px] filter drop-shadow-[0_20px_40px_rgba(103,44,185,0.25)]"
         >
           <Image 
-            src="/assets/MASKOT NEURA AI EROR.svg" 
+            src="/assets/maskot-neura-ai-error.svg" 
             alt="Neura AI Mascot 404" 
             fill 
             className="object-contain"
