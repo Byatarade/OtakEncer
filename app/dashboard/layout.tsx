@@ -1,4 +1,4 @@
-"use client";
+"use client"; // Trigger rescan
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { LayoutDashboard, Settings, Menu, Users, Library, Trophy } from 'lucide-react';

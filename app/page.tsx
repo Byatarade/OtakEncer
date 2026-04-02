@@ -897,7 +897,7 @@ export default function Home() {
                      transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
                      className="w-[110px] h-[110px] md:w-[180px] md:h-[180px] mb-2 md:mb-3 relative z-10"
                   >
-                     <Image src="/assets/MASKOT NEURA AI.svg" alt="Robot AI Cta" width={120} height={120} className="w-full h-full object-contain" />
+                     <Image src="/assets/wajahneuraai.svg" alt="Robot AI Cta" width={120} height={120} className="w-full h-full object-contain" />
                   </motion.div>
 
                   <h3 className="text-white font-bold text-[20px] md:text-[30px] lg:text-[36px] tracking-tight mb-3 md:mb-4 leading-[1.2] relative z-10 drop-shadow-md">
