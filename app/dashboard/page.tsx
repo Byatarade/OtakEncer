@@ -283,7 +283,7 @@ export default function Dashboard() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               {/* File PDF */}
               <button className="flex flex-col items-start bg-white/70 backdrop-blur hover:bg-white hover:shadow-lg p-7 rounded-[24px] border border-white transition-all text-left group">
-                <div className="w-[52px] h-[52px] rounded-2xl bg-gradient-to-br from-[#9c5ee0] to-[#672cb9] flex items-center justify-center mb-5 shadow-sm group-hover:scale-105 transition-transform relative">
+                <div className="w-[52px] h-[52px] rounded-2xl bg-gradient-to-br from-[#ed2d07] to-[#871c07] flex items-center justify-center mb-5 shadow-sm group-hover:scale-105 transition-transform relative">
                   <FileText className="text-white" size={26} />
                   <span className="absolute text-[8px] font-bold text-[#672cb9] bg-white px-1 leading-none rounded-sm mt-3.5">PDF</span>
                 </div>
@@ -293,7 +293,7 @@ export default function Dashboard() {
 
               {/* Link Artikel */}
               <button className="flex flex-col items-start bg-white/70 backdrop-blur hover:bg-white hover:shadow-lg p-7 rounded-[24px] border border-white transition-all text-left group">
-                <div className="w-[52px] h-[52px] rounded-2xl bg-gradient-to-br from-[#9c5ee0] to-[#672cb9] flex items-center justify-center mb-5 shadow-sm group-hover:scale-105 transition-transform">
+                <div className="w-[52px] h-[52px] rounded-2xl bg-gradient-to-br from-[#0883ff] to-[#064a8f] flex items-center justify-center mb-5 shadow-sm group-hover:scale-105 transition-transform">
                   <LinkIcon className="text-white" size={26} strokeWidth={2.5} />
                 </div>
                 <h3 className="text-[20px] font-bold text-slate-800 mb-2.5">Link Artikel</h3>
@@ -302,7 +302,7 @@ export default function Dashboard() {
 
               {/* Video */}
               <button className="flex flex-col items-start bg-white/70 backdrop-blur hover:bg-white hover:shadow-lg p-7 rounded-[24px] border border-white transition-all text-left group">
-                <div className="w-[52px] h-[52px] rounded-2xl bg-gradient-to-br from-[#9c5ee0] to-[#672cb9] flex items-center justify-center mb-5 shadow-sm group-hover:scale-105 transition-transform">
+                <div className="w-[52px] h-[52px] rounded-2xl bg-gradient-to-br from-[#88d406] to-[#476e04] flex items-center justify-center mb-5 shadow-sm group-hover:scale-105 transition-transform">
                   <MonitorPlay className="text-white" size={26} />
                 </div>
                 <h3 className="text-[20px] font-bold text-slate-800 mb-2.5">Video</h3>
@@ -311,7 +311,7 @@ export default function Dashboard() {
 
               {/* Audio */}
               <button className="flex flex-col items-start bg-white/70 backdrop-blur hover:bg-white hover:shadow-lg p-7 rounded-[24px] border border-white transition-all text-left group">
-                <div className="w-[52px] h-[52px] rounded-2xl bg-gradient-to-br from-[#9c5ee0] to-[#672cb9] flex items-center justify-center mb-5 shadow-sm group-hover:scale-105 transition-transform">
+                <div className="w-[52px] h-[52px] rounded-2xl bg-gradient-to-br from-[#fa05cd] to-[#7a0565] flex items-center justify-center mb-5 shadow-sm group-hover:scale-105 transition-transform">
                   <Volume2 className="text-white" size={26} />
                 </div>
                 <h3 className="text-[20px] font-bold text-slate-800 mb-2.5">Audio</h3>

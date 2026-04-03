@@ -83,7 +83,7 @@ function NavLink({ href, icon, children, active = false }: { href: string, icon:
            <span className="text-[15px]">{children}</span>
         </div>
         {/* Dot indicator on the right edge */}
-        <div className="absolute right-6 w-2 h-2 rounded-full bg-[#672cb9] z-10"></div>
+        <div className="absolute right-0 w-1 h-7 full rounded bg-[#FFA515] z-10"></div>
       </Link>
     );
   }
