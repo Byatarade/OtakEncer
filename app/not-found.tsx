@@ -49,11 +49,11 @@ export default function NotFound() {
            transition={{ delay: 0.2, duration: 0.6 }}
            className="relative z-20"
         >
-           <h2 className="text-[24px] md:text-[32px] font-extrabold text-[#1e293b] mb-4 tracking-tight">
+           <h2 className="text-[24px] md:text-[32px] font-extrabold text-[#1e293b] mb-1 tracking-tight">
              Waduh! Halaman Hilang...
            </h2>
-           <p className="text-gray-500 text-[15px] md:text-[17px] font-medium leading-relaxed mb-10 max-w-[420px] mx-auto font-['Montserrat',sans-serif]">
-             Maaf, halaman ini tidak ditemukan. Mungkin Neura melompat terlalu jauh dan tersesat di dimensi lain!
+           <p className="text-gray-500 text-[15px] md:text-[17px] font-medium leading-relaxed mb-7 max-w-[420px] mx-auto font-['Montserrat',sans-serif]">
+             Maaf, halaman ini tidak ditemukan. Kami akan memperbaikinya segera mungkin!
            </p>
 
            {/* Return Button */}

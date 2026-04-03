@@ -1,6 +1,6 @@
 "use client";
 
-import { Search, Bell, Plus, Filter, LogOut, Settings, HelpCircle, ChevronDown, Calendar, Eye, FileText, CheckCircle2 } from 'lucide-react';
+import { Search, Bell, Plus, Filter, LogOut, Settings, HelpCircle, ChevronDown, Calendar, Eye, FileText, CheckCircle2, CheckCircle2Icon, LucideCheckCircle, LucideCheckCircle2, CheckCircle, X, Link as LinkIcon, MonitorPlay, Volume2 } from 'lucide-react';
 import Image from 'next/image';
 import { useAuth } from '@/components/AuthProvider';
 import { useRouter } from 'next/navigation';
@@ -11,6 +11,7 @@ export default function Dashboard() {
   const { user, logout } = useAuth();
   const router = useRouter();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isUploadPopupOpen, setIsUploadPopupOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const handleLogout = () => {
@@ -38,7 +39,7 @@ export default function Dashboard() {
 
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 py-2">
-        <h1 className="text-[28px] font-bold text-[#0f172a] tracking-tight whitespace-nowrap">Hi, {user.name.split(' ')[0]}! 👋</h1>
+        <h1 className="text-[28px] font-bold text-[#0f172a] tracking-tight whitespace-nowrap">Halo, {user.name.split(' ')[0]}!</h1>
         
         <div className="flex flex-wrap items-center gap-3 md:gap-4 justify-end">
           
@@ -65,7 +66,10 @@ export default function Dashboard() {
             <span className="absolute top-0.5 right-0.5 w-2 h-2 bg-rose-500 rounded-full outline outline-2 outline-white"></span>
           </button>
 
-          <button className="flex items-center gap-2 bg-[#672cb9] text-white px-5 py-2.5 rounded-full text-[14px] font-bold shadow-md hover:bg-[#58249c] hover:shadow-lg transition-all transform hover:-translate-y-0.5 ml-2">
+          <button 
+            onClick={() => setIsUploadPopupOpen(true)}
+            className="flex items-center gap-2 bg-[#672cb9] text-white px-5 py-2.5 rounded-full text-[14px] font-bold shadow-md hover:bg-[#58249c] hover:shadow-lg transition-all transform hover:-translate-y-0.5 ml-2"
+          >
             <Plus size={18} strokeWidth={2.5}/>
             <span className="hidden sm:inline">Upload</span>
           </button>
@@ -149,7 +153,7 @@ export default function Dashboard() {
                   {day}
                 </div>
                 {['M', 'T', 'W', 'F', 'S'].includes(day) && (idx !== 3 && idx !== 6) && (
-                  <CheckCircle2 size={16} className="text-[#672cb9]" />
+                  <CheckCircle size={20} className="text-[#FFA515]" />
                 )}
               </div>
             ))}
@@ -162,17 +166,17 @@ export default function Dashboard() {
           
           <div className="flex justify-between items-end mb-3">
             <div>
-              <p className="text-slate-800 font-medium">Tokens Available: <span className="font-bold">3/5</span></p>
+              <p className="text-slate-800 font-medium">Token Tersisa: <span className="font-bold">3/5</span></p>
             </div>
-            <p className="text-slate-800 font-bold text-[15px]">3 tokens <span className="font-normal">left today</span></p>
+            <p className="text-slate-800 font-bold text-[15px]">3 token <span className="font-normal">digunakan</span></p>
           </div>
           
           <div className="w-full h-3.5 bg-indigo-50 rounded-full overflow-hidden mb-6">
-            <div className="h-full bg-[#672cb9] rounded-full" style={{ width: '60%' }}></div>
+            <div className="h-full bg-[#FFA515] rounded-full" style={{ width: '60%' }}></div>
           </div>
           
-          <div className="inline-flex py-2 px-4 bg-indigo-50 rounded-xl text-[#672cb9] text-[14px] font-medium">
-            3 tokens left today
+          <div className="inline-flex py-2 px-4 bg-orange-50 rounded-xl text-[#000000] text-[14px] font-medium">
+            2 token tersisa untuk hari ini
           </div>
         </div>
 
@@ -257,6 +261,66 @@ export default function Dashboard() {
         </div>
 
       </div>
+
+      {/* Modal Upload Popup */}
+      {isUploadPopupOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center">
+          <div 
+            className="absolute inset-0 bg-black/40 backdrop-blur-[2px]"
+            onClick={() => setIsUploadPopupOpen(false)}
+          />
+          <div className="relative w-full max-w-4xl bg-gradient-to-b from-[#f3f4f6] to-[#e5e7eb] rounded-[32px] shadow-2xl p-10 animate-in fade-in zoom-in-95 duration-200">
+            <div className="flex items-center justify-between mb-8">
+              <h2 className="text-[26px] font-bold text-slate-800 flex-1 text-center pl-10">Pilih Tipe Upload</h2>
+              <button 
+                onClick={() => setIsUploadPopupOpen(false)}
+                className="text-slate-500 hover:text-slate-800 bg-transparent rounded-full p-2 transition-colors ml-2"
+              >
+                <X size={28} />
+              </button>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              {/* File PDF */}
+              <button className="flex flex-col items-start bg-white/70 backdrop-blur hover:bg-white hover:shadow-lg p-7 rounded-[24px] border border-white transition-all text-left group">
+                <div className="w-[52px] h-[52px] rounded-2xl bg-gradient-to-br from-[#9c5ee0] to-[#672cb9] flex items-center justify-center mb-5 shadow-sm group-hover:scale-105 transition-transform relative">
+                  <FileText className="text-white" size={26} />
+                  <span className="absolute text-[8px] font-bold text-[#672cb9] bg-white px-1 leading-none rounded-sm mt-3.5">PDF</span>
+                </div>
+                <h3 className="text-[20px] font-bold text-slate-800 mb-2.5">File PDF</h3>
+                <p className="text-[15px] text-slate-600 leading-relaxed pr-2">Unggah dokumen PDF untuk dibagikan atau disimpan.</p>
+              </button>
+
+              {/* Link Artikel */}
+              <button className="flex flex-col items-start bg-white/70 backdrop-blur hover:bg-white hover:shadow-lg p-7 rounded-[24px] border border-white transition-all text-left group">
+                <div className="w-[52px] h-[52px] rounded-2xl bg-gradient-to-br from-[#9c5ee0] to-[#672cb9] flex items-center justify-center mb-5 shadow-sm group-hover:scale-105 transition-transform">
+                  <LinkIcon className="text-white" size={26} strokeWidth={2.5} />
+                </div>
+                <h3 className="text-[20px] font-bold text-slate-800 mb-2.5">Link Artikel</h3>
+                <p className="text-[15px] text-slate-600 leading-relaxed pr-2">Tautkan ke artikel eksternal untuk referensi.</p>
+              </button>
+
+              {/* Video */}
+              <button className="flex flex-col items-start bg-white/70 backdrop-blur hover:bg-white hover:shadow-lg p-7 rounded-[24px] border border-white transition-all text-left group">
+                <div className="w-[52px] h-[52px] rounded-2xl bg-gradient-to-br from-[#9c5ee0] to-[#672cb9] flex items-center justify-center mb-5 shadow-sm group-hover:scale-105 transition-transform">
+                  <MonitorPlay className="text-white" size={26} />
+                </div>
+                <h3 className="text-[20px] font-bold text-slate-800 mb-2.5">Video</h3>
+                <p className="text-[15px] text-slate-600 leading-relaxed pr-2">Unggah atau tautkan video pembelajaran.</p>
+              </button>
+
+              {/* Audio */}
+              <button className="flex flex-col items-start bg-white/70 backdrop-blur hover:bg-white hover:shadow-lg p-7 rounded-[24px] border border-white transition-all text-left group">
+                <div className="w-[52px] h-[52px] rounded-2xl bg-gradient-to-br from-[#9c5ee0] to-[#672cb9] flex items-center justify-center mb-5 shadow-sm group-hover:scale-105 transition-transform">
+                  <Volume2 className="text-white" size={26} />
+                </div>
+                <h3 className="text-[20px] font-bold text-slate-800 mb-2.5">Audio</h3>
+                <p className="text-[15px] text-slate-600 leading-relaxed pr-2">Unggah atau tautkan rekaman audio.</p>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   );

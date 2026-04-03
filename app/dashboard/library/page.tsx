@@ -144,8 +144,8 @@ export default function LibraryPage() {
               <div className="bg-white/20 backdrop-blur-md p-2.5 rounded-xl text-white shadow-inner border border-white/10">
                 <Sparkles size={20} className="animate-pulse" />
               </div>
-              <span className="text-orange-200 font-bold tracking-widest text-sm uppercase letter-spacing-2">
-                Neura AI Archive
+              <span className="text-yellow-500 font-bold tracking-widest text-sm uppercase letter-spacing-2">
+                library
               </span>
             </motion.div>
 
@@ -155,7 +155,7 @@ export default function LibraryPage() {
               transition={{ delay: 0.3 }}
               className="text-4xl md:text-5xl font-extrabold text-white tracking-tight mb-5 leading-[1.15]"
             >
-              Perpustakaan <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-300 to-yellow-200">Pintar</span> Anda
+              Perpustakaan <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-500 to-orange-400">Pintar</span> Anda
             </motion.h1>
 
             <motion.p 
