@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { AuroraBackground } from "@/components/ui/aurora-background";
+import { Button } from "@/components/ui/button";
 
 export function HomeHeroSection() {
   const router = useRouter();
@@ -31,24 +32,22 @@ export function HomeHeroSection() {
           </p>
 
           <div className="flex flex-row flex-wrap items-center justify-center md:justify-start gap-3 md:gap-5 mt-8 md:mt-10 z-10 w-full px-1 md:px-0">
-            <motion.button
-              type="button"
+            <Button
+              variant="glass"
+              size="lg"
               onClick={() => router.push("/login")}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="whitespace-nowrap bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 text-white px-6 md:px-8 py-3.5 md:py-4 rounded-[16px] md:rounded-[20px] font-bold text-[13px] md:text-[15px] flex items-center justify-center gap-2 md:gap-3 transition-all shadow-[0_8px_32px_rgba(255,255,255,0.1)]"
+              leftIcon={<Image src="/assets/google-icon.svg" alt="G" width={16} height={16} className="md:w-[18px] md:h-[18px]" />}
+              className="px-6 md:px-8 py-3.5 md:py-4 rounded-[16px] md:rounded-[20px]"
             >
-              <Image src="/assets/google-icon.svg" alt="G" width={16} height={16} className="md:w-[18px] md:h-[18px]" />
               Mulai Gratis
-            </motion.button>
-            <motion.button
-              type="button"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="whitespace-nowrap bg-white/5 hover:bg-white/10 backdrop-blur-md border border-white/10 hover:border-white/20 text-white px-6 md:px-8 py-3.5 md:py-4 rounded-[16px] md:rounded-[20px] font-bold text-[13px] md:text-[15px] flex items-center justify-center transition-all shadow-[0_8px_32px_rgba(255,255,255,0.05)]"
+            </Button>
+            <Button
+              variant="glass"
+              size="lg"
+              className="bg-white/5 hover:bg-white/10 border-white/10 hover:border-white/20 shadow-[0_8px_32px_rgba(255,255,255,0.05)] px-6 md:px-8 py-3.5 md:py-4 rounded-[16px] md:rounded-[20px]"
             >
               Lihat Demo
-            </motion.button>
+            </Button>
           </div>
         </div>
 

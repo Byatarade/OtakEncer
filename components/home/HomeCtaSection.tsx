@@ -4,12 +4,13 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { AuroraBackground } from "@/components/ui/aurora-background";
+import { Button } from "@/components/ui/button";
 
 export function HomeCtaSection() {
   const router = useRouter();
 
   return (
-    <section className="w-full bg-white px-4 md:px-12 py-8 md:py-12 flex flex-col items-center relative z-20">
+    <section className="w-full bg-white px-4 md:px-12 py-8 md:py-12 flex flex-col items-center relative z-20 font-['Montserrat',sans-serif]">
       <motion.div
         initial={{ opacity: 0, y: 40 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -38,19 +39,18 @@ export function HomeCtaSection() {
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 relative z-10 w-full sm:w-auto px-4">
-            <motion.button
-              type="button"
+            <Button
+              variant="primary"
+              size="lg"
               onClick={() => router.push("/login")}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="w-full sm:w-auto px-7 md:px-9 h-[44px] md:h-[50px] bg-white text-[#672cb9] font-bold text-[14px] md:text-[15px] rounded-full transition-all shadow-[0_8px_25px_rgba(255,255,255,0.2)] hover:shadow-[0_12px_35px_rgba(255,255,255,0.3)] flex items-center justify-center gap-2"
+              className="w-full sm:w-auto px-7 md:px-9 h-[44px] md:h-[50px] shadow-[0_8px_25px_rgba(255,255,255,0.2)] hover:shadow-[0_12px_35px_rgba(255,255,255,0.3)] group mt-2"
             >
               Mulai Sekarang Gratis
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="ml-1 group-hover:translate-x-1 transition-transform">
                 <path d="M5 12h14" />
                 <path d="m12 5 7 7-7 7" />
               </svg>
-            </motion.button>
+            </Button>
           </div>
         </AuroraBackground>
       </motion.div>

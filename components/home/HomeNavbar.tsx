@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import type { User } from "@/components/AuthProvider";
+import { Button } from "@/components/ui/button";
 
 export type HomeNavbarProps = {
   hidden: boolean;
@@ -23,7 +24,7 @@ export function HomeNavbar({
   user,
 }: HomeNavbarProps) {
   return (
-    <div className="w-full flex justify-center fixed top-2 md:top-6 z-[100] px-4 md:px-8 pointer-events-none">
+    <div className="w-full flex justify-center fixed top-2 md:top-6 z-[100] px-4 md:px-8 pointer-events-none font-['Montserrat',sans-serif]">
       <motion.nav
         initial="visible"
         variants={{
@@ -44,100 +45,58 @@ export function HomeNavbar({
             </span>
           </Link>
 
-          <div className="hidden md:flex items-center gap-6 lg:gap-8 font-medium text-[13px] md:text-[14px]">
-            <Link
-              onClick={handleScroll}
-              href="#beranda"
-              className={`font-bold transition-colors duration-300 ${activeSection === "beranda" ? "text-[#672cb9]" : "text-gray-800 hover:text-[#672cb9]"}`}
-            >
+          <div className="hidden md:flex items-center gap-4 lg:gap-6 font-medium text-[13px] md:text-[14px]">
+            <Link onClick={handleScroll} href="#beranda" className={`font-bold transition-colors duration-300 ${activeSection === "beranda" ? "text-[#672cb9]" : "text-gray-800 hover:text-[#672cb9]"}`}>
               Beranda
             </Link>
-            <Link
-              onClick={handleScroll}
-              href="#tentang"
-              className={`font-bold transition-colors duration-300 ${activeSection === "tentang" ? "text-[#672cb9]" : "text-gray-800 hover:text-[#672cb9]"}`}
-            >
+            <Link onClick={handleScroll} href="#tentang" className={`font-bold transition-colors duration-300 ${activeSection === "tentang" ? "text-[#672cb9]" : "text-gray-800 hover:text-[#672cb9]"}`}>
               Tentang Kami
             </Link>
-            <Link
-              onClick={handleScroll}
-              href="#neura"
-              className={`font-bold transition-colors duration-300 ${activeSection === "neura" ? "text-[#672cb9]" : "text-gray-800 hover:text-[#672cb9]"}`}
-            >
+            <Link onClick={handleScroll} href="#neura" className={`font-bold transition-colors duration-300 ${activeSection === "neura" ? "text-[#672cb9]" : "text-gray-800 hover:text-[#672cb9]"}`}>
               Neura AI
             </Link>
-            <Link
-              onClick={handleScroll}
-              href="#fitur"
-              className={`font-bold transition-colors duration-300 ${activeSection === "fitur" ? "text-[#672cb9]" : "text-gray-800 hover:text-[#672cb9]"}`}
-            >
+            <Link onClick={handleScroll} href="#fitur" className={`font-bold transition-colors duration-300 ${activeSection === "fitur" ? "text-[#672cb9]" : "text-gray-800 hover:text-[#672cb9]"}`}>
               Fitur
             </Link>
-            <Link
-              onClick={handleScroll}
-              href="#comment"
-              className={`font-bold transition-colors duration-300 ${activeSection === "comment" ? "text-[#672cb9]" : "text-gray-800 hover:text-[#672cb9]"}`}
-            >
+            <Link onClick={handleScroll} href="#comment" className={`font-bold transition-colors duration-300 ${activeSection === "comment" ? "text-[#672cb9]" : "text-gray-800 hover:text-[#672cb9]"}`}>
               Comment
             </Link>
           </div>
 
-          <div className="flex items-center gap-3 md:gap-4">
+          <div className="flex items-center gap-2 md:gap-4">
             {user ? (
-              <div className="flex items-center gap-3 md:gap-4">
-                <Link
-                  href="/dashboard"
-                  className="hidden md:flex items-center justify-center bg-gray-900 hover:bg-black text-white px-5 py-2.5 rounded-full font-medium text-[12px] md:text-[13px] transition-transform hover:scale-105 shadow-md group"
-                >
-                  Go to Dashboard
+              <div className="flex items-center gap-2 md:gap-4">
+                <Button size="sm" variant="secondary" className="hidden md:flex px-5 py-2.5 rounded-full group h-auto" onClick={() => (window.location.href = "/dashboard")}>
+                  Dashboard
                   <span className="ml-2 inline-block transition-transform group-hover:translate-x-1">👉</span>
-                </Link>
-                <Link
-                  href="/dashboard"
-                  className="md:hidden flex items-center justify-center bg-gray-900 text-white px-4 py-2 rounded-full font-medium text-[11px] shadow-md group"
-                >
-                  Dashboard <span className="ml-1 inline-block transition-transform group-hover:translate-x-1">👉</span>
-                </Link>
+                </Button>
+                <Button size="sm" variant="secondary" className="md:hidden flex px-3 py-2 rounded-full group" onClick={() => (window.location.href = "/dashboard")}>
+                  Dashboard
+                </Button>
                 {user.picture ? (
-                  <Image
-                    src={user.picture}
-                    alt="Profile"
-                    width={36}
-                    height={36}
-                    className="rounded-full border border-gray-200"
-                  />
+                  <div className="w-8 h-8 rounded-full border border-gray-100 overflow-hidden relative shadow-sm">
+                    <Image src={user.picture} alt="Profile" fill className="object-cover" />
+                  </div>
                 ) : (
-                  <div className="w-9 h-9 md:w-10 md:h-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 font-bold border border-indigo-200">
+                  <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 font-bold border border-indigo-200 text-xs">
                     {user.name?.[0] || user.email?.[0] || "U"}
                   </div>
                 )}
               </div>
             ) : (
-              <>
-                <div className="hidden md:flex items-center gap-4 mr-1">
-                  <Link href="/login" className="text-[13px] font-bold text-gray-800 hover:text-black transition-colors">
-                    Log In
-                  </Link>
-                </div>
-
-                <Link
-                  href="/login"
-                  className="hidden md:flex items-center justify-center bg-gray-900 hover:bg-black text-white px-5 py-2.5 rounded-full font-medium text-[12px] md:text-[13px] transition-transform hover:scale-105 shadow-md"
-                >
-                  Sign In
+              <div className="flex items-center gap-2 md:gap-4">
+                <Link href="/login" className="hidden md:block text-[13px] font-bold text-gray-800 hover:text-[#672cb9] transition-colors px-2">
+                  Log In
                 </Link>
-                <Link
-                  href="/login"
-                  className="md:hidden flex items-center justify-center bg-gray-900 text-white px-4 py-2 rounded-full font-medium text-[11px] shadow-md"
-                >
+                <Button size="sm" variant="secondary" className="px-5 py-2.5 rounded-full" onClick={() => (window.location.href = "/login")}>
                   Sign In
-                </Link>
-              </>
+                </Button>
+              </div>
             )}
             <button
               type="button"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="p-2 md:hidden bg-white/40 rounded-full border border-white/50 backdrop-blur-md transition-colors hover:bg-white/60 focus:outline-none"
+              className="p-2 md:hidden bg-white/40 rounded-full border border-white/50 backdrop-blur-md transition-colors hover:bg-white/60"
             >
               <Image src="/assets/menu-icon.svg" alt="Menu" width={18} height={18} />
             </button>
@@ -147,55 +106,20 @@ export function HomeNavbar({
         <motion.div
           initial={false}
           animate={{ height: isMobileMenuOpen ? "auto" : 0, opacity: isMobileMenuOpen ? 1 : 0 }}
-          transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: 0.3 }}
           className="overflow-hidden md:hidden w-full"
         >
           <div className="flex flex-col items-center gap-4 px-4 pb-6 pt-2 border-t border-gray-200/50">
-            <Link
-              onClick={handleScroll}
-              href="#beranda"
-              className={`font-bold text-[14px] transition-colors duration-300 ${activeSection === "beranda" ? "text-[#672cb9]" : "text-gray-800 hover:text-[#672cb9]"}`}
-            >
-              Beranda
-            </Link>
-            <Link
-              onClick={handleScroll}
-              href="#tentang"
-              className={`font-bold text-[14px] transition-colors duration-300 ${activeSection === "tentang" ? "text-[#672cb9]" : "text-gray-800 hover:text-[#672cb9]"}`}
-            >
-              Tentang Kami
-            </Link>
-            <Link
-              onClick={handleScroll}
-              href="#neura"
-              className={`font-bold text-[14px] transition-colors duration-300 ${activeSection === "neura" ? "text-[#672cb9]" : "text-gray-800 hover:text-[#672cb9]"}`}
-            >
-              Neura AI
-            </Link>
-            <Link
-              onClick={handleScroll}
-              href="#fitur"
-              className={`font-bold text-[14px] transition-colors duration-300 ${activeSection === "fitur" ? "text-[#672cb9]" : "text-gray-800 hover:text-[#672cb9]"}`}
-            >
-              Fitur
-            </Link>
-            <Link
-              onClick={handleScroll}
-              href="#comment"
-              className={`font-bold text-[14px] transition-colors duration-300 ${activeSection === "comment" ? "text-[#672cb9]" : "text-gray-800 hover:text-[#672cb9]"}`}
-            >
-              Comment
-            </Link>
-            <div className="w-full h-px bg-gray-200/50 my-1"></div>
-            {user ? (
-              <Link onClick={() => setIsMobileMenuOpen(false)} href="/dashboard" className="text-gray-900 font-bold text-[14px]">
-                Dashboard
+            {["beranda", "tentang", "neura", "fitur", "comment"].map((section) => (
+              <Link
+                key={section}
+                onClick={handleScroll}
+                href={`#${section}`}
+                className={`font-bold text-[14px] transition-colors duration-300 ${activeSection === section ? "text-[#672cb9]" : "text-gray-800 hover:text-[#672cb9]"}`}
+              >
+                {section.charAt(0).toUpperCase() + section.slice(1).replace("tentang", "Tentang Kami").replace("neura", "Neura AI")}
               </Link>
-            ) : (
-              <Link onClick={() => setIsMobileMenuOpen(false)} href="/login" className="text-gray-900 font-bold text-[14px]">
-                Log In
-              </Link>
-            )}
+            ))}
           </div>
         </motion.div>
       </motion.nav>

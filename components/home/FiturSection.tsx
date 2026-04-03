@@ -1,18 +1,21 @@
 "use client";
 
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 export function FiturSection() {
+  const router = useRouter();
+
   return (
-    <section id="fitur" className="relative w-full flex flex-col items-center pt-24 md:pt-36 pb-12 md:pb-24 bg-[#08020d] rounded-t-[40px] md:rounded-t-[80px] mt-16 md:mt-24 z-20 border-t border-white/5 overflow-hidden">
+    <section id="fitur" className="relative w-full flex flex-col items-center pt-24 md:pt-36 pb-12 md:pb-24 bg-[#08020d] rounded-t-[40px] md:rounded-t-[80px] mt-16 md:mt-24 z-20 border-t border-white/5 overflow-hidden font-['Montserrat',sans-serif]">
+      {/* Background Elements */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
         <div className="absolute inset-0 bg-gradient-to-b from-[#08020d] via-[#10031c] to-[#08020d]"></div>
-
         <div className="absolute top-[-20%] right-[-10%] w-[70vw] h-[600px] bg-[radial-gradient(ellipse_at_center,rgba(114,35,204,0.15)_0%,transparent_60%)] rounded-[100%] rotate-[-15deg] blur-[80px]"></div>
         <div className="absolute bottom-[-10%] left-[-20%] w-[80vw] h-[700px] bg-[radial-gradient(ellipse_at_center,rgba(63,16,134,0.2)_0%,transparent_60%)] rounded-[100%] rotate-[25deg] blur-[100px]"></div>
         <div className="absolute top-[30%] left-[20%] w-[50vw] h-[400px] bg-[radial-gradient(ellipse_at_center,rgba(163,104,221,0.1)_0%,transparent_70%)] rounded-[100%] blur-[90px]"></div>
-
         <div
           className="absolute inset-0 opacity-[0.03] mix-blend-overlay"
           style={{
@@ -35,7 +38,6 @@ export function FiturSection() {
       ></div>
 
       <div className="absolute top-[20%] left-1/2 -translate-x-1/2 w-[500px] h-[300px] bg-[#9d4edd]/15 blur-[100px] rounded-[100%] pointer-events-none z-0"></div>
-
       <div className="absolute bottom-0 left-0 right-0 h-[200px] bg-gradient-to-t from-[#08020d] to-transparent pointer-events-none z-10"></div>
 
       <div className="w-full max-w-[1240px] flex flex-col items-center justify-center z-20 px-6 md:px-12 relative flex-1">
@@ -45,7 +47,7 @@ export function FiturSection() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="text-[34px] md:text-[48px] lg:text-[60px] font-bold leading-[1.2] tracking-tight text-white mb-4 relative"
+            className="text-[34px] md:text-[48px] lg:text-[60px] font-bold leading-[1.2] tracking-tight text-white mb-4 relative font-['Montserrat',sans-serif]"
           >
             Dari Dokumen Kusut <br className="hidden md:block" />
             Jadi{" "}
@@ -68,22 +70,19 @@ export function FiturSection() {
         </div>
 
         <div className="w-full flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-6 relative z-30">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            whileHover={{ y: -5 }}
-            transition={{ duration: 0.5 }}
-            className="w-full lg:w-1/3 flex flex-col bg-[#1c0f2e]/80 border border-white/10 rounded-[24px] p-8 backdrop-blur-sm relative"
+          <Card
+            hoverable
+            variant="dark"
+            padding="lg"
+            className="w-full lg:w-1/3 flex flex-col relative min-h-[380px]"
           >
             <div className="w-10 h-10 rounded-full bg-[#672cb9] flex items-center justify-center mb-6 font-bold text-lg text-white shadow-lg absolute -top-5 -left-2 border-4 border-[#0d0415] rotate-[-5deg]">
               1
             </div>
-
-            <h3 className="text-white font-bold text-[20px] mb-2">Tumpuk Materimu</h3>
+            <h3 className="text-white font-bold text-[20px] mb-2 leading-tight">Tumpuk Materimu</h3>
             <p className="text-white/50 text-[13px] mb-8 leading-[1.5]">Upload PDF, Word, atau Paste Link YouTube dosenmu ke dalam satu folder belajar.</p>
-
             <div className="relative h-[140px] w-full flex justify-center items-center mt-auto">
+              {/* Restored Animated Elements */}
               <motion.div
                 animate={{ y: [0, -4, 0] }}
                 transition={{ repeat: Infinity, duration: 4 }}
@@ -106,7 +105,6 @@ export function FiturSection() {
               >
                 <div className="w-[80%] h-2 bg-[#4dabf7]/20 rounded-full"></div>
                 <div className="w-full h-2 bg-gray-100 rounded-full"></div>
-                <div className="w-[90%] h-2 bg-gray-100 rounded-full"></div>
                 <div className="mt-auto self-end text-[#4dabf7]">
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M4 22h14a2 2 0 0 0 2-2V7.5L14.5 2H6a2 2 0 0 0-2 2v4" />
@@ -119,8 +117,8 @@ export function FiturSection() {
                 transition={{ repeat: Infinity, duration: 4.5 }}
                 className="absolute w-[110px] h-[130px] bg-gradient-to-br from-[#1c0f2e] to-[#2a1744] border border-[#672cb9]/50 rounded-lg shadow-2xl z-10 flex items-center justify-center"
               >
-                <div className="bg-white/10 p-3 rounded-full backdrop-blur-md">
-                  <svg className="text-[#ffa515]" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <div className="bg-white/10 p-3 rounded-full backdrop-blur-md text-[#ffa515]">
+                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
                     <polyline points="17 8 12 3 7 8" />
                     <line x1="12" y1="3" x2="12" y2="15" />
@@ -128,38 +126,25 @@ export function FiturSection() {
                 </div>
               </motion.div>
             </div>
-          </motion.div>
+          </Card>
 
-          <div className="hidden lg:block w-[40px] text-white/30">
-            <svg viewBox="0 0 100 20" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeDasharray="5,5">
-              <path d="M0,10 Q50,0 90,10" />
-              <polyline points="80,0 95,12 75,20" />
-            </svg>
-          </div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            whileHover={{ y: -5 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="w-full lg:w-1/3 flex flex-col bg-[#1c0f2e]/80 border border-white/10 rounded-[24px] p-8 backdrop-blur-sm relative"
+          <Card
+            hoverable
+            variant="dark"
+            padding="lg"
+            className="w-full lg:w-1/3 flex flex-col relative min-h-[380px]"
           >
             <div className="w-10 h-10 rounded-full bg-[#672cb9] flex items-center justify-center mb-6 font-bold text-lg text-white shadow-lg absolute -top-5 -left-2 border-4 border-[#0d0415] rotate-[5deg]">
               2
             </div>
-
-            <h3 className="text-white font-bold text-[20px] mb-2">Biar Neura Merangkum</h3>
+            <h3 className="text-white font-bold text-[20px] mb-2 leading-tight">Biar Neura Merangkum</h3>
             <p className="text-white/50 text-[13px] mb-8 leading-[1.5]">AI kami akan membaca ribuan kata dan menyaring poin-poin terpenting layaknya spidol ajaib.</p>
-
             <div className="relative h-[140px] w-full flex justify-center items-center mt-auto">
               <div className="w-[160px] h-[120px] bg-white/5 border border-white/10 rounded-xl p-4 flex flex-col gap-3 relative overflow-hidden">
                 <div className="w-[40%] h-2 bg-white/20 rounded-full"></div>
                 <div className="w-full h-2 bg-white/10 rounded-full"></div>
                 <div className="w-[85%] h-2 bg-white/10 rounded-full"></div>
                 <div className="w-[70%] h-2 bg-white/10 rounded-full"></div>
-                <div className="w-full h-2 bg-white/10 rounded-full"></div>
-
                 <motion.div
                   animate={{ y: [0, 80, 0] }}
                   transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
@@ -176,34 +161,20 @@ export function FiturSection() {
                 </svg>
               </motion.div>
             </div>
-          </motion.div>
+          </Card>
 
-          <div className="hidden lg:block w-[40px] text-white/30">
-            <svg viewBox="0 0 100 20" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeDasharray="5,5">
-              <path d="M0,10 Q50,20 90,10" />
-              <polyline points="80,0 95,8 85,20" />
-            </svg>
-          </div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            whileHover={{ y: -5 }}
-            transition={{ duration: 0.5, delay: 0.4 }}
-            className="w-full lg:w-1/3 flex flex-col bg-[#1c0f2e]/80 border border-[#ffa515]/30 rounded-[24px] p-8 backdrop-blur-sm relative shadow-[0_10px_30px_rgba(255,165,21,0.1)]"
+          <Card
+            hoverable
+            variant="dark"
+            padding="lg"
+            className="w-full lg:w-1/3 flex flex-col relative min-h-[380px] border-[#ffa515]/30 shadow-[0_10px_30px_rgba(255,165,21,0.1)]"
           >
             <div className="absolute inset-0 bg-gradient-to-br from-[#ffa515]/5 to-transparent rounded-[24px] pointer-events-none"></div>
-
             <div className="w-10 h-10 rounded-full bg-[#ffa515] flex items-center justify-center mb-6 font-bold text-lg text-[#0d0415] shadow-lg absolute -top-5 -left-2 border-4 border-[#0d0415] rotate-[-5deg]">
               3
             </div>
-
-            <h3 className="text-white font-bold text-[20px] mb-2 z-10">Materi Siap Ujian</h3>
-            <p className="text-white/50 text-[13px] mb-8 leading-[1.5] z-10">
-              Hasil akhirnya berupa Flashcard interaktif dan Rangkuman rapi yang siap kamu pelajari di mana saja.
-            </p>
-
+            <h3 className="text-white font-bold text-[20px] mb-2 leading-tight z-10">Materi Siap Ujian</h3>
+            <p className="text-white/50 text-[13px] mb-8 leading-[1.5] z-10">Hasil akhirnya berupa Flashcard interaktif dan Rangkuman rapi yang siap kamu pelajari di mana saja.</p>
             <div className="relative h-[140px] w-full flex justify-center items-center mt-auto group">
               <motion.div className="absolute w-[120px] h-[80px] bg-white border border-gray-200 rounded-xl shadow-lg rotate-[-10deg] -translate-x-4 translate-y-4 group-hover:-translate-x-8 transition-transform duration-300 flex items-center justify-center opacity-70"></motion.div>
               <motion.div className="absolute w-[120px] h-[80px] bg-white border border-gray-200 rounded-xl shadow-xl rotate-[5deg] translate-x-4 translate-y-2 group-hover:translate-x-8 transition-transform duration-300 flex items-center justify-center opacity-90"></motion.div>
@@ -217,7 +188,7 @@ export function FiturSection() {
                 </div>
               </motion.div>
             </div>
-          </motion.div>
+          </Card>
         </div>
 
         <motion.div
@@ -227,13 +198,21 @@ export function FiturSection() {
           transition={{ delay: 0.6 }}
           className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-16 md:mt-20 w-full"
         >
-          <Link href="#comment" className="w-full sm:w-auto bg-white/10 hover:bg-white/20 border border-white/10 text-white text-[15px] font-medium py-4 px-8 rounded-full transition-all flex items-center justify-center gap-3 backdrop-blur-md">
+          <Button
+            variant="glass"
+            size="lg"
+            className="w-full sm:w-auto rounded-full group px-8"
+            onClick={() => {
+              const elem = document.getElementById("comment");
+              if (elem) elem.scrollIntoView({ behavior: "smooth" });
+            }}
+          >
             Lihat kata mereka
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="ml-1 group-hover:translate-x-1 transition-transform">
               <path d="M5 12h14" />
               <path d="m12 5 7 7-7 7" />
             </svg>
-          </Link>
+          </Button>
         </motion.div>
       </div>
     </section>

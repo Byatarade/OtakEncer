@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import { testimonials } from "./home-data";
-import { TestimonialCard } from "./TestimonialCard";
+import { TestimonialCard } from "@/components/ui/TestimonialCard";
 
 export function TestimonialsSection() {
   const triple = [...testimonials, ...testimonials, ...testimonials];
