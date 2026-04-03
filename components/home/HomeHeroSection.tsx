@@ -1,0 +1,101 @@
+"use client";
+
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { motion } from "framer-motion";
+import { AuroraBackground } from "@/components/ui/aurora-background";
+
+export function HomeHeroSection() {
+  const router = useRouter();
+
+  return (
+    <motion.section
+      initial={{ opacity: 0, y: 30 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6 }}
+      className="w-full max-w-[1280px] px-4 md:px-8 mt-4 md:mt-8 flex flex-col items-center relative z-20"
+    >
+      <AuroraBackground className="w-full rounded-[24px] md:rounded-[36px] overflow-hidden pt-10 pb-12 md:pt-[54px] md:pb-[54px] px-6 md:px-12 lg:px-16 flex flex-col md:flex-row items-center md:items-start gap-10 md:gap-0 min-h-[460px] md:min-h-[480px]">
+        <div className="flex flex-col items-center md:items-start z-30 w-full md:w-[45%] text-center md:text-left mt-0 md:mt-2">
+          <h1 className="font-bold text-[32px] md:text-[50px] lg:text-[58px] leading-[1.2] md:leading-[1.1] text-white tracking-[-0.01em]">
+            Ubah Dokumenmu <br className="hidden md:block" />
+            Menjadi Materi <br className="md:hidden" />
+            <span className="relative inline-block mt-0 md:mt-2">
+              Siap Jadi
+              <div className="absolute -bottom-[2px] left-0 w-full h-[3px] md:h-[5px] bg-[#ffa515] rounded-full"></div>
+            </span>
+          </h1>
+
+          <p className="font-['Montserrat',sans-serif] text-[13px] md:text-[15px] lg:text-[16px] leading-[1.6] text-white/95 mt-6 md:mt-8 z-10 w-full max-w-[310px] md:max-w-[440px] font-medium">
+            Upload PDF, Audio, atau link YouTube — AI akan meringkasnya menjadi materi yang siap dipelajari lebih cepat.
+          </p>
+
+          <div className="flex flex-row flex-wrap items-center justify-center md:justify-start gap-3 md:gap-5 mt-8 md:mt-10 z-10 w-full px-1 md:px-0">
+            <motion.button
+              type="button"
+              onClick={() => router.push("/login")}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="whitespace-nowrap bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 text-white px-6 md:px-8 py-3.5 md:py-4 rounded-[16px] md:rounded-[20px] font-bold text-[13px] md:text-[15px] flex items-center justify-center gap-2 md:gap-3 transition-all shadow-[0_8px_32px_rgba(255,255,255,0.1)]"
+            >
+              <Image src="/assets/google-icon.svg" alt="G" width={16} height={16} className="md:w-[18px] md:h-[18px]" />
+              Mulai Gratis
+            </motion.button>
+            <motion.button
+              type="button"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="whitespace-nowrap bg-white/5 hover:bg-white/10 backdrop-blur-md border border-white/10 hover:border-white/20 text-white px-6 md:px-8 py-3.5 md:py-4 rounded-[16px] md:rounded-[20px] font-bold text-[13px] md:text-[15px] flex items-center justify-center transition-all shadow-[0_8px_32px_rgba(255,255,255,0.05)]"
+            >
+              Lihat Demo
+            </motion.button>
+          </div>
+        </div>
+
+        <div className="w-full md:w-[55%] flex justify-center md:justify-end items-center mt-2 md:mt-0 z-20 h-auto perspective-[1000px]">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="relative w-full max-w-[420px] md:max-w-[550px] aspect-[1.05/1] md:aspect-[1.15/1] shadow-2xl rounded-xl transform-style-3d"
+          >
+            <motion.div
+              animate={{ y: [0, -8, 0] }}
+              transition={{ repeat: Infinity, duration: 6, ease: "easeInOut" }}
+              className="absolute top-[8%] right-[5%] w-[88%] h-[80%] rounded-xl overflow-hidden shadow-[0_10px_40px_rgba(0,0,0,0.3)] bg-white z-10"
+            >
+              <Image src="/assets/hero-image-main.svg" alt="Dashboard Main" fill className="object-cover object-left-top" />
+            </motion.div>
+
+            <motion.div
+              animate={{ y: [0, 10, 0] }}
+              transition={{ repeat: Infinity, duration: 5, ease: "easeInOut", delay: 1 }}
+              whileHover={{ scale: 1.05 }}
+              className="absolute top-[40%] left-[2%] w-[42%] h-[38%] rounded-xl shadow-[0_15px_30px_rgba(0,0,0,0.15)] bg-white overflow-hidden z-20 cursor-pointer"
+            >
+              <Image src="/assets/hero-image-left.svg" alt="Left Panel" fill className="object-cover" />
+            </motion.div>
+
+            <motion.div
+              animate={{ y: [0, -12, 0] }}
+              transition={{ repeat: Infinity, duration: 5.5, ease: "easeInOut", delay: 0.5 }}
+              whileHover={{ scale: 1.05 }}
+              className="absolute top-[2%] right-[10%] w-[40%] h-[38%] rounded-xl shadow-[0_15px_30px_rgba(0,0,0,0.2)] bg-white overflow-hidden z-30 cursor-pointer"
+            >
+              <Image src="/assets/hero-image-top.svg" alt="Top Panel" fill className="object-cover" />
+            </motion.div>
+
+            <motion.div
+              animate={{ y: [0, 8, 0] }}
+              transition={{ repeat: Infinity, duration: 4.5, ease: "easeInOut", delay: 1.5 }}
+              whileHover={{ scale: 1.05 }}
+              className="absolute bottom-[0%] right-[5%] w-[38%] h-[35%] rounded-xl shadow-[0_15px_30px_rgba(0,0,0,0.2)] bg-white overflow-hidden z-30 cursor-pointer"
+            >
+              <Image src="/assets/hero-image-right.svg" alt="Bottom Right Panel" fill className="object-cover" />
+            </motion.div>
+          </motion.div>
+        </div>
+      </AuroraBackground>
+    </motion.section>
+  );
+}
