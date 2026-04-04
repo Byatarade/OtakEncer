@@ -3,7 +3,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useGoogleLogin } from '@react-oauth/google';
 import { useAuth } from '@/components/AuthProvider';
 import { useState } from 'react';
 
@@ -12,30 +11,17 @@ export default function LoginPage() {
   const { login } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
 
-  const googleLogin = useGoogleLogin({
-    onSuccess: async (tokenResponse) => {
-      try {
-        setIsLoading(true);
-        const res = await fetch("https://www.googleapis.com/oauth2/v3/userinfo", {
-          headers: { Authorization: `Bearer ${tokenResponse.access_token}` },
-        });
-        const data = await res.json();
-        
-        login({
-          name: data.name,
-          email: data.email,
-          picture: data.picture,
-        });
-        
-        router.push('/dashboard');
-      } catch (err) {
-        console.error("Failed to fetch user profile:", err);
-      } finally {
-        setIsLoading(false);
-      }
-    },
-    onError: errorResponse => console.error("Google Login Failed", errorResponse),
-  });
+  const handleGoogleLogin = async () => {
+    try {
+      setIsLoading(true);
+      await login();
+      // Supabase signInWithOAuth will automatically redirect the user to Google
+      // and then back to the origin (/dashboard as configured in AuthProvider)
+    } catch (err) {
+      console.error("Google Login Failed:", err);
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-[#f8fafc] font-['Montserrat',sans-serif] relative overflow-hidden">
@@ -68,7 +54,7 @@ export default function LoginPage() {
             </div>
             
             <button 
-              onClick={() => googleLogin()}
+              onClick={handleGoogleLogin}
               disabled={isLoading}
               className="w-full flex items-center justify-center gap-3 bg-white border-2 border-[#672cb9] text-[#672cb9] hover:bg-[#672cb9] hover:text-white px-6 py-4 rounded-[16px] font-bold text-[15px] transition-all shadow-[0_4px_14px_rgba(103,44,185,0.15)] disabled:opacity-70 disabled:cursor-not-allowed group relative z-10">
                <Image src="/assets/google-icon.svg" alt="Google" width={22} height={22} className="group-hover:brightness-0 group-hover:invert transition-all" />

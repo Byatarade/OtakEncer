@@ -1,12 +1,11 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState } from 'react';
-import { GoogleOAuthProvider } from '@react-oauth/google';
 import { useRouter } from 'next/navigation';
-
-const CLIENT_ID = "1085863512132-jmcloruml9vdu46qpomo6fqntcfr7a1m.apps.googleusercontent.com";
+import { supabase } from '@/lib/supabase';
 
 export interface User {
+  id: string;
   name: string;
   email: string;
   picture: string;
@@ -14,15 +13,15 @@ export interface User {
 
 interface AuthContextType {
   user: User | null;
-  login: (userData: User) => void;
-  logout: () => void;
+  login: () => Promise<void>;
+  logout: () => Promise<void>;
   isLoaded: boolean;
 }
 
 const AuthContext = createContext<AuthContextType>({
   user: null,
-  login: () => {},
-  logout: () => {},
+  login: async () => {},
+  logout: async () => {},
   isLoaded: false,
 });
 
@@ -31,38 +30,57 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
-    try {
-      const storedUser = localStorage.getItem('otak_user');
-      if (storedUser) {
-        setUser(JSON.parse(storedUser));
-        document.cookie = "otak_auth=true; path=/; max-age=31536000; SameSite=Lax";
-      } else {
-        document.cookie = "otak_auth=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax";
+    // Cek session saat awal dimuat
+    const getSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user) {
+        setUser({
+          id: session.user.id,
+          name: session.user.user_metadata.full_name || '',
+          email: session.user.email || '',
+          picture: session.user.user_metadata.avatar_url || '',
+        });
       }
-    } catch (e) {
-      console.error("Failed to parse user session", e);
-    }
-    setIsLoaded(true);
+      setIsLoaded(true);
+    };
+
+    getSession();
+
+    // Dengarkan perubahan login/logout dari Supabase (misal saat redirect balik dari Google)
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session?.user) {
+        setUser({
+          id: session.user.id,
+          name: session.user.user_metadata.full_name || '',
+          email: session.user.email || '',
+          picture: session.user.user_metadata.avatar_url || '',
+        });
+      } else {
+        setUser(null);
+      }
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
 
-  const login = (userData: User) => {
-    setUser(userData);
-    localStorage.setItem('otak_user', JSON.stringify(userData));
-    document.cookie = "otak_auth=true; path=/; max-age=31536000; SameSite=Lax";
+  const login = async () => {
+    await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: `${window.location.origin}/dashboard`
+      }
+    });
   };
 
-  const logout = () => {
-    setUser(null);
-    localStorage.removeItem('otak_user');
-    document.cookie = "otak_auth=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax";
+  const logout = async () => {
+    await supabase.auth.signOut();
+    window.location.href = '/';
   };
 
   return (
-    <GoogleOAuthProvider clientId={CLIENT_ID}>
-      <AuthContext.Provider value={{ user, login, logout, isLoaded }}>
-        {children}
-      </AuthContext.Provider>
-    </GoogleOAuthProvider>
+    <AuthContext.Provider value={{ user, login, logout, isLoaded }}>
+      {children}
+    </AuthContext.Provider>
   );
 }
 
