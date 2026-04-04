@@ -117,7 +117,7 @@ export function QuotesSection() {
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] md:w-[70%] h-[90%] bg-[radial-gradient(circle_at_center,rgba(252,252,252,0.95)_0%,rgba(252,252,252,0.6)_50%,transparent_100%)] pointer-events-none z-0"></div>
       </div>
 
-      <div className="relative z-10 w-full flex-1 max-w-[1240px] mx-auto flex flex-col justify-center items-start text-left px-8 md:px-20 pointer-events-none mt-[-20px] md:mt-[-40px]">
+      <div className="relative z-10 w-full flex-1 max-w-[1240px] mx-auto flex flex-col justify-center items-start text-left px-8 md:px-20 pointer-events-none mt-[50px] md:mt-[-40px]">
         <motion.div style={{ y: quotesTextY }} className="w-full">
           <h2 className="flex flex-col items-start justify-center text-[32px] sm:text-[40px] md:text-[56px] lg:text-[64px] font-medium text-[#1f1f1f] leading-[1.2] tracking-tight relative z-20 w-full">
             <motion.span
