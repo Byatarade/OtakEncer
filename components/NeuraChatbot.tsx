@@ -115,7 +115,7 @@ export default function NeuraChatbot({ showTrigger = true }: NeuraChatbotProps) 
             <img
               alt="AI"
               src="/assets/maskot-neura.svg"
-              className="w-full h-full object-contain scale-[1.25] md:scale-[1.3] group-hover:scale-[1.35] transition-transform duration-300 origin-bottom"
+              className="w-full h-full object-contain scale-[1.1] md:scale-[1.15] group-hover:scale-[1.25] transition-transform duration-300 origin-bottom"
             />
           </div>
           <div className="flex flex-col items-start justify-center pr-1">

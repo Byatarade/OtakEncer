@@ -33,7 +33,9 @@ export function HomeNavbar({
         }}
         animate={hidden && !isMobileMenuOpen ? "hidden" : "visible"}
         transition={{ duration: 0.3, ease: "easeInOut" }}
-        className="flex flex-col w-full max-w-[900px] bg-white/40 hover:bg-white/50 backdrop-blur-2xl border border-white/50 shadow-[0_8px_32px_rgba(0,0,0,0.1)] pointer-events-auto overflow-hidden rounded-[32px] md:rounded-full"
+        className={`flex flex-col w-full max-w-[900px] transition-colors duration-500 backdrop-blur-2xl border shadow-[0_8px_32px_rgba(0,0,0,0.1)] pointer-events-auto overflow-hidden rounded-[32px] md:rounded-full ${
+          activeSection === "fitur" ? "bg-white border-transparent" : "bg-white/40 hover:bg-white/50 border-white/50"
+        }`}
       >
         <div className="flex items-center justify-between px-4 md:px-6 py-3 w-full">
           <Link href="#beranda" className="flex items-center gap-2">

@@ -13,11 +13,11 @@ export function FiturSection() {
       {/* Background Elements */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
         <div className="absolute inset-0 bg-gradient-to-b from-[#08020d] via-[#10031c] to-[#08020d]"></div>
-        <div className="absolute top-[-20%] right-[-10%] w-[70vw] h-[600px] bg-[radial-gradient(ellipse_at_center,rgba(114,35,204,0.15)_0%,transparent_60%)] rounded-[100%] rotate-[-15deg] blur-[80px]"></div>
-        <div className="absolute bottom-[-10%] left-[-20%] w-[80vw] h-[700px] bg-[radial-gradient(ellipse_at_center,rgba(63,16,134,0.2)_0%,transparent_60%)] rounded-[100%] rotate-[25deg] blur-[100px]"></div>
-        <div className="absolute top-[30%] left-[20%] w-[50vw] h-[400px] bg-[radial-gradient(ellipse_at_center,rgba(163,104,221,0.1)_0%,transparent_70%)] rounded-[100%] blur-[90px]"></div>
+        <div className="absolute top-[-20%] right-[-10%] w-[70vw] h-[600px] bg-[radial-gradient(ellipse_at_center,rgba(114,35,204,0.15)_0%,transparent_60%)] rounded-[100%] rotate-[-15deg]"></div>
+        <div className="absolute bottom-[-10%] left-[-20%] w-[80vw] h-[700px] bg-[radial-gradient(ellipse_at_center,rgba(63,16,134,0.2)_0%,transparent_60%)] rounded-[100%] rotate-[25deg]"></div>
+        <div className="absolute top-[30%] left-[20%] w-[50vw] h-[400px] bg-[radial-gradient(ellipse_at_center,rgba(163,104,221,0.1)_0%,transparent_70%)] rounded-[100%]"></div>
         <div
-          className="absolute inset-0 opacity-[0.03] mix-blend-overlay"
+          className="absolute inset-0 opacity-[0.03]"
           style={{
             backgroundImage:
               "url('data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E')",
@@ -37,7 +37,7 @@ export function FiturSection() {
         }}
       ></div>
 
-      <div className="absolute top-[20%] left-1/2 -translate-x-1/2 w-[500px] h-[300px] bg-[#9d4edd]/15 blur-[100px] rounded-[100%] pointer-events-none z-0"></div>
+      <div className="absolute top-[20%] left-1/2 -translate-x-1/2 w-[500px] h-[300px] bg-[radial-gradient(ellipse_at_center,rgba(157,78,221,0.15)_0%,transparent_60%)] rounded-[100%] pointer-events-none z-0"></div>
       <div className="absolute bottom-0 left-0 right-0 h-[200px] bg-gradient-to-t from-[#08020d] to-transparent pointer-events-none z-10"></div>
 
       <div className="w-full max-w-[1240px] flex flex-col items-center justify-center z-20 px-6 md:px-12 relative flex-1">
@@ -74,9 +74,9 @@ export function FiturSection() {
             hoverable
             variant="dark"
             padding="lg"
-            className="w-full lg:w-1/3 flex flex-col relative min-h-[380px]"
+            className="w-full lg:w-1/3 flex flex-col relative min-h-[380px] overflow-visible"
           >
-            <div className="w-10 h-10 rounded-full bg-[#672cb9] flex items-center justify-center mb-6 font-bold text-lg text-white shadow-lg absolute -top-5 -left-2 border-4 border-[#0d0415] rotate-[-5deg]">
+            <div className="w-10 h-10 rounded-full bg-[#672cb9] flex items-center justify-center mb-6 font-bold text-lg text-white shadow-lg absolute -top-5 -left-2 border-4 border-[#0d0415]">
               1
             </div>
             <h3 className="text-white font-bold text-[20px] mb-2 leading-tight">Tumpuk Materimu</h3>
@@ -132,9 +132,9 @@ export function FiturSection() {
             hoverable
             variant="dark"
             padding="lg"
-            className="w-full lg:w-1/3 flex flex-col relative min-h-[380px]"
+            className="w-full lg:w-1/3 flex flex-col relative min-h-[380px] overflow-visible"
           >
-            <div className="w-10 h-10 rounded-full bg-[#672cb9] flex items-center justify-center mb-6 font-bold text-lg text-white shadow-lg absolute -top-5 -left-2 border-4 border-[#0d0415] rotate-[5deg]">
+            <div className="w-10 h-10 rounded-full bg-[#672cb9] flex items-center justify-center mb-6 font-bold text-lg text-white shadow-lg absolute -top-5 -left-2 border-4 border-[#0d0415]">
               2
             </div>
             <h3 className="text-white font-bold text-[20px] mb-2 leading-tight">Biar Neura Merangkum</h3>
@@ -167,10 +167,10 @@ export function FiturSection() {
             hoverable
             variant="dark"
             padding="lg"
-            className="w-full lg:w-1/3 flex flex-col relative min-h-[380px] border-[#ffa515]/30 shadow-[0_10px_30px_rgba(255,165,21,0.1)]"
+            className="w-full lg:w-1/3 flex flex-col relative min-h-[380px] border-[#ffa515]/30 shadow-[0_10px_30px_rgba(255,165,21,0.1)] overflow-visible"
           >
-            <div className="absolute inset-0 bg-gradient-to-br from-[#ffa515]/5 to-transparent rounded-[24px] pointer-events-none"></div>
-            <div className="w-10 h-10 rounded-full bg-[#ffa515] flex items-center justify-center mb-6 font-bold text-lg text-[#0d0415] shadow-lg absolute -top-5 -left-2 border-4 border-[#0d0415] rotate-[-5deg]">
+            <div className="absolute inset-0 bg-gradient-to-br from-[#ffa515]/5 to-transparent rounded-[24px] md:rounded-[32px] pointer-events-none"></div>
+            <div className="w-10 h-10 rounded-full bg-[#ffa515] flex items-center justify-center mb-6 font-bold text-lg text-[#0d0415] shadow-lg absolute -top-5 -left-2 border-4 border-[#0d0415]">
               3
             </div>
             <h3 className="text-white font-bold text-[20px] mb-2 leading-tight z-10">Materi Siap Ujian</h3>

@@ -7,9 +7,9 @@ import { forwardRef } from "react";
 export const SiteFooter = forwardRef<HTMLElement>(function SiteFooter(_, ref) {
   return (
     <footer ref={ref} className="w-full bg-[#08020d] rounded-t-[40px] md:rounded-t-[80px] border-t border-white/10 text-white pt-16 md:pt-24 pb-8 md:pb-10 relative z-20 overflow-hidden">
-      <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-[#672cb9]/15 rounded-full blur-[120px] pointer-events-none"></div>
-      <div className="absolute bottom-[-100px] right-1/4 w-[400px] h-[400px] bg-[#ffa515]/10 rounded-full blur-[100px] pointer-events-none"></div>
-      <div className="absolute top-[20%] right-10 w-[300px] h-[300px] bg-[#c876b5]/10 rounded-full blur-[100px] pointer-events-none"></div>
+      <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-[radial-gradient(circle,rgba(103,44,185,0.15)_0%,transparent_60%)] rounded-[100%] pointer-events-none"></div>
+      <div className="absolute bottom-[-100px] right-1/4 w-[400px] h-[400px] bg-[radial-gradient(circle,rgba(255,165,21,0.1)_0%,transparent_60%)] rounded-[100%] pointer-events-none"></div>
+      <div className="absolute top-[20%] right-10 w-[300px] h-[300px] bg-[radial-gradient(circle,rgba(200,118,181,0.1)_0%,transparent_60%)] rounded-[100%] pointer-events-none"></div>
 
       <div className="max-w-[1240px] w-full mx-auto px-6 md:px-12 flex flex-col relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 mb-16 lg:mb-20">

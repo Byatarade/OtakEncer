@@ -19,7 +19,7 @@ export function HomeCtaSection() {
         className="w-full max-w-[860px] rounded-[28px] md:rounded-[36px] overflow-hidden shadow-[0_16px_48px_rgba(103,44,185,0.15)] relative"
       >
         <AuroraBackground className="w-full py-8 md:py-10 px-6 md:px-10 flex flex-col items-center text-center">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-[360px] h-[160px] bg-[#ffa515]/20 blur-[70px] rounded-full pointer-events-none mix-blend-screen"></div>
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-[360px] h-[160px] bg-[radial-gradient(ellipse_at_center,rgba(255,165,21,0.25)_0%,transparent_70%)] rounded-full pointer-events-none mix-blend-screen"></div>
 
           <motion.div
             animate={{ y: [0, -8, 0] }}

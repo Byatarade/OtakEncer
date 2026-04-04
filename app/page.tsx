@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState, useRef, useEffect } from "react";
 import { useScroll, useMotionValueEvent } from "framer-motion";
@@ -23,6 +23,24 @@ export default function Home() {
   const [showNeuraFab, setShowNeuraFab] = useState(false);
   const neuraRef = useRef<HTMLElement>(null);
   const footerRef = useRef<HTMLElement>(null);
+
+  const layoutCache = useRef({ neuraTop: 9999, footerTop: 99999 });
+
+  useEffect(() => {
+    const updateLayout = () => {
+      if (neuraRef.current && footerRef.current) {
+        layoutCache.current = {
+          neuraTop: neuraRef.current.getBoundingClientRect().top + window.scrollY,
+          footerTop: footerRef.current.getBoundingClientRect().top + window.scrollY,
+        };
+      }
+    };
+    
+    updateLayout();
+    setTimeout(updateLayout, 1000);
+    window.addEventListener("resize", updateLayout);
+    return () => window.removeEventListener("resize", updateLayout);
+  }, []);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -50,11 +68,12 @@ export default function Home() {
       setHidden(false);
     }
 
-    if (neuraRef.current && footerRef.current) {
-      const neuraRect = neuraRef.current.getBoundingClientRect();
-      const footerRect = footerRef.current.getBoundingClientRect();
-      const shouldShow = neuraRect.top < window.innerHeight && footerRect.top > window.innerHeight;
-      setShowNeuraFab((prev) => (prev !== shouldShow ? shouldShow : prev));
+    const scrollBottom = latest + window.innerHeight;
+    const shouldShow = scrollBottom > layoutCache.current.neuraTop && scrollBottom < layoutCache.current.footerTop;
+    setShowNeuraFab((prev) => (prev !== shouldShow ? shouldShow : prev));
+
+    if (latest < 100) {
+      setActiveSection("beranda");
     }
   });
 
@@ -82,7 +101,7 @@ export default function Home() {
         user={user}
       />
 
-      <main id="beranda" className="w-full flex flex-col items-center max-w-[1440px] relative mt-20 md:mt-22">
+      <main className="w-full flex flex-col items-center max-w-[1440px] relative mt-20 md:mt-22">
         <HomeHeroSection />
         <TentangSection />
         <NeuraSection ref={neuraRef} />

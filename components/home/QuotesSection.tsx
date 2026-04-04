@@ -102,10 +102,10 @@ export function QuotesSection() {
               }}
               className="absolute mix-blend-multiply"
               style={{
-                left: `${left}%`,
-                top: `${top}%`,
-                width: `${w}px`,
-                height: `${h}px`,
+                left: `${left.toFixed(2)}%`,
+                top: `${top.toFixed(2)}%`,
+                width: `${w.toFixed(2)}px`,
+                height: `${h.toFixed(2)}px`,
                 background: bg,
                 borderRadius: "0px",
                 y: yTransform,
@@ -205,8 +205,8 @@ export function QuotesSection() {
                     transition={{ duration, repeat: Infinity, ease: "easeInOut", delay: animDelay }}
                     className="w-full absolute rounded-[1px] md:rounded-[2px]"
                     style={{
-                      bottom: `calc(50% + ${totalHeight / 2}% + ${floatGap}px)`,
-                      height: `${4 + pseudoRandom(i) * 10}px`,
+                      bottom: `calc(50% + ${(totalHeight / 2).toFixed(2)}% + ${floatGap.toFixed(2)}px)`,
+                      height: `${(4 + pseudoRandom(i) * 10).toFixed(2)}px`,
                       backgroundColor: floatColor,
                     }}
                   />
@@ -214,7 +214,7 @@ export function QuotesSection() {
 
                 <motion.div
                   className="w-full flex flex-col overflow-hidden rounded-[1px] md:rounded-[2px]"
-                  style={{ height: `${totalHeight}%`, originY: 0.5 }}
+                  style={{ height: `${totalHeight.toFixed(2)}%`, originY: 0.5 }}
                   animate={{
                     scaleY: [1, 1.15, 0.85, 1],
                     y: [0, -4, 4, 0],
@@ -226,8 +226,8 @@ export function QuotesSection() {
                     delay: animDelay,
                   }}
                 >
-                  <div className="w-full transition-all" style={{ flex: purpleRatio, backgroundColor: purpleColor }} />
-                  <div className="w-full transition-all" style={{ flex: orangeRatio, backgroundColor: "#ffa515" }} />
+                  <div className="w-full transition-all" style={{ flex: Number(purpleRatio.toFixed(4)), backgroundColor: purpleColor }} />
+                  <div className="w-full transition-all" style={{ flex: Number(orangeRatio.toFixed(4)), backgroundColor: "#ffa515" }} />
                 </motion.div>
               </motion.div>
             </div>
