@@ -11,17 +11,7 @@ html {
   --color-primary: #672cb9;
   --color-secondary: #ffa515;
 
-  --animate-aurora: aurora 60s linear infinite;
   --animate-gradient-x: gradient-x 5s ease infinite;
-
-  @keyframes aurora {
-    from {
-      background-position: 50% 50%, 50% 50%;
-    }
-    to {
-      background-position: 350% 50%, 350% 50%;
-    }
-  }
 
   @keyframes gradient-x {
     0%, 100% {

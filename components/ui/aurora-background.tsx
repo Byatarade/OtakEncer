@@ -18,37 +18,24 @@ export const AuroraBackground = ({
   return (
     <div
       className={cn(
-        "relative flex flex-col h-full items-center justify-center bg-[#672cb9] text-white transition-bg",
+        "relative flex flex-col h-full items-center justify-center bg-[#672cb9] text-white",
         className
       )}
       {...props}
     >
-      <div className="absolute inset-0 overflow-hidden rounded-[inherit]">
+      <div className="absolute inset-0 overflow-hidden rounded-[inherit] pointer-events-none">
         <div
-          //   I'm using tailwindcss variables to build the aurora effect
-          //   The aurora is made of moving glowing blobs
           className={cn(
             `
-            [--white-gradient:repeating-linear-gradient(100deg,var(--white)_0%,var(--white)_7%,var(--transparent)_10%,var(--transparent)_12%,var(--white)_16%)]
-            [--dark-gradient:repeating-linear-gradient(100deg,var(--black)_0%,var(--black)_7%,var(--transparent)_10%,var(--transparent)_12%,var(--black)_16%)]
-            [--aurora:repeating-linear-gradient(100deg,#4d2691_10%,#8d4acf_15%,#ffa515_20%,#c876b5_25%,#672cb9_30%)]
-            [background-image:var(--white-gradient),var(--aurora)]
-            dark:[background-image:var(--dark-gradient),var(--aurora)]
-            [background-size:300%,_200%]
-            [background-position:50%_50%,50%_50%]
-            filter blur-[20px] invert-0 dark:invert-0
-            after:content-[""] after:absolute after:inset-0 after:[background-image:var(--white-gradient),var(--aurora)] 
-            after:dark:[background-image:var(--dark-gradient),var(--aurora)]
-            after:[background-size:200%,_100%] 
-            after:animate-aurora after:[background-attachment:fixed] after:mix-blend-difference
-            pointer-events-none
-            absolute -inset-[10px] opacity-60 will-change-transform`,
+            absolute inset-0 
+            [background-image:linear-gradient(100deg,#4d2691_10%,#8d4acf_30%,#ffa515_60%,#c876b5_80%,#672cb9_100%)]
+            opacity-40`,
             showRadialGradient &&
-              `[mask-image:radial-gradient(ellipse_at_100%_0%,black_10%,var(--transparent)_70%)]`
+              `[mask-image:radial-gradient(ellipse_at_100%_0%,black_10%,transparent_70%)]`
           )}
         ></div>
       </div>
       {children}
     </div>
   );
-};
+};
