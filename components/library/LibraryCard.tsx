@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 
 export interface Material {
-  id: number;
+  id: string | number;
   title: string;
   type: string;
   date: string;

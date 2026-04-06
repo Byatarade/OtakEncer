@@ -1,69 +1,15 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { Variants } from 'framer-motion';
-import { Search, FolderPlus, FileText, Video, Link as LinkIcon, Layers, Sparkles, Filter } from 'lucide-react';
+import { Search, FolderPlus, FileText, Video, Link as LinkIcon, Layers, Sparkles, Filter, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { LibraryCard, Material } from '@/components/library/LibraryCard';
-
-const dummyMaterials: Material[] = [
-  { 
-    id: 1, 
-    title: 'Sejarah Kemerdekaan Indonesia - Penjajahan Belanda hingga Proklamasi', 
-    type: 'youtube', 
-    date: '24 Mar 2026', 
-    readTime: '12 min baca', 
-    source: 'Channel SejarahKita',
-    coverColor: 'from-[#ff7e5f] to-[#feb47b]' // Warm sunset
-  },
-  { 
-    id: 2, 
-    title: 'Sistem Pencernaan Manusia Lengkap beserta Fungsinya', 
-    type: 'pdf', 
-    date: '21 Mar 2026', 
-    readTime: '8 min baca', 
-    source: 'Buku_Biologi_SMA_Bab_4.pdf',
-    coverColor: 'from-[#654ea3] to-[#eaafc8]' // Purple to pink (Matches theme well)
-  },
-  { 
-    id: 3, 
-    title: 'Memahami Hukum Newton 1, 2, dan 3 dengan Contoh Sehari-hari', 
-    type: 'youtube', 
-    date: '18 Mar 2026', 
-    readTime: '15 min baca', 
-    source: 'Fisika Asik',
-    coverColor: 'from-[#00c6ff] to-[#0072ff]' // Bright blue
-  },
-  { 
-    id: 4, 
-    title: 'Rangkuman Web Artikel: Pengantar Artificial Intelligence untuk Pemula', 
-    type: 'link', 
-    date: '10 Mar 2026', 
-    readTime: '5 min baca', 
-    source: 'Medium - TechBlog',
-    coverColor: 'from-[#11998e] to-[#38ef7d]' // Fresh green
-  },
-  { 
-    id: 5, 
-    title: 'Modul Bahasa Indonesia: Teks Eksposisi dan Teks Anekdot', 
-    type: 'pdf', 
-    date: '05 Mar 2026', 
-    readTime: '20 min baca', 
-    source: 'Modul_Bahasa_Indonesia_XII.pdf',
-    coverColor: 'from-[#8A2387] to-[#E94057]' // Vibrant magenta to orange
-  },
-  { 
-    id: 6, 
-    title: 'Podcast: Apa itu Generative AI dan Bagaimana Ia Bekerja', 
-    type: 'youtube', 
-    date: '28 Feb 2026', 
-    readTime: '10 min baca', 
-    source: 'Tech Talk Daily',
-    coverColor: 'from-[#f12711] to-[#f5af19]' // Fire gradient
-  },
-];
+import { supabase } from '@/lib/supabase';
+import { useAuth } from '@/components/AuthProvider';
+import Link from 'next/link';
 
 const containerVariants: Variants = {
   hidden: { opacity: 0 },
@@ -78,6 +24,66 @@ const containerVariants: Variants = {
 export default function LibraryPage() {
   const [activeTab, setActiveTab] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const [materials, setMaterials] = useState<Material[]>([]);
+  const [loading, setLoading] = useState(true);
+  const { user, isLoaded } = useAuth();
+
+  useEffect(() => {
+    if (user?.id) {
+      fetchMaterials();
+    } else if (isLoaded && user === null) {
+      setLoading(false);
+    }
+  }, [user, isLoaded]);
+
+  const fetchMaterials = async () => {
+    try {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from('materials')
+        .select('*')
+        .eq('user_id', user?.id)
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Error fetching materials:', error);
+        return;
+      }
+
+      const colors = [
+        'from-[#ff7e5f] to-[#feb47b]',
+        'from-[#654ea3] to-[#eaafc8]',
+        'from-[#00c6ff] to-[#0072ff]',
+        'from-[#11998e] to-[#38ef7d]',
+        'from-[#8A2387] to-[#E94057]',
+        'from-[#f12711] to-[#f5af19]',
+      ];
+
+      const mappedMaterials: Material[] = (data || []).map((item, index) => {
+        const coverColor = colors[index % colors.length];
+        const dateObj = new Date(item.created_at);
+        const formattedDate = isNaN(dateObj.getTime()) 
+          ? 'Sekarang' 
+          : dateObj.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
+
+        return {
+          id: item.id,
+          title: item.title || 'Materi Tanpa Judul',
+          type: item.source_type || 'other',
+          date: formattedDate,
+          readTime: item.ai_summary ? `${Math.max(1, Math.ceil(item.ai_summary.length / 1500))} min baca` : '3 min baca',
+          source: item.source_type?.toUpperCase() || 'Sistem',
+          coverColor: coverColor
+        };
+      });
+
+      setMaterials(mappedMaterials);
+    } catch (err) {
+      console.error('Failed to load materials', err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const tabs = [
     { id: 'all', label: 'Semua Materi', icon: <Layers size={16} /> },
@@ -86,8 +92,8 @@ export default function LibraryPage() {
     { id: 'link', label: 'Artikel Web', icon: <LinkIcon size={16} /> },
   ];
 
-  const filteredMaterials = dummyMaterials.filter(m => {
-    const matchesTab = activeTab === 'all' || m.type === activeTab;
+  const filteredMaterials = materials.filter(m => {
+    const matchesTab = activeTab === 'all' || m.type.toLowerCase().includes(activeTab);
     const matchesSearch = m.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
                           m.source.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesTab && matchesSearch;
@@ -207,32 +213,41 @@ export default function LibraryPage() {
       </div>
 
       {/* Dynamic Grid of Materials */}
-      <AnimatePresence mode="popLayout">
-        <motion.div 
-          variants={containerVariants}
-          initial="hidden"
-          animate="show"
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
-        >
-          {filteredMaterials.length > 0 ? (
-            filteredMaterials.map((material) => (
-              <LibraryCard key={material.id} material={material} />
-            ))
-          ) : (
-            <motion.div 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="col-span-full flex flex-col items-center justify-center py-20 px-4 text-center"
-            >
-              <div className="w-24 h-24 mb-6 rounded-full bg-gray-100 flex items-center justify-center text-gray-400">
-                <Search size={40} />
-              </div>
-              <h3 className="text-xl font-bold text-gray-800 mb-2">Materi tidak ditemukan</h3>
-              <p className="text-gray-500 max-w-md">Tidak ada materi yang cocok dengan pencarian atau filter yang Anda pilih. Coba gunakan kata kunci lain.</p>
-            </motion.div>
-          )}
-        </motion.div>
-      </AnimatePresence>
+      {loading ? (
+        <div className="flex justify-center items-center py-20 flex-col gap-4">
+          <Loader2 size={40} className="text-[#672cb9] animate-spin" />
+          <p className="text-gray-500 font-medium">Memuat materi Anda...</p>
+        </div>
+      ) : (
+        <AnimatePresence mode="popLayout">
+          <motion.div 
+            variants={containerVariants}
+            initial="hidden"
+            animate="show"
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+          >
+            {filteredMaterials.length > 0 ? (
+              filteredMaterials.map((material) => (
+                <Link key={material.id} href={`/dashboard/library/${material.id}`} className="block">
+                  <LibraryCard material={material} />
+                </Link>
+              ))
+            ) : (
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="col-span-full flex flex-col items-center justify-center py-20 px-4 text-center"
+              >
+                <div className="w-24 h-24 mb-6 rounded-full bg-gray-100 flex items-center justify-center text-gray-400">
+                  <FolderPlus size={40} />
+                </div>
+                <h3 className="text-xl font-bold text-gray-800 mb-2">Belum ada materi</h3>
+                <p className="text-gray-500 max-w-md">Klik "Tambah Materi Baru" untuk mulai menghasilkan rangkuman cerdas Anda.</p>
+              </motion.div>
+            )}
+          </motion.div>
+        </AnimatePresence>
+      )}
       
       {/* Load More Button */}
       {filteredMaterials.length > 0 && (

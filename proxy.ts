@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-export function middleware(request: NextRequest) {
+export default function proxy(request: NextRequest) {
   const hasUser = request.cookies.has('otak_auth');
   const path = request.nextUrl.pathname;
   const view = request.nextUrl.searchParams.get('view');

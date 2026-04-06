@@ -40,9 +40,6 @@ export default function DashboardLayout({
               <NavLink href="/dashboard/leaderboard" icon={<Trophy size={20} />} active={pathname.startsWith('/dashboard/leaderboard')}>Leaderboard</NavLink>
               <NavLink href="/dashboard/kolaborasi" icon={<Users size={20} />} active={pathname.startsWith('/dashboard/kolaborasi')}>Ruang Kolaborasi</NavLink>
 
-              <div className="mt-auto pb-4">
-                <NavLink href="/dashboard/settings" icon={<Settings size={20} />} active={pathname.startsWith('/dashboard/settings')}>Pengaturan</NavLink>
-              </div>
             </nav>
           </aside>
 

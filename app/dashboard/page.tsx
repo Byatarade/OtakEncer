@@ -1,6 +1,7 @@
 "use client";
+import { supabase } from '@/lib/supabase';
 
-import { Search, Bell, Plus, Filter, LogOut, Settings, HelpCircle, ChevronDown, Calendar, Eye, FileText, CheckCircle2, CheckCircle2Icon, LucideCheckCircle, LucideCheckCircle2, CheckCircle, X, Link as LinkIcon, MonitorPlay, Volume2 } from 'lucide-react';
+import { Search, Bell, Plus, Filter, LogOut, Settings, HelpCircle, ChevronDown, Calendar, Eye, FileText, CheckCircle2, CheckCircle2Icon, LucideCheckCircle, LucideCheckCircle2, CheckCircle, X, Link as LinkIcon, MonitorPlay, Volume2, Sparkles } from 'lucide-react';
 import Image from 'next/image';
 import { useAuth } from '@/components/AuthProvider';
 import { useRouter } from 'next/navigation';
@@ -12,7 +13,51 @@ export default function Dashboard() {
   const router = useRouter();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isUploadPopupOpen, setIsUploadPopupOpen] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file || !user) return;
+
+    // Optional client side check for fast feedback
+    if (file.size > 10 * 1024 * 1024) {
+      alert("Ukuran dokumen melebihi batas 10MB!");
+      return;
+    }
+
+    try {
+      setIsUploading(true);
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('user_id', user.id);
+
+      const { data: { session } } = await supabase.auth.getSession();
+
+      const response = await fetch('/api/generate-materi', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${session?.access_token}`
+        },
+        body: formData,
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+         alert(`Gagal: ${result.error || 'Terjadi kesalahan'}`);
+      } else {
+         // Sukses
+         setIsUploadPopupOpen(false);
+         router.push('/dashboard/library');
+      }
+    } catch (err: any) {
+       alert("Gagal mengunggah file. Silakan coba lagi.");
+       console.error("Upload error:", err);
+    } finally {
+       setIsUploading(false);
+    }
+  };
 
   const handleLogout = () => {
     logout();
@@ -262,61 +307,64 @@ export default function Dashboard() {
 
       </div>
 
-      {/* Modal Upload Popup */}
+            {/* Modal Upload Popup */}
       {isUploadPopupOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center">
           <div 
             className="absolute inset-0 bg-black/40 backdrop-blur-[2px]"
-            onClick={() => setIsUploadPopupOpen(false)}
+            onClick={() => { if(!isUploading) setIsUploadPopupOpen(false); }}
           />
           <div className="relative w-full max-w-4xl bg-gradient-to-b from-[#f3f4f6] to-[#e5e7eb] rounded-[32px] shadow-2xl p-10 animate-in fade-in zoom-in-95 duration-200">
             <div className="flex items-center justify-between mb-8">
               <h2 className="text-[26px] font-bold text-slate-800 flex-1 text-center pl-10">Pilih Tipe Upload</h2>
               <button 
                 onClick={() => setIsUploadPopupOpen(false)}
-                className="text-slate-500 hover:text-slate-800 bg-transparent rounded-full p-2 transition-colors ml-2"
+                disabled={isUploading}
+                className="text-slate-500 hover:text-slate-800 bg-transparent rounded-full p-2 transition-colors ml-2 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <X size={28} />
               </button>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              {/* File PDF */}
-              <button className="flex flex-col items-start bg-white/70 backdrop-blur hover:bg-white hover:shadow-lg p-7 rounded-[24px] border border-white transition-all text-left group">
-                <div className="w-[52px] h-[52px] rounded-2xl bg-gradient-to-br from-[#ed2d07] to-[#871c07] flex items-center justify-center mb-5 shadow-sm group-hover:scale-105 transition-transform relative">
-                  <FileText className="text-white" size={26} />
-                  <span className="absolute text-[8px] font-bold text-[#672cb9] bg-white px-1 leading-none rounded-sm mt-3.5">PDF</span>
+              {isUploading ? (
+                <div className="col-span-1 md:col-span-2 flex flex-col items-center justify-center p-12 bg-white/70 backdrop-blur rounded-[24px] border border-white">
+                   <div className="flex gap-3 mb-6">
+                     <Sparkles className="text-[#672cb9] animate-bounce" size={32} />
+                   </div>
+                   <h3 className="text-xl font-bold text-[#672cb9] mb-2 animate-pulse">AI Sedang Membaca & Merangkum Materi...</h3>
+                   <p className="text-slate-500 font-medium text-center">Proses ini mungkin memakan waktu hingga satu menit. Harap jangan tutup jendela ini.</p>
                 </div>
-                <h3 className="text-[20px] font-bold text-slate-800 mb-2.5">File PDF</h3>
-                <p className="text-[15px] text-slate-600 leading-relaxed pr-2">Unggah dokumen PDF untuk dibagikan atau disimpan.</p>
-              </button>
+              ) : (
+                <>
+                  {/* File PDF / DOCX */}
+                  <div className="relative flex flex-col items-start bg-white/70 backdrop-blur hover:bg-white hover:shadow-lg p-7 rounded-[24px] border border-white transition-all text-left group overflow-hidden cursor-pointer">
+                    <div className="w-[52px] h-[52px] rounded-2xl bg-gradient-to-br from-[#ed2d07] to-[#871c07] flex items-center justify-center mb-5 shadow-sm group-hover:scale-105 transition-transform relative">
+                      <FileText className="text-white" size={26} />
+                      <span className="absolute text-[8px] font-bold text-[#672cb9] bg-white px-1 leading-none rounded-sm mt-3.5">DOC</span>
+                    </div>
+                    <h3 className="text-[20px] font-bold text-slate-800 mb-2.5">Upload Dokumen</h3>
+                    <p className="text-[15px] text-slate-600 leading-relaxed pr-2 mb-2">Unggah PDF, DOCX, atau PPT (Max 10MB).</p>
+                    <input 
+                      type="file" 
+                      accept=".pdf, .docx, .pptx"
+                      onChange={handleFileUpload}
+                      disabled={isUploading}
+                      className="absolute inset-0 w-full h-full opacity-0 outline-none cursor-pointer z-10"
+                      title="Pilih File"
+                    />
+                  </div>
 
-              {/* Link Artikel */}
-              <button className="flex flex-col items-start bg-white/70 backdrop-blur hover:bg-white hover:shadow-lg p-7 rounded-[24px] border border-white transition-all text-left group">
-                <div className="w-[52px] h-[52px] rounded-2xl bg-gradient-to-br from-[#0883ff] to-[#064a8f] flex items-center justify-center mb-5 shadow-sm group-hover:scale-105 transition-transform">
-                  <LinkIcon className="text-white" size={26} strokeWidth={2.5} />
-                </div>
-                <h3 className="text-[20px] font-bold text-slate-800 mb-2.5">Link Artikel</h3>
-                <p className="text-[15px] text-slate-600 leading-relaxed pr-2">Tautkan ke artikel eksternal untuk referensi.</p>
-              </button>
-
-              {/* Video */}
-              <button className="flex flex-col items-start bg-white/70 backdrop-blur hover:bg-white hover:shadow-lg p-7 rounded-[24px] border border-white transition-all text-left group">
-                <div className="w-[52px] h-[52px] rounded-2xl bg-gradient-to-br from-[#88d406] to-[#476e04] flex items-center justify-center mb-5 shadow-sm group-hover:scale-105 transition-transform">
-                  <MonitorPlay className="text-white" size={26} />
-                </div>
-                <h3 className="text-[20px] font-bold text-slate-800 mb-2.5">Video</h3>
-                <p className="text-[15px] text-slate-600 leading-relaxed pr-2">Unggah atau tautkan video pembelajaran.</p>
-              </button>
-
-              {/* Audio */}
-              <button className="flex flex-col items-start bg-white/70 backdrop-blur hover:bg-white hover:shadow-lg p-7 rounded-[24px] border border-white transition-all text-left group">
-                <div className="w-[52px] h-[52px] rounded-2xl bg-gradient-to-br from-[#fa05cd] to-[#7a0565] flex items-center justify-center mb-5 shadow-sm group-hover:scale-105 transition-transform">
-                  <Volume2 className="text-white" size={26} />
-                </div>
-                <h3 className="text-[20px] font-bold text-slate-800 mb-2.5">Audio</h3>
-                <p className="text-[15px] text-slate-600 leading-relaxed pr-2">Unggah atau tautkan rekaman audio.</p>
-              </button>
+                  {/* Link Artikel */}
+                  <button onClick={() => alert('Fitur web link segera hadir!')} className="flex flex-col items-start bg-white/70 backdrop-blur p-7 rounded-[24px] border border-white transition-all text-left opacity-60 cursor-not-allowed">
+                    <div className="w-[52px] h-[52px] rounded-2xl bg-gradient-to-br from-[#0883ff] to-[#064a8f] flex items-center justify-center mb-5 shadow-sm">
+                      <LinkIcon className="text-white" size={26} strokeWidth={2.5} />
+                    </div>
+                    <h3 className="text-[20px] font-bold text-slate-800 mb-2.5">Link Artikel</h3>
+                    <p className="text-[15px] text-slate-600 leading-relaxed pr-2">Tautkan ke artikel eksternal untuk referensi (Segera hadir).</p>
+                  </button>
+                </>
+              )}
             </div>
           </div>
         </div>
