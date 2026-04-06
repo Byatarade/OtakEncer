@@ -66,10 +66,11 @@ export async function POST(request: Request) {
     let inlinePdfData: { inlineData: { data: string, mimeType: string } } | null = null;
 
     if (file) {
-      // Limit file size (10 MB = 10 * 1024 * 1024 bytes)
-      const MAX_SIZE = 10 * 1024 * 1024;
+      // Limit file size (25 MB max untuk Audio/Whisper, 10 MB untuk Dokumen)
+      const isAudio = file.name.match(/\.(mp3|mp4|mpeg|mpga|m4a|wav|webm)$/i);
+      const MAX_SIZE = isAudio ? 25 * 1024 * 1024 : 10 * 1024 * 1024;
       if (file.size > MAX_SIZE) {
-        return NextResponse.json({ error: 'Ukuran dokumen melebihi batas 10MB!' }, { status: 400 });
+        return NextResponse.json({ error: `Ukuran dokumen/audio melebihi batas (${isAudio ? '25MB' : '10MB'})!` }, { status: 400 });
       }
 
       fileSizeBytes = file.size;
@@ -96,8 +97,36 @@ export async function POST(request: Request) {
           // Menggunakan officeparser untuk mengekstrak teks dari buffer dokumen
           const ast = await OfficeParser.parseOffice(buffer);
           extractedText = typeof ast.toText === 'function' ? ast.toText() : JSON.stringify(ast);
+        } else if (fileName.match(/\.(mp3|mp4|mpeg|mpga|m4a|wav|webm)$/)) {
+          sourceType = 'audio';
+          
+          // Menggunakan Groq Whisper untuk Transkripsi Audio ke Teks
+          const audioFormData = new FormData();
+          // Gunakan blob karena kita ada buffer
+          const mimeType = file.type || 'audio/mpeg';
+          const audioBlob = new Blob([buffer], { type: mimeType });
+          audioFormData.append('file', audioBlob, fileName);
+          audioFormData.append('model', 'whisper-large-v3');
+          audioFormData.append('language', 'id'); // opsional, dipaksa agar transkrip dalam bahasa indonesia
+          
+          const groqResponse = await fetch('https://api.groq.com/openai/v1/audio/transcriptions', {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${process.env.GROQ_API_KEY}`
+            },
+            body: audioFormData
+          });
+
+          if (!groqResponse.ok) {
+            const errBase = await groqResponse.text();
+            console.error('Groq Transcribe Error:', errBase);
+            throw new Error(`Gagal mengubah audio menjadi teks. Groq Error: ${errBase}`);
+          }
+          const result = await groqResponse.json();
+          extractedText = result.text;
+          
         } else {
-          return NextResponse.json({ error: 'Format file tidak didukung. Harap gunakan PDF, DOCX, atau PPTX.' }, { status: 400 });
+          return NextResponse.json({ error: 'Format file tidak didukung. Harap gunakan PDF, DOCX, PPTX atau format Audio didukung.' }, { status: 400 });
         }
       } catch (err: any) {
          console.error("Gagal membaca dokumen:", err);
