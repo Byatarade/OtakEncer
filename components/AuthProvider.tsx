@@ -32,16 +32,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     // Cek session saat awal dimuat
     const getSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session?.user) {
-        setUser({
-          id: session.user.id,
-          name: session.user.user_metadata.full_name || '',
-          email: session.user.email || '',
-          picture: session.user.user_metadata.avatar_url || '',
-        });
+      try {
+        const { data: { session }, error } = await supabase.auth.getSession();
+        if (error) {
+          console.error("Supabase getSession error:", error.message);
+        }
+        
+        if (session?.user) {
+          setUser({
+            id: session.user.id,
+            name: session.user.user_metadata.full_name || '',
+            email: session.user.email || '',
+            picture: session.user.user_metadata.avatar_url || '',
+          });
+        }
+      } catch (err) {
+        console.error("Unexpected error during getSession:", err);
+      } finally {
+        setIsLoaded(true);
       }
-      setIsLoaded(true);
     };
 
     getSession();
@@ -58,9 +67,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       } else {
         setUser(null);
       }
+      setIsLoaded(true);
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
 
   const login = async () => {
@@ -97,7 +109,14 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
   }, [user, isLoaded, router]);
 
   if (!isLoaded || !user) {
-    return <div className="h-screen w-screen flex items-center justify-center bg-[#f8fafc] text-indigo-900 font-bold uppercase tracking-wider text-sm animate-pulse">Memuat...</div>;
+    return (
+      <div className="h-screen w-screen flex flex-col items-center justify-center bg-[#f8fafc] space-y-4">
+        <div className="w-12 h-12 border-4 border-[#672cb9]/20 border-t-[#672cb9] rounded-full animate-spin"></div>
+        <div className="text-[#672cb9] font-bold uppercase tracking-widest text-xs animate-pulse">
+          {!isLoaded ? "Memuat Akun..." : "Mengalihkan..."}
+        </div>
+      </div>
+    );
   }
 
   return <>{children}</>;
