@@ -1,7 +1,7 @@
 "use client";
 import { supabase } from '@/lib/supabase';
 
-import { Search, Bell, Plus, Filter, LogOut, Settings, HelpCircle, ChevronDown, Calendar, Eye, FileText, CheckCircle2, CheckCircle, X, Sparkles, Menu, MonitorPlay, Volume2, Link as LinkIcon } from 'lucide-react';
+import {Bell, Plus, Filter, LogOut, Settings, HelpCircle, ChevronDown, Calendar, Eye, FileText, CheckCircle2, CheckCircle, X, Sparkles, Menu, MonitorPlay, Volume2, Link as LinkIcon, LayoutDashboard, Trophy, Users, Library } from 'lucide-react';
 import Image from 'next/image';
 import { useAuth } from '@/components/AuthProvider';
 import { useRouter } from 'next/navigation';
@@ -12,12 +12,14 @@ export default function Dashboard() {
   const { user, logout } = useAuth();
   const router = useRouter();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isUploadPopupOpen, setIsUploadPopupOpen] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [showLinkInput, setShowLinkInput] = useState(false);
   const [linkUrl, setLinkUrl] = useState('');
   const [alertData, setAlertData] = useState<{title: string, message: string, type: 'error' | 'success'} | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const mobileDropdownRef = useRef<HTMLDivElement>(null);
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -181,7 +183,14 @@ export default function Dashboard() {
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      const isOutsideDesktop = dropdownRef.current && !dropdownRef.current.contains(event.target as Node);
+      const isOutsideMobile = mobileDropdownRef.current && !mobileDropdownRef.current.contains(event.target as Node);
+      
+      // If both elements exist and click is outside both, or one exists and click is outside it
+      if (
+        (!dropdownRef.current || isOutsideDesktop) && 
+        (!mobileDropdownRef.current || isOutsideMobile)
+      ) {
         setIsDropdownOpen(false);
       }
     };
@@ -200,22 +209,23 @@ export default function Dashboard() {
       {/* Mobile Header (Only visible on small screens) */}
       <div className="flex sm:hidden items-center justify-between mb-2">
         <Link href="/?view=landing" className="flex items-center gap-2 shrink-0">
-          <div className="relative w-8 h-8 flex items-center justify-center">
+          <div className="relative w-7 h-7 flex items-center justify-center">
             <Image src="/assets/logo.svg" alt="OtakEncer Logo" fill className="object-contain" />
           </div>
-          <span className="font-bold text-[20px] tracking-tight text-[#0f172a]">
-            OtakEncer
+          <span className="font-bold text-[20px] md:text-[18px] tracking-tight text-gray-900">
+            Otak<span className="text-[#672cb9]">Encer</span>
           </span>
         </Link>
         
         <div className="flex items-center gap-3">
-          <button className="text-[#334155] relative p-1 transition-colors hover:text-[#672cb9]">
-            <Bell size={22} strokeWidth={2} />
+          <button className="p-2 text-slate-500 hover:text-[#672cb9] bg-white rounded-full border border-slate-200 shadow-sm transition-colors relative">
+            <Bell size={18} strokeWidth={2} />
+            <span className="absolute top-0 right-0 w-2 h-2 bg-rose-500 rounded-full outline outline-2 outline-white"></span>
           </button>
           
           <button 
             onClick={() => setIsUploadPopupOpen(true)}
-            className="flex items-center gap-1.5 bg-[#672cb9] text-white px-4 py-1.5 rounded-full text-[14px] font-semibold tracking-wide"
+            className="flex items-center gap-1.5 bg-[#672cb9] text-white px-4 py-1.5 rounded-full text-[13px] font-semibold tracking-wide"
           >
             <Plus size={18} strokeWidth={2.5}/>
             Upload
@@ -223,7 +233,8 @@ export default function Dashboard() {
           
           <div className="w-[1px] h-7 bg-slate-200 mx-0.5"></div>
 
-          <div className="flex shrink-0">
+          <div className="relative flex shrink-0 items-center" ref={mobileDropdownRef}>
+             <button onClick={() => setIsDropdownOpen(!isDropdownOpen)} className="focus:outline-none group">
              {user.picture ? (
                <Image src={user.picture} alt={user.name} width={34} height={34} className="rounded-full ring-2 ring-white shadow-sm" />
              ) : (
@@ -231,16 +242,51 @@ export default function Dashboard() {
                  {user.name?.[0] || 'U'}
                </div>
              )}
+             </button>
+             {/* Dropdown Menu Mobile */}
+             {isDropdownOpen && (
+               <div className="absolute right-0 top-full mt-3 w-56 bg-white rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.1)] border border-slate-100 py-2 z-50 animate-in fade-in slide-in-from-top-4 duration-200">
+                 <div className="px-4 py-3 border-b border-slate-100 mb-1">
+                   <p className="text-[14px] font-bold text-slate-800">{user.name}</p>
+                   <p className="text-[12px] text-slate-500 truncate">{user.email}</p>
+                 </div>
+                 
+                 <div className="flex flex-col px-2">
+                   <Link href="/dashboard/settings" className="flex items-center gap-3 px-3 py-2.5 text-[14px] font-medium text-slate-600 hover:text-[#672cb9] hover:bg-indigo-50/50 rounded-xl transition-colors">
+                     <Settings size={18} />
+                     Pengaturan Akun
+                   </Link>
+                   
+                   <Link href="mailto:support@otakencer.com" className="flex items-center gap-3 px-3 py-2.5 text-[14px] font-medium text-slate-600 hover:text-[#672cb9] hover:bg-indigo-50/50 rounded-xl transition-colors">
+                     <HelpCircle size={18} />
+                     Bantuan & Support
+                   </Link>
+                   
+                   <div className="h-px w-full bg-slate-100 my-1"></div>
+                   
+                   <button 
+                     onClick={handleLogout}
+                     className="flex items-center gap-3 px-3 py-2.5 text-[14px] font-medium text-rose-600 hover:bg-rose-50 rounded-xl transition-colors w-full text-left"
+                   >
+                     <LogOut size={18} />
+                     Keluar / Logout
+                   </button>
+                 </div>
+               </div>
+             )}
           </div>
           
-          <button className="text-[#0f172a] p-1 -ml-1">
-            <Menu size={28} strokeWidth={2} />
-          </button>
+          <button
+            type="button"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className="p-2 md:hidden bg-white/40 rounded-full border border-white/50 backdrop-blur-md transition-colors hover:bg-white/60">
+              <Image src="/assets/menu-icon.svg" alt="Menu" width={18} height={18} />
+            </button>
         </div>
       </div>
 
       {/* Mobile Greeting */}
-      <h1 className="sm:hidden text-[34px] font-bold text-[#0f172a] tracking-tight">Halo, {user.name.split(' ')[0]}!</h1>
+      <h1 className="sm:hidden mt-7 text-[34px] font-bold text-[#0f172a] tracking-tight">Halo, {user.name.split(' ')[0]}!</h1>
 
       {/* Desktop Header Wrapper */}
       <div className="hidden sm:flex flex-col sm:flex-row sm:items-center justify-between gap-4 py-2">
@@ -447,26 +493,67 @@ export default function Dashboard() {
 
       </div>
 
-            {/* Modal Upload Popup */}
+      {/* Mobile Drawer Navigation */}
+      {isMobileMenuOpen && (
+        <div className="fixed inset-0 z-[150] md:hidden flex">
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setIsMobileMenuOpen(false)}></div>
+          <div className="relative w-64 max-w-[80vw] h-full bg-[#672cb9] flex flex-col pt-6 shadow-2xl animate-in slide-in-from-left duration-200">
+            <button onClick={() => setIsMobileMenuOpen(false)} className="absolute top-4 right-4 text-white/70 hover:text-white p-2">
+              <X size={24} />
+            </button>
+            <div className="px-6 mb-8 pt-2">
+              <Link href="/?view=landing" className="flex items-center gap-3">
+                <div className="w-8 h-8 relative flex items-center justify-center p-0.5">
+                  <Image src="/assets/logo.svg" alt="Logo" fill className="object-contain brightness-0 invert" />
+                </div>
+                <div className="text-[20px] font-bold text-white tracking-tight">OtakEncer</div>
+              </Link>
+            </div>
+            <nav className="flex flex-col space-y-2 px-3">
+              <Link href="/dashboard" className="relative flex items-center gap-4 px-4 py-3 cursor-pointer text-[#672cb9]">
+                <div className="absolute left-0 right-0 top-0 bottom-0 bg-[#f8fafc] rounded-xl shadow-sm"></div>
+                <div className="relative z-10 flex items-center gap-4 text-[#672cb9] font-bold w-full">
+                  <LayoutDashboard size={20} />
+                  <span>Dashboard</span>
+                </div>
+              </Link>
+              <Link href="/dashboard/library" className="flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-white/5 text-white/80 hover:text-white transition-colors font-medium">
+                <Library size={20} />
+                <span>Library</span>
+              </Link>
+              <Link href="/dashboard/leaderboard" className="flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-white/5 text-white/80 hover:text-white transition-colors font-medium">
+                <Trophy size={20} />
+                <span>Leaderboard</span>
+              </Link>
+              <Link href="/dashboard/kolaborasi" className="flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-white/5 text-white/80 hover:text-white transition-colors font-medium">
+                <Users size={20} />
+                <span>Ruang Kolaborasi</span>
+              </Link>
+            </nav>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Upload Popup */}
       {isUploadPopupOpen && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
           <div 
             className="absolute inset-0 bg-black/40 backdrop-blur-[2px]"
             onClick={() => { if(!isUploading) setIsUploadPopupOpen(false); }}
           />
-          <div className="relative w-full max-w-4xl bg-gradient-to-b from-[#f3f4f6] to-[#e5e7eb] rounded-[32px] shadow-2xl p-10 animate-in fade-in zoom-in-95 duration-200">
-            <div className="flex items-center justify-between mb-8">
-              <h2 className="text-[26px] font-bold text-slate-800 flex-1 text-center pl-10">Pilih Tipe Upload</h2>
+          <div className="relative w-full max-w-4xl bg-gradient-to-b from-[#f3f4f6] to-[#e5e7eb] rounded-[24px] md:rounded-[32px] shadow-2xl p-6 md:p-10 max-h-[95vh] overflow-y-auto animate-in fade-in zoom-in-95 duration-200">
+            <div className="flex items-start md:items-center justify-between mb-6 md:mb-8">
+              <h2 className="text-[22px] md:text-[26px] font-bold text-slate-800 flex-1 text-center pl-8 md:pl-10">Pilih Tipe Upload</h2>
               <button 
                 onClick={() => setIsUploadPopupOpen(false)}
                 disabled={isUploading}
-                className="text-slate-500 hover:text-slate-800 bg-transparent rounded-full p-2 transition-colors ml-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="text-slate-500 hover:text-slate-800 bg-white/50 hover:bg-white rounded-full p-2 transition-colors ml-2 disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
               >
-                <X size={28} />
+                <X size={24} className="md:w-7 md:h-7" />
               </button>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-5">
               {isUploading ? (
                 <div className="col-span-1 md:col-span-3 flex flex-col items-center justify-center p-12 bg-white/70 backdrop-blur rounded-[24px] border border-white">
                    <div className="flex gap-3 mb-6">

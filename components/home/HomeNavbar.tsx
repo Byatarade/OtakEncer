@@ -42,7 +42,7 @@ export function HomeNavbar({
             <div className="relative w-7 h-7 md:w-8 md:h-8">
               <Image src="/assets/logo.svg" alt="Logo" fill className="object-contain" />
             </div>
-            <span className="font-bold text-[16px] md:text-[18px] tracking-tight text-gray-900">
+            <span className="font-bold text-[18px] md:text-[18px] tracking-tight text-gray-900">
               Otak<span className="text-[#672cb9]">Encer</span>
             </span>
           </Link>
