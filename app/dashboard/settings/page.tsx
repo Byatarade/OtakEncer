@@ -97,152 +97,154 @@ export default function SettingsPage() {
   const remaining = Math.max(MAX_LIMIT - usageCount, 0);
 
   return (
-    <div className="min-h-full flex flex-col pt-6 md:pt-8 px-6 md:px-12 pb-24 max-w-[1200px] mx-auto w-full font-['Montserrat',sans-serif]">
+    <div className="min-h-full flex flex-col md:flex-row pt-6 md:pt-12 px-6 md:px-12 pb-24 max-w-[1240px] mx-auto w-full font-['Inter',sans-serif] gap-8">
       
-      {/* Header Premium */}
-      <motion.div 
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, ease: "easeOut" }}
-        className="relative bg-white rounded-[32px] p-8 md:p-10 mb-8 shadow-xl shadow-gray-200/50 border border-gray-100 overflow-hidden"
-      >
-        <div className="absolute top-0 right-0 w-full h-full overflow-hidden pointer-events-none rounded-[32px]">
-          <div className="absolute -top-32 -right-32 w-96 h-96 bg-[#672cb9] opacity-[0.03] rounded-full blur-[100px]"></div>
-          <div className="absolute -bottom-32 -left-32 w-96 h-96 bg-[#ffa515] opacity-[0.03] rounded-full blur-[100px]"></div>
-        </div>
-
-        <div className="relative z-10 flex items-center gap-6">
-          <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-[#672cb9] to-[#9254e8] shadow-lg flex items-center justify-center text-white shrink-0">
-            <SettingsIcon size={36} />
-          </div>
-          <div>
-            <h1 className="text-3xl md:text-4xl font-extrabold text-gray-900 tracking-tight mb-2">
-              Pengaturan Akun
+      {/* Sidebar Navigation */}
+      <div className="w-full md:w-[280px] shrink-0">
+        <div className="sticky top-24">
+          <motion.div 
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5 }}
+            className="mb-8"
+          >
+            <h1 className="text-2xl md:text-3xl font-extrabold text-[#111827] tracking-tight mb-2">
+              Pengaturan
             </h1>
-            <p className="text-gray-500 font-medium">Kelola informasi profil dan pantau penggunaan kuota AI Anda.</p>
-          </div>
-        </div>
-      </motion.div>
+            <p className="text-[#6b7280] text-sm font-medium">Kelola preferensi akun Anda.</p>
+          </motion.div>
 
-      {/* Tabs */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-4 scrollbar-hide no-scrollbar flex-nowrap shrink-0 mb-6">
-        <div className="flex bg-white p-1.5 rounded-2xl shadow-sm border border-gray-100">
-          <button
-            onClick={() => setActiveTab('profile')}
-            className={`relative flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-sm transition-all duration-300 whitespace-nowrap z-10 ${
-              activeTab === 'profile' ? 'text-white' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
-            }`}
-          >
-            {activeTab === 'profile' && (
-              <motion.div layoutId="settingTab" className="absolute inset-0 bg-[#672cb9] rounded-xl -z-10 shadow-md shadow-[#672cb9]/30" />
-            )}
-            <User size={18} /> Profil
-          </button>
-          <button
-            onClick={() => setActiveTab('quota')}
-            className={`relative flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-sm transition-all duration-300 whitespace-nowrap z-10 ${
-              activeTab === 'quota' ? 'text-white' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
-            }`}
-          >
-            {activeTab === 'quota' && (
-              <motion.div layoutId="settingTab" className="absolute inset-0 bg-[#672cb9] rounded-xl -z-10 shadow-md shadow-[#672cb9]/30" />
-            )}
-            <BatteryCharging size={18} /> Kuota AI (Token)
-          </button>
+          <nav className="flex flex-row md:flex-col gap-2 overflow-x-auto md:overflow-visible pb-2 md:pb-0 scrollbar-hide no-scrollbar">
+            <button
+              onClick={() => setActiveTab('profile')}
+              className={`relative flex items-center gap-3 px-4 py-3.5 rounded-2xl font-semibold text-sm transition-all duration-300 w-full text-left shrink-0 md:shrink ${
+                activeTab === 'profile' ? 'text-[#672cb9] bg-[#f5f3ff] shadow-sm shadow-[#672cb9]/10' : 'text-[#6b7280] hover:bg-[#f9fafb] hover:text-[#374151]'
+              }`}
+            >
+              <User size={18} className={activeTab === 'profile' ? 'text-[#672cb9]' : 'text-[#9ca3af]'} /> 
+              Profil Saya
+              {activeTab === 'profile' && (
+                <motion.div layoutId="activeInd" className="absolute left-0 top-[15%] bottom-[15%] w-1 bg-[#672cb9] rounded-r-full hidden md:block" />
+              )}
+            </button>
+            <button
+              onClick={() => setActiveTab('quota')}
+              className={`relative flex items-center gap-3 px-4 py-3.5 rounded-2xl font-semibold text-sm transition-all duration-300 w-full text-left shrink-0 md:shrink ${
+                activeTab === 'quota' ? 'text-[#672cb9] bg-[#f5f3ff] shadow-sm shadow-[#672cb9]/10' : 'text-[#6b7280] hover:bg-[#f9fafb] hover:text-[#374151]'
+              }`}
+            >
+              <BatteryCharging size={18} className={activeTab === 'quota' ? 'text-[#672cb9]' : 'text-[#9ca3af]'} /> 
+              Kuota AI & Paket
+              {activeTab === 'quota' && (
+                <motion.div layoutId="activeInd" className="absolute left-0 top-[15%] bottom-[15%] w-1 bg-[#672cb9] rounded-r-full hidden md:block" />
+              )}
+            </button>
+          </nav>
         </div>
       </div>
 
-      {/* Konten */}
-      <div className="grid grid-cols-1 gap-8">
-        
+      {/* Main Content Area */}
+      <div className="flex-1 w-full min-w-0">
         <AnimatePresence mode="wait">
           {/* TAB: PROFILE */}
           {activeTab === 'profile' && (
             <motion.div
               key="profile"
-              initial={{ opacity: 0, y: 10 }}
+              initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              className="bg-white rounded-3xl p-8 md:p-10 shadow-xl shadow-gray-200/40 border border-gray-100"
+              exit={{ opacity: 0, y: -15 }}
+              transition={{ duration: 0.4 }}
+              className="flex flex-col gap-6"
             >
-              <h2 className="text-2xl font-bold text-gray-800 mb-8 flex items-center gap-3">
-                <ShieldCheck className="text-[#672cb9]" size={24} /> Informasi Personal
-              </h2>
+              {/* Header Box */}
+              <div className="bg-white rounded-[28px] p-6 shadow-[0_2px_20px_rgba(0,0,0,0.03)] border border-[#f3f4f6]">
+                 <div className="flex gap-5 items-center">
+                    <div className="relative w-[72px] h-[72px] rounded-full overflow-hidden bg-[#f3f4f6] flex items-center justify-center shrink-0 border border-[#e5e7eb]">
+                      {avatar ? (
+                        <Image src={avatar} alt="Avatar" fill className="object-cover" />
+                      ) : (
+                        <span className="font-bold text-2xl text-[#9ca3af]">{name.charAt(0).toUpperCase()}</span>
+                      )}
+                    </div>
+                    <div>
+                      <h2 className="text-[#111827] font-bold text-xl mb-0.5">{name || 'Pengguna'}</h2>
+                      <p className="text-[#6b7280] text-sm flex items-center gap-1.5 font-medium">
+                        <Mail size={14} className="text-[#9ca3af]"/> {user?.email}
+                      </p>
+                    </div>
+                 </div>
+              </div>
 
-              {successMsg && (
-                <div className="mb-6 p-4 bg-green-50 border border-green-200 text-green-700 rounded-xl flex items-start gap-3">
-                  <Info size={20} className="shrink-0 mt-0.5" />
-                  <p className="text-sm font-medium">{successMsg}</p>
-                </div>
-              )}
-              {errorMsg && (
-                <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-700 rounded-xl flex items-start gap-3">
-                  <Info size={20} className="shrink-0 mt-0.5" />
-                  <p className="text-sm font-medium">{errorMsg}</p>
-                </div>
-              )}
-
-              <form onSubmit={handleUpdateProfile} className="max-w-2xl">
-                {/* Avatar Preview */}
-                <div className="mb-8 flex items-center gap-6">
-                  <div className="relative w-24 h-24 rounded-full overflow-hidden bg-gray-100 border-4 border-white shadow-xl flex items-center justify-center shrink-0">
-                    {avatar ? (
-                      <Image src={avatar} alt="Avatar" fill className="object-cover" />
-                    ) : (
-                      <User size={40} className="text-gray-400" />
-                    )}
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-gray-800 text-lg mb-1">Foto Profil</h3>
-                    <p className="text-sm text-gray-500 mb-3">Tautan URL foto profil Anda saat ini.</p>
-                  </div>
+              {/* Form Box */}
+              <div className="bg-white rounded-[28px] p-6 md:p-8 shadow-[0_2px_20px_rgba(0,0,0,0.03)] border border-[#f3f4f6]">
+                <div className="mb-6">
+                  <h3 className="text-lg font-bold text-[#111827] mb-1">Informasi Personal</h3>
+                  <p className="text-sm text-[#6b7280]">Perbarui foto dan nama yang akan ditampilkan di platform.</p>
                 </div>
 
-                <div className="space-y-6">
-                  <div>
-                    <label className="block text-sm font-bold text-gray-700 mb-2">Nama Lengkap</label>
-                    <Input 
-                      icon={<User size={18} />}
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      placeholder="Masukkan nama lengkap Anda"
-                      required
-                    />
+                {successMsg && (
+                  <motion.div initial={{opacity:0, height:0}} animate={{opacity:1, height:'auto'}} className="mb-6 p-4 bg-[#ecfdf5] border border-[#d1fae5] rounded-2xl flex items-start gap-3">
+                    <ShieldCheck size={20} className="text-[#059669] shrink-0 mt-0.5" />
+                    <p className="text-sm font-medium text-[#065f46]">{successMsg}</p>
+                  </motion.div>
+                )}
+                {errorMsg && (
+                  <motion.div initial={{opacity:0, height:0}} animate={{opacity:1, height:'auto'}} className="mb-6 p-4 bg-[#fef2f2] border border-[#fee2e2] rounded-2xl flex items-start gap-3">
+                    <Info size={20} className="text-[#dc2626] shrink-0 mt-0.5" />
+                    <p className="text-sm font-medium text-[#991b1b]">{errorMsg}</p>
+                  </motion.div>
+                )}
+
+                <form onSubmit={handleUpdateProfile} className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-3xl">
+                    <div className="space-y-2">
+                      <label className="text-[13px] font-bold text-[#4b5563] uppercase tracking-wide">Nama Lengkap</label>
+                      <Input 
+                        icon={<User size={18} />}
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        placeholder="Cth: John Doe"
+                        required
+                        className="bg-[#f9fafb] border-[#e5e7eb] focus:bg-white"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <label className="text-[13px] font-bold text-[#4b5563] uppercase tracking-wide">Alamat Email <span className="opacity-50 lowercase tracking-normal font-normal">(Read only)</span></label>
+                      <Input 
+                        icon={<Mail size={18} />}
+                        value={user?.email || ''}
+                        disabled
+                        className="bg-[#f3f4f6] text-[#9ca3af] border-transparent cursor-not-allowed"
+                      />
+                    </div>
                   </div>
 
-                  <div>
-                    <label className="block text-sm font-bold text-gray-700 mb-2">Alamat Email <span className="text-gray-400 font-normal">(Tidak dapat diubah)</span></label>
-                    <Input 
-                      icon={<Mail size={18} />}
-                      value={user?.email || ''}
-                      disabled
-                      className="bg-gray-50 text-gray-500 cursor-not-allowed"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-bold text-gray-700 mb-2">URL Foto Profil (Avatar)</label>
+                  <div className="space-y-2 max-w-3xl">
+                    <label className="text-[13px] font-bold text-[#4b5563] uppercase tracking-wide">URL Avatar</label>
                     <Input 
                       icon={<Camera size={18} />}
                       value={avatar}
                       onChange={(e) => setAvatar(e.target.value)}
-                      placeholder="https://contoh.com/foto-saya.jpg"
+                      placeholder="https://... image.jpg"
+                      className="bg-[#f9fafb] border-[#e5e7eb] focus:bg-white"
                     />
+                    <p className="text-xs text-[#9ca3af] mt-1 ml-1">Paste link gambar secara langsung. Mendukung format JPG, PNG.</p>
                   </div>
                   
-                  <div className="pt-6 border-t border-gray-100">
+                  <div className="pt-6 border-t border-[#f3f4f6] flex justify-end">
                     <Button 
                       type="submit" 
                       variant="primary" 
-                      className="w-full sm:w-auto h-12 px-8"
+                      className="h-12 px-8 rounded-full font-bold shadow-md shadow-[#672cb9]/20"
                       disabled={loading}
                       leftIcon={loading ? <Loader2 size={18} className="animate-spin" /> : <Save size={18} />}
                     >
-                      {loading ? 'Menyimpan...' : 'Simpan Perubahan'}
+                      {loading ? 'Menyimpan...' : 'Simpan Profil'}
                     </Button>
                   </div>
-                </div>
-              </form>
+                </form>
+              </div>
             </motion.div>
           )}
 
@@ -250,71 +252,90 @@ export default function SettingsPage() {
           {activeTab === 'quota' && (
             <motion.div
               key="quota"
-              initial={{ opacity: 0, y: 10 }}
+              initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              className="bg-white rounded-3xl p-8 md:p-10 shadow-xl shadow-gray-200/40 border border-gray-100"
+              exit={{ opacity: 0, y: -15 }}
+              transition={{ duration: 0.4 }}
+              className="flex flex-col gap-6"
             >
-              <h2 className="text-2xl font-bold text-gray-800 mb-8 flex items-center gap-3">
-                <Sparkles className="text-[#ffa515]" size={24} /> Penggunaan Kuota Harian (Gemini AI)
-              </h2>
+              <div className="bg-white rounded-[28px] p-6 md:p-10 shadow-[0_2px_20px_rgba(0,0,0,0.03)] border border-[#f3f4f6] w-full max-w-3xl relative overflow-hidden">
+                {/* Decorative background shape */}
+                <div className="absolute -top-32 -right-32 w-80 h-80 bg-gradient-to-br from-[#ffa515]/20 to-[#672cb9]/10 rounded-full blur-[80px] pointer-events-none"></div>
 
-              {usageLoading ? (
-                <div className="flex items-center justify-center py-12">
-                  <Loader2 size={32} className="animate-spin text-gray-400" />
-                </div>
-              ) : (
-                <div className="max-w-2xl bg-gradient-to-br from-[#672cb9]/5 to-[#672cb9]/10 border border-[#672cb9]/20 rounded-3xl p-8 relative overflow-hidden">
-                  
-                  <div className="flex items-center justify-between mb-4 relative z-10">
-                    <h3 className="font-bold text-gray-800 text-lg">Sisa Ekstraksi Pintar Hari ini</h3>
-                    <div className="bg-white px-4 py-1.5 rounded-full font-bold text-[#672cb9] shadow-sm tracking-wide text-sm border border-[#672cb9]/10">
-                      {remaining} dari {MAX_LIMIT} tersisa
+                <div className="relative z-10">
+                  <div className="flex items-start justify-between mb-8">
+                    <div>
+                      <div className="flex items-center gap-2 text-[#ffa515] font-bold uppercase tracking-widest text-[11px] mb-2">
+                        <Sparkles size={14} /> Plan Saat Ini
+                      </div>
+                      <h2 className="text-2xl font-bold text-[#111827]">Free Tier</h2>
+                    </div>
+                    
+                    <div className="bg-[#f8fafc] px-4 py-2 rounded-2xl border border-[#e2e8f0] flex flex-col items-center">
+                      <span className="text-xs text-[#64748b] font-medium">Sisa Kuota</span>
+                      {usageLoading ? (
+                        <Loader2 size={16} className="animate-spin mt-1 mx-2" />
+                      ) : (
+                        <span className="text-xl font-bold text-[#0f172a] leading-none mt-1">{remaining}<span className="text-sm font-medium text-[#94a3b8] ml-1">/{MAX_LIMIT}</span></span>
+                      )}
                     </div>
                   </div>
 
-                  {/* Progress Bar Container */}
-                  <div className="h-4 w-full bg-white/60 rounded-full overflow-hidden mt-6 mb-6 shadow-inner relative z-10 p-0.5">
-                    <motion.div 
-                      initial={{ width: 0 }}
-                      animate={{ width: `${percentage}%` }}
-                      transition={{ duration: 1, ease: 'easeOut' }}
-                      className={`h-full rounded-full ${
-                        remaining === 0 ? 'bg-red-500' : 
-                        remaining === 1 ? 'bg-orange-400' : 'bg-gradient-to-r from-[#672cb9] to-[#9254e8]'
-                      }`}
-                    />
-                  </div>
+                  {!usageLoading && (
+                    <>
+                      {/* Detailed Usage Bar */}
+                      <div className="mb-8">
+                        <div className="flex justify-between text-sm font-medium mb-2">
+                          <span className="text-[#64748b]">Telah Terpakai: {usageCount}</span>
+                          <span className={remaining === 0 ? "text-[#ef4444]" : "text-[#10b981]"}>
+                            {remaining === 0 ? "Habis" : `${percentage.toFixed(0)}% Digunakan`}
+                          </span>
+                        </div>
+                        <div className="h-4 w-full bg-[#f1f5f9] rounded-full overflow-hidden shadow-inner p-1">
+                          <motion.div 
+                            initial={{ width: 0 }}
+                            animate={{ width: `${percentage}%` }}
+                            transition={{ duration: 1, ease: 'easeOut' }}
+                            className={`h-full rounded-full ${
+                              remaining === 0 ? 'bg-[#ef4444]' : 
+                              remaining === 1 ? 'bg-[#f59e0b]' : 'bg-gradient-to-r from-[#672cb9] to-[#8b5cf6]'
+                            }`}
+                          />
+                        </div>
+                      </div>
 
-                  <p className="text-sm text-gray-600 font-medium leading-relaxed relative z-10">
-                    Kamu telah menggunakan <strong className="text-gray-900">{usageCount}</strong> dari <strong className="text-gray-900">{MAX_LIMIT}</strong> kuota ekstraksi dokumen (PDF/PPTX/Video) hari ini.
-                  </p>
-
-                  {remaining === 0 && (
-                    <div className="mt-6 p-4 bg-red-100 border border-red-200 rounded-xl flex items-start gap-3 relative z-10">
-                       <Info size={20} className="text-red-600 shrink-0 mt-0.5" />
-                       <p className="text-sm font-semibold text-red-800">
-                         Kuota harian Anda telah habis. Limit ini berguna agar kami dapat mempertahankan ketersediaan server AI (Gemini Free Tier). Kuota akan di-reset besok tengah malam secara otomatis.
-                       </p>
-                    </div>
+                      {remaining === 0 ? (
+                        <div className="p-5 bg-[#fef2f2] border border-[#fee2e2] rounded-2xl flex items-start gap-4">
+                           <div className="w-10 h-10 rounded-full bg-[#fee2e2] flex items-center justify-center shrink-0">
+                             <Info size={20} className="text-[#ef4444]" />
+                           </div>
+                           <div>
+                             <h4 className="text-[#991b1b] font-bold text-sm mb-1">Batas Maksimal Tercapai</h4>
+                             <p className="text-sm text-[#b91c1c] leading-relaxed">
+                               Kuota harian Anda telah habis untuk menghemat biaya server AI. Kuota akan otomatis di-reset pada tengah malam (00:00).
+                             </p>
+                           </div>
+                        </div>
+                      ) : (
+                        <div className="p-5 bg-[#f8fafc] border border-[#e2e8f0] rounded-2xl flex items-start gap-4">
+                           <div className="w-10 h-10 rounded-full bg-[#e0e7ff] flex items-center justify-center shrink-0">
+                             <BatteryCharging size={20} className="text-[#6366f1]" />
+                           </div>
+                           <div>
+                             <h4 className="text-[#1e293b] font-bold text-sm mb-1">Informasi Limit Harian</h4>
+                             <p className="text-[13px] text-[#475569] leading-relaxed">
+                               Setiap pengguna memiliki limit pemrosesan dokumen (PDF/Audio/Video) menggunakan AI per harinya untuk menghindari penyalahgunaan sistem.
+                             </p>
+                           </div>
+                        </div>
+                      )}
+                    </>
                   )}
-                  {remaining > 0 && (
-                    <div className="mt-6 p-4 bg-blue-50 border border-blue-100 rounded-xl flex items-start gap-3 relative z-10">
-                       <Info size={20} className="text-blue-600 shrink-0 mt-0.5" />
-                       <p className="text-sm font-semibold text-blue-800">
-                         Limit ini di-reset setiap pergantian hari. Pastikan Anda mengunggah dokumen yang valid agar kuota tidak terbuang sia-sia.
-                       </p>
-                    </div>
-                  )}
-
-                  {/* Aesthetic BG ring */}
-                  <div className="absolute -right-20 -bottom-20 w-64 h-64 border-[40px] border-[#672cb9]/5 rounded-full z-0"></div>
                 </div>
-              )}
+              </div>
             </motion.div>
           )}
         </AnimatePresence>
-
       </div>
     </div>
   );
