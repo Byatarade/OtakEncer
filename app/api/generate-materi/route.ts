@@ -19,6 +19,44 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'User ID tidak ditemukan. Harap login ulang.' }, { status: 401 });
     }
 
+    // --- CHECK QUOTA LIMIT (MAX 3 PER DAY) ---
+    const startOfDay = new Date();
+    startOfDay.setHours(0, 0, 0, 0);
+    const authHeader = request.headers.get('Authorization') || '';
+    
+    // Gunakan fungsi custom fetch untuk menghindari policy RLS
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        global: {
+          fetch: async (url, options) => {
+            const headers = new Headers(options?.headers);
+            headers.set('Authorization', authHeader);
+            return fetch(url, { ...options, headers });
+          }
+        }
+      }
+    );
+
+    const { count: usageCount, error: countError } = await supabase
+      .from('materials')
+      .select('*', { count: 'exact', head: true })
+      .eq('user_id', userId)
+      .gte('created_at', startOfDay.toISOString());
+
+    if (countError) {
+      console.error('Failed to check quota:', countError);
+      return NextResponse.json({ error: 'Gagal mengecek kuota pengguna.' }, { status: 500 });
+    }
+
+    if ((usageCount || 0) >= 3) {
+      return NextResponse.json({ 
+        error: 'Kuota harian Anda telah habis (Maks. 3 kali sehari). Silakan kembali besok.' 
+      }, { status: 429 });
+    }
+    // --- END CHECK QUOTA ---
+
     let extractedText = '';
     let sourceType = 'other';
     let title = 'Materi Baru';
@@ -95,22 +133,6 @@ ${safeText}
     const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
     const aiResult = await model.generateContent(contentsToAI);
     const aiSummary = aiResult.response.text();
-
-    // Inisialisasi Supabase menggunakan Token User untuk RLS
-    const authHeader = request.headers.get('Authorization') || '';
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      {
-        global: {
-          fetch: async (url, options) => {
-            const headers = new Headers(options?.headers);
-            headers.set('Authorization', authHeader);
-            return fetch(url, { ...options, headers });
-          }
-        }
-      }
-    );
 
     // Simpan ke Database
     const { data, error } = await supabase.from('materials').insert([
