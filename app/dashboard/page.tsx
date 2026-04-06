@@ -14,15 +14,49 @@ export default function Dashboard() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isUploadPopupOpen, setIsUploadPopupOpen] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  const [alertData, setAlertData] = useState<{title: string, message: string, type: 'error' | 'success'} | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file || !user) return;
 
-    // Optional client side check for fast feedback
-    if (file.size > 10 * 1024 * 1024) {
-      alert("Ukuran dokumen melebihi batas 10MB!");
+    // Reset input value so same file can be selected again if needed
+    event.target.value = '';
+
+    const isAudioInput = event.target.accept.includes('audio');
+    const isDocInput = event.target.accept.includes('.pdf');
+
+    const isAudioFile = file.type.startsWith('audio/') || !!file.name.match(/\.(mp3|mp4|mpeg|mpga|m4a|wav|webm)$/i);
+    const isDocFile = !!file.name.match(/\.(pdf|docx|pptx)$/i);
+
+    // Cross-validation
+    if (isAudioInput && !isAudioFile) {
+       setAlertData({
+         title: 'Format Tidak Valid',
+         message: 'Harap unggah file audio (MP3, WAV, M4A, dll) pada menu Upload Audio.',
+         type: 'error'
+       });
+       return;
+    }
+    if (isDocInput && !isDocFile) {
+       setAlertData({
+         title: 'Format Tidak Valid',
+         message: 'Harap unggah file dokumen (PDF, DOCX, PPTX) pada menu Upload Dokumen.',
+         type: 'error'
+       });
+       return;
+    }
+
+    const isAudio = isAudioFile;
+    const maxSize = isAudio ? 25 * 1024 * 1024 : 10 * 1024 * 1024; // 25MB audio, 10MB doc
+
+    if (file.size > maxSize) {
+      setAlertData({
+        title: 'File Terlalu Besar',
+        message: `Ukuran file melebihi batas maksimal (${isAudio ? '25MB' : '10MB'})!`,
+        type: 'error'
+      });
       return;
     }
 
@@ -45,14 +79,30 @@ export default function Dashboard() {
       const result = await response.json();
 
       if (!response.ok) {
-         alert(`Gagal: ${result.error || 'Terjadi kesalahan'}`);
+         setAlertData({
+           title: 'Gagal Memproses',
+           message: result.error || 'Terjadi kesalahan saat memproses materi.',
+           type: 'error'
+         });
       } else {
          // Sukses
          setIsUploadPopupOpen(false);
-         router.push('/dashboard/library');
+         setAlertData({
+           title: 'Berhasil!',
+           message: 'Materi berhasil dibuat.',
+           type: 'success'
+         });
+         setTimeout(() => {
+           setAlertData(null);
+           router.push('/dashboard/library');
+         }, 1500);
       }
     } catch (err: any) {
-       alert("Gagal mengunggah file. Silakan coba lagi.");
+       setAlertData({
+         title: 'Terjadi Kesalahan',
+         message: 'Gagal mengunggah file. Periksa koneksi internet Anda dan coba lagi.',
+         type: 'error'
+       });
        console.error("Upload error:", err);
     } finally {
        setIsUploading(false);
@@ -326,9 +376,9 @@ export default function Dashboard() {
               </button>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
               {isUploading ? (
-                <div className="col-span-1 md:col-span-2 flex flex-col items-center justify-center p-12 bg-white/70 backdrop-blur rounded-[24px] border border-white">
+                <div className="col-span-1 md:col-span-3 flex flex-col items-center justify-center p-12 bg-white/70 backdrop-blur rounded-[24px] border border-white">
                    <div className="flex gap-3 mb-6">
                      <Sparkles className="text-[#672cb9] animate-bounce" size={32} />
                    </div>
@@ -355,8 +405,26 @@ export default function Dashboard() {
                     />
                   </div>
 
+                  {/* Audio File */}
+                  <div className="relative flex flex-col items-start bg-white/70 backdrop-blur hover:bg-white hover:shadow-lg p-7 rounded-[24px] border border-white transition-all text-left group overflow-hidden cursor-pointer">
+                    <div className="w-[52px] h-[52px] rounded-2xl bg-gradient-to-br from-[#10b981] to-[#047857] flex items-center justify-center mb-5 shadow-sm group-hover:scale-105 transition-transform relative">
+                      <Volume2 className="text-white" size={26} />
+                      <span className="absolute text-[8px] font-bold text-[#672cb9] bg-white px-1 leading-none rounded-sm mt-3.5">MP3</span>
+                    </div>
+                    <h3 className="text-[20px] font-bold text-slate-800 mb-2.5">Upload Audio</h3>
+                    <p className="text-[15px] text-slate-600 leading-relaxed pr-2 mb-2">Unggah rekaman suara MP3, WAV (Max 10MB/25MB).</p>
+                    <input 
+                      type="file" 
+                      accept="audio/*, .mp3, .wav, .m4a, .mp4, .mpeg, .mpga, .webm"
+                      onChange={handleFileUpload}
+                      disabled={isUploading}
+                      className="absolute inset-0 w-full h-full opacity-0 outline-none cursor-pointer z-10"
+                      title="Pilih File Audio"
+                    />
+                  </div>
+
                   {/* Link Artikel */}
-                  <button onClick={() => alert('Fitur web link segera hadir!')} className="flex flex-col items-start bg-white/70 backdrop-blur p-7 rounded-[24px] border border-white transition-all text-left opacity-60 cursor-not-allowed">
+                  <button onClick={() => setAlertData({ title: 'Segera Hadir', message: 'Fitur web link sedang dalam pengembangan kawan.', type: 'error' })} className="flex flex-col items-start bg-white/70 backdrop-blur p-7 rounded-[24px] border border-white transition-all text-left opacity-60 cursor-not-allowed">
                     <div className="w-[52px] h-[52px] rounded-2xl bg-gradient-to-br from-[#0883ff] to-[#064a8f] flex items-center justify-center mb-5 shadow-sm">
                       <LinkIcon className="text-white" size={26} strokeWidth={2.5} />
                     </div>
@@ -366,6 +434,26 @@ export default function Dashboard() {
                 </>
               )}
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* CUSTOM ALERT POPUP */}
+      {alertData && (
+        <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/30 backdrop-blur-[2px] animate-in fade-in" onClick={() => setAlertData(null)}></div>
+          <div className="relative bg-white rounded-3xl p-6 sm:p-8 max-w-sm w-full shadow-2xl animate-in zoom-in-95 flex flex-col items-center text-center">
+            <div className={`w-16 h-16 rounded-full flex items-center justify-center mb-4 ${alertData.type === 'error' ? 'bg-rose-100 text-rose-500' : 'bg-emerald-100 text-emerald-500'}`}>
+              {alertData.type === 'error' ? <X size={32} strokeWidth={3} /> : <CheckCircle2 size={32} strokeWidth={3} />}
+            </div>
+            <h3 className="text-xl font-bold text-slate-800 mb-2">{alertData.title}</h3>
+            <p className="text-slate-500 mb-6">{alertData.message}</p>
+            <button 
+              onClick={() => setAlertData(null)}
+              className={`w-full py-3 rounded-xl font-bold text-white transition-colors ${alertData.type === 'error' ? 'bg-rose-500 hover:bg-rose-600' : 'bg-emerald-500 hover:bg-emerald-600'}`}
+            >
+              Tutup
+            </button>
           </div>
         </div>
       )}
