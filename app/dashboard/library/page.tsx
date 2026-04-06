@@ -100,7 +100,7 @@ export default function LibraryPage() {
   });
 
   return (
-    <div className="min-h-full flex flex-col pt-6 md:pt-8 px-6 md:px-12 pb-24 max-w-[1600px] mx-auto w-full font-['Montserrat',sans-serif]">
+    <div className="min-h-full flex flex-col pt-6 md:pt-8 px-6 md:px-12 pb-24 w-full font-['Montserrat',sans-serif] overflow-x-hidden">
       
       {/* Hero Header Selection - Premium Redesign */}
       <motion.div 
@@ -173,7 +173,7 @@ export default function LibraryPage() {
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 mb-8">
         
         {/* Animated Tabs */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide no-scrollbar -mx-6 px-6 lg:mx-0 lg:px-0 flex-nowrap shrink-0">
+        <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide no-scrollbar flex-nowrap shrink-0">
           <div className="flex bg-white p-1.5 rounded-2xl shadow-sm border border-gray-100">
             {tabs.map((tab) => (
               <button
