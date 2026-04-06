@@ -14,6 +14,8 @@ export default function Dashboard() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isUploadPopupOpen, setIsUploadPopupOpen] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  const [showLinkInput, setShowLinkInput] = useState(false);
+  const [linkUrl, setLinkUrl] = useState('');
   const [alertData, setAlertData] = useState<{title: string, message: string, type: 'error' | 'success'} | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -104,6 +106,69 @@ export default function Dashboard() {
          type: 'error'
        });
        console.error("Upload error:", err);
+    } finally {
+       setIsUploading(false);
+    }
+  };
+
+  const handleLinkSubmit = async () => {
+    if (!linkUrl || !user) return;
+
+    if (!linkUrl.includes('youtube.com') && !linkUrl.includes('youtu.be')) {
+      setAlertData({
+         title: 'Link Tidak Valid',
+         message: 'Harap masukkan link URL dari YouTube yang benar (contoh: https://youtu.be/xxx).',
+         type: 'error'
+      });
+      return;
+    }
+
+    try {
+      setIsUploading(true);
+      setShowLinkInput(false);
+      
+      const formData = new FormData();
+      formData.append('link', linkUrl);
+      formData.append('user_id', user.id);
+
+      const { data: { session } } = await supabase.auth.getSession();
+
+      const response = await fetch('/api/generate-materi', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${session?.access_token}`
+        },
+        body: formData,
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+         setAlertData({
+           title: 'Gagal Memproses Video',
+           message: result.error || 'Terjadi kesalahan saat memproses video YouTube.',
+           type: 'error'
+         });
+      } else {
+         setLinkUrl('');
+         setIsUploadPopupOpen(false);
+         setAlertData({
+           title: 'Berhasil!',
+           message: 'Materi dari YouTube berhasil dibuat.',
+           type: 'success'
+         });
+         setTimeout(() => {
+           setAlertData(null);
+           router.push('/dashboard/library');
+         }, 1500);
+      }
+    } catch (err: any) {
+       setAlertData({
+         title: 'Terjadi Kesalahan',
+         message: 'Gagal memproses link YouTube. Periksa koneksi internet Anda.',
+         type: 'error'
+       });
+       console.error("Youtube error:", err);
     } finally {
        setIsUploading(false);
     }
@@ -423,14 +488,53 @@ export default function Dashboard() {
                     />
                   </div>
 
-                  {/* Link Artikel */}
-                  <button onClick={() => setAlertData({ title: 'Segera Hadir', message: 'Fitur web link sedang dalam pengembangan kawan.', type: 'error' })} className="flex flex-col items-start bg-white/70 backdrop-blur p-7 rounded-[24px] border border-white transition-all text-left opacity-60 cursor-not-allowed">
-                    <div className="w-[52px] h-[52px] rounded-2xl bg-gradient-to-br from-[#0883ff] to-[#064a8f] flex items-center justify-center mb-5 shadow-sm">
-                      <LinkIcon className="text-white" size={26} strokeWidth={2.5} />
+                  {/* Link YouTube */}
+                  {!showLinkInput ? (
+                    <button onClick={() => setShowLinkInput(true)} className="flex flex-col items-start bg-white/70 backdrop-blur hover:bg-white hover:shadow-lg p-7 rounded-[24px] border border-white transition-all text-left outline-none">
+                      <div className="w-[52px] h-[52px] rounded-2xl bg-gradient-to-br from-[#ef4444] to-[#991b1b] flex items-center justify-center mb-5 shadow-sm group-hover:scale-105 transition-transform relative">
+                        <MonitorPlay className="text-white" size={26} strokeWidth={2} />
+                      </div>
+                      <h3 className="text-[20px] font-bold text-slate-800 mb-2.5">Link YouTube</h3>
+                      <p className="text-[15px] text-slate-600 leading-relaxed pr-2">Ambil materi dan poin penting dari video YouTube lewat URL.</p>
+                    </button>
+                  ) : (
+                    <div className="flex flex-col items-start bg-white p-7 rounded-[24px] border border-slate-200 shadow-md transition-all text-left w-full h-full relative">
+                      <button 
+                         onClick={() => setShowLinkInput(false)} 
+                         className="absolute top-4 right-4 text-slate-400 hover:text-rose-500 transition-colors"
+                      >
+                         <X size={20} />
+                      </button>
+                      <div className="w-[42px] h-[42px] rounded-xl bg-gradient-to-br from-[#ef4444] to-[#991b1b] flex items-center justify-center mb-5 shadow-sm">
+                        <MonitorPlay className="text-white" size={22} />
+                      </div>
+                      <h3 className="text-[20px] font-bold text-slate-800 mb-2">Paste Link Youtube</h3>
+                      <p className="text-[13px] text-slate-500 mb-4">Pastikan video YouTube publik & punya teks subtitle (CC).</p>
+                      
+                      <div className="relative w-full mb-3 flex gap-2">
+                        <div className="relative flex-1">
+                          <LinkIcon className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+                          <input 
+                            disabled={isUploading}
+                            type="url" 
+                            placeholder="https://youtu.be/..." 
+                            value={linkUrl}
+                            onChange={(e) => setLinkUrl(e.target.value)}
+                            onKeyDown={(e) => { if(e.key==='Enter') handleLinkSubmit(); }}
+                            className="w-full bg-slate-50 border border-slate-200 text-[14px] rounded-xl py-2.5 pl-9 pr-3 outline-none focus:border-[#ef4444] focus:ring-1 focus:ring-[#ef4444]/30 transition-all font-medium text-slate-700"
+                          />
+                        </div>
+                      </div>
+                      
+                      <button 
+                        onClick={handleLinkSubmit}
+                        disabled={isUploading || linkUrl.trim().length < 10}
+                        className="w-full py-2.5 bg-[#ef4444] hover:bg-[#dc2626] text-white rounded-xl font-bold text-[14px] transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-sm border border-transparent shadow-[#ef4444]/20"
+                      >
+                        {isUploading ? 'Memproses...' : 'Proses Materi Video'}
+                      </button>
                     </div>
-                    <h3 className="text-[20px] font-bold text-slate-800 mb-2.5">Link Artikel</h3>
-                    <p className="text-[15px] text-slate-600 leading-relaxed pr-2">Tautkan ke artikel eksternal untuk referensi (Segera hadir).</p>
-                  </button>
+                  )}
                 </>
               )}
             </div>
