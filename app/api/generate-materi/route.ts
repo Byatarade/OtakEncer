@@ -2,16 +2,18 @@ import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { OfficeParser } from 'officeparser';
+import { YoutubeTranscript } from 'youtube-transcript';
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
 
 export async function POST(request: Request) {
   try {
     const formData = await request.formData();
-    const file = formData.get('file') as File;
+    const file = formData.get('file') as File | null;
+    const link = formData.get('link') as string | null;
     const userId = formData.get('user_id') as string;
     
-    if (!file && !formData.get('link')) {
+    if (!file && !link) {
       return NextResponse.json({ error: 'File atau Link wajib disertakan.' }, { status: 400 });
     }
     
@@ -132,10 +134,34 @@ export async function POST(request: Request) {
          console.error("Gagal membaca dokumen:", err);
          return NextResponse.json({ error: 'Gagal membaca dokumen. Pastikan file tidak rusak atau terenkripsi.' }, { status: 400 });
       }
+    } else if (link) {
+      try {
+        const isYoutube = link.includes('youtube.com') || link.includes('youtu.be');
+        if (!isYoutube) {
+           return NextResponse.json({ error: 'Saat ini AI hanya mendukung konversi dari link YouTube.' }, { status: 400 });
+        }
+        
+        fileSizeBytes = 0;
+        sourceType = 'youtube';
+        
+        // Ambil ID YouTube untuk title dan transcript
+        title = 'Materi Video YouTube';
+        const transcript = await YoutubeTranscript.fetchTranscript(link);
+        
+        if (!transcript || transcript.length === 0) {
+           return NextResponse.json({ error: 'Subtitle tidak ditemukan. Video YouTube ini sepertinya tidak memiliki CC.' }, { status: 400 });
+        }
+        
+        // Gabungkan semua array dari CC menjadi satu teks panjang
+        extractedText = transcript.map(t => t.text).join(' ');
+      } catch (err: any) {
+        console.error('YouTube Transcript Error:', err);
+        return NextResponse.json({ error: 'Gagal mengambil subtitle (CC) dari video. Pastikan video bersifat publik dan tidak diblokir.' }, { status: 400 });
+      }
     }
 
     if (!extractedText || extractedText.trim().length === 0) {
-      return NextResponse.json({ error: 'Tidak ada teks yang dapat dibaca dari dokumen ini.' }, { status: 400 });
+      return NextResponse.json({ error: 'Tidak ada teks yang dapat dibaca dari dokumen atau link ini.' }, { status: 400 });
     }
 
     // Mengambil 30.000 karakter pertama agar tidak melampaui token limit Gemini
