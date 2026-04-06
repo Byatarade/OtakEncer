@@ -1,7 +1,7 @@
 "use client";
 import { supabase } from '@/lib/supabase';
 
-import { Search, Bell, Plus, Filter, LogOut, Settings, HelpCircle, ChevronDown, Calendar, Eye, FileText, CheckCircle2, CheckCircle2Icon, LucideCheckCircle, LucideCheckCircle2, CheckCircle, X, Link as LinkIcon, MonitorPlay, Volume2, Sparkles } from 'lucide-react';
+import { Search, Bell, Plus, Filter, LogOut, Settings, HelpCircle, ChevronDown, Calendar, Eye, FileText, CheckCircle2, CheckCircle, X, Sparkles, Menu, MonitorPlay, Volume2, Link as LinkIcon } from 'lucide-react';
 import Image from 'next/image';
 import { useAuth } from '@/components/AuthProvider';
 import { useRouter } from 'next/navigation';
@@ -195,31 +195,58 @@ export default function Dashboard() {
   if (!user) return null; // Handled by AuthGuard
 
   return (
-    <div className="flex flex-col min-h-full w-full p-4 lg:p-8 xl:p-10 max-w-[1600px] mx-auto gap-6 sm:gap-8">
+    <div className="flex flex-col min-h-full w-full p-4 lg:p-8 xl:p-10 max-w-[1600px] mx-auto gap-4 sm:gap-8">
 
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 py-2">
+      {/* Mobile Header (Only visible on small screens) */}
+      <div className="flex sm:hidden items-center justify-between mb-2">
+        <Link href="/?view=landing" className="flex items-center gap-2 shrink-0">
+          <div className="relative w-8 h-8 flex items-center justify-center">
+            <Image src="/assets/logo.svg" alt="OtakEncer Logo" fill className="object-contain" />
+          </div>
+          <span className="font-bold text-[20px] tracking-tight text-[#0f172a]">
+            OtakEncer
+          </span>
+        </Link>
+        
+        <div className="flex items-center gap-3">
+          <button className="text-[#334155] relative p-1 transition-colors hover:text-[#672cb9]">
+            <Bell size={22} strokeWidth={2} />
+          </button>
+          
+          <button 
+            onClick={() => setIsUploadPopupOpen(true)}
+            className="flex items-center gap-1.5 bg-[#672cb9] text-white px-4 py-1.5 rounded-full text-[14px] font-semibold tracking-wide"
+          >
+            <Plus size={18} strokeWidth={2.5}/>
+            Upload
+          </button>
+          
+          <div className="w-[1px] h-7 bg-slate-200 mx-0.5"></div>
+
+          <div className="flex shrink-0">
+             {user.picture ? (
+               <Image src={user.picture} alt={user.name} width={34} height={34} className="rounded-full ring-2 ring-white shadow-sm" />
+             ) : (
+               <div className="w-[34px] h-[34px] rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 font-bold text-[14px] ring-2 ring-white shadow-sm">
+                 {user.name?.[0] || 'U'}
+               </div>
+             )}
+          </div>
+          
+          <button className="text-[#0f172a] p-1 -ml-1">
+            <Menu size={28} strokeWidth={2} />
+          </button>
+        </div>
+      </div>
+
+      {/* Mobile Greeting */}
+      <h1 className="sm:hidden text-[34px] font-bold text-[#0f172a] tracking-tight">Halo, {user.name.split(' ')[0]}!</h1>
+
+      {/* Desktop Header Wrapper */}
+      <div className="hidden sm:flex flex-col sm:flex-row sm:items-center justify-between gap-4 py-2">
         <h1 className="text-[28px] font-bold text-[#0f172a] tracking-tight whitespace-nowrap">Halo, {user.name.split(' ')[0]}!</h1>
         
         <div className="flex flex-wrap items-center gap-3 md:gap-4 justify-end">
-          
-          {/* Search Box */}
-          <div className="relative group hidden sm:flex">
-             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[#672cb9] transition-colors" size={18} />
-             <input 
-               type="text" 
-               placeholder="Cari..." 
-               className="text-black w-full sm:w-[240px] bg-white border border-slate-200 text-[14px] font-medium rounded-full py-2.5 pl-11 pr-4 outline-none focus:border-[#672cb9] focus:ring-1 focus:ring-[#672cb9]/30 transition-all shadow-sm"
-             />
-          </div>
-
-          <button className="sm:hidden p-2.5 text-slate-500 hover:text-[#672cb9] bg-white rounded-full border border-slate-200 shadow-sm transition-colors">
-            <Search size={18} />
-          </button>
-          
-          <button className="p-2.5 text-slate-500 hover:text-[#672cb9] bg-white rounded-full border border-slate-200 shadow-sm transition-colors relative">
-            <Filter size={18} />
-          </button>
           
           <button className="p-2.5 text-slate-500 hover:text-[#672cb9] bg-white rounded-full border border-slate-200 shadow-sm transition-colors relative">
             <Bell size={18} />
@@ -289,21 +316,21 @@ export default function Dashboard() {
       </div>
 
       {/* Konten Dashboard Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-4">
+      <div className="grid grid-cols-2 lg:grid-cols-2 gap-4 md:gap-6 mt-4">
         
         {/* Total Visits Card */}
-        <div className="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-slate-100 flex flex-col justify-between">
-          <div className="flex items-start gap-4">
-            <div className="bg-[#f8f5fd] p-3 rounded-2xl">
-              <Calendar size={40} className="text-[#672cb9]" strokeWidth={1.5} />
+        <div className="bg-white rounded-3xl p-5 md:p-8 shadow-sm border border-slate-100 flex flex-col justify-between col-span-1">
+          <div className="flex flex-col sm:flex-row sm:items-start gap-4">
+            <div className="bg-[#f8f5fd] p-3 rounded-2xl self-start">
+              <Calendar size={32} className="text-[#672cb9] sm:w-10 sm:h-10" strokeWidth={1.5} />
             </div>
             <div>
-              <p className="text-slate-500 font-medium text-[15px]">Total Visits</p>
-              <h2 className="text-4xl font-bold text-slate-800 mt-1">145 Visits</h2>
+              <p className="text-slate-500 font-medium text-[13px] sm:text-[15px]">Total Visits</p>
+              <h2 className="text-[32px] sm:text-4xl font-bold text-slate-800 mt-1">145</h2>
             </div>
           </div>
           
-          <div className="flex items-center gap-2 lg:gap-3 mt-8">
+          <div className="hidden sm:flex items-center gap-2 lg:gap-3 mt-8">
             {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((day, idx) => (
               <div key={idx} className="flex flex-col items-center gap-2 flex-1">
                 <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-bold text-[14px] transition-colors
@@ -321,27 +348,25 @@ export default function Dashboard() {
         </div>
 
         {/* Daily Tokens Card */}
-        <div className="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-slate-100">
-          <h3 className="text-[20px] font-bold text-[#672cb9] mb-6">Daily Tokens</h3>
+        <div className="bg-white rounded-3xl p-5 md:p-8 shadow-sm border border-slate-100 col-span-1">
+          <h3 className="text-[16px] sm:text-[20px] font-bold text-[#672cb9] mb-4 sm:mb-6">Daily Token</h3>
           
-          <div className="flex justify-between items-end mb-3">
-            <div>
-              <p className="text-slate-800 font-medium">Token Tersisa: <span className="font-bold">3/5</span></p>
-            </div>
-            <p className="text-slate-800 font-bold text-[15px]">3 token <span className="font-normal">digunakan</span></p>
+          <div className="flex flex-row justify-between items-center mb-3">
+            <p className="text-slate-800 font-medium text-[13px] sm:text-[16px]">Token <span className="font-bold hidden sm:inline">Tersisa:</span></p>
+            <p className="text-slate-800 font-bold text-[13px] sm:text-[15px]">3/5</p>
           </div>
           
-          <div className="w-full h-3.5 bg-indigo-50 rounded-full overflow-hidden mb-6">
-            <div className="h-full bg-[#FFA515] rounded-full" style={{ width: '60%' }}></div>
+          <div className="w-full h-2.5 sm:h-3.5 bg-indigo-50 flex rounded-full overflow-hidden mb-4 sm:mb-6 relative">
+            <div className="h-full bg-[#FFA515] rounded-l-full" style={{ width: '60%' }}></div>
           </div>
           
-          <div className="inline-flex py-2 px-4 bg-orange-50 rounded-xl text-[#000000] text-[14px] font-medium">
-            2 token tersisa untuk hari ini
+          <div className="inline-flex justify-center py-3 sm:py-3 sm:px-16 w-full sm:w-auto bg-[#fef2e4] rounded-xl text-[#000000] text-[14px] sm:text-[14px] font-medium whitespace-nowrap">
+            2 Token Tersisa
           </div>
         </div>
 
         {/* Recent Activity Card */}
-        <div className="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-slate-100 relative">
+        <div className="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-slate-100 relative col-span-2 lg:col-span-1">
           <h3 className="text-[20px] font-bold text-[#672cb9] mb-6">Recent Activity</h3>
           
           <div className="space-y-6 relative z-10">
@@ -391,7 +416,7 @@ export default function Dashboard() {
         </div>
 
         {/* Leaderboard Rank Card */}
-        <div className="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-slate-100">
+        <div className="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-slate-100 col-span-2 lg:col-span-1">
           <h3 className="text-[20px] font-bold text-[#672cb9] mb-4">Leaderboard Rank</h3>
           
           <div className="mb-6 space-y-1">
