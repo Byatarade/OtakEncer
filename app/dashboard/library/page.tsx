@@ -228,7 +228,7 @@ export default function LibraryPage() {
           >
             {filteredMaterials.length > 0 ? (
               filteredMaterials.map((material) => (
-                <Link key={material.id} href={`/dashboard/library/${material.id}`} className="block">
+                <Link key={material.id} href={`/dashboard/library/${material.id}`} className="block h-full">
                   <LibraryCard material={material} />
                 </Link>
               ))

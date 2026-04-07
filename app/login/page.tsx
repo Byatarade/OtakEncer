@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/components/AuthProvider';
 import { useState } from 'react';
+import Swal from 'sweetalert2';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -19,6 +20,12 @@ export default function LoginPage() {
       // and then back to the origin (/dashboard as configured in AuthProvider)
     } catch (err) {
       console.error("Google Login Failed:", err);
+      Swal.fire({
+        title: 'Login Gagal',
+        text: 'Terjadi kesalahan saat mencoba masuk dengan Google. Silakan coba lagi.',
+        icon: 'error',
+        confirmButtonColor: '#672cb9'
+      });
       setIsLoading(false);
     }
   };

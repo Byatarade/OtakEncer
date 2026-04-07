@@ -48,7 +48,7 @@ export const LibraryCard = ({ material }: LibraryCardProps) => {
   };
 
   return (
-    <Card hoverable padding="none" variant="white" className="flex flex-col cursor-pointer bg-white group">
+    <Card hoverable padding="none" variant="white" className="flex flex-col cursor-pointer bg-white group h-full">
       {/* Premium Thumbnail Header */}
       <div className={`relative h-44 w-full bg-gradient-to-br ${material.coverColor} p-5 flex flex-col justify-between overflow-hidden shrink-0`}>
         {/* Glass overlays and animated blobs */}

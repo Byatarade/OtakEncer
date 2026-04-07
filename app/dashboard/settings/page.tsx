@@ -8,6 +8,7 @@ import { supabase } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import Image from 'next/image';
+import Swal from 'sweetalert2';
 
 export default function SettingsPage() {
   const { user, isLoaded } = useAuth();
@@ -16,8 +17,6 @@ export default function SettingsPage() {
   const [name, setName] = useState('');
   const [avatar, setAvatar] = useState('');
   const [loading, setLoading] = useState(false);
-  const [successMsg, setSuccessMsg] = useState('');
-  const [errorMsg, setErrorMsg] = useState('');
 
   const [usageCount, setUsageCount] = useState(0);
   const [usageLoading, setUsageLoading] = useState(true);
@@ -61,8 +60,6 @@ export default function SettingsPage() {
   const handleUpdateProfile = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setSuccessMsg('');
-    setErrorMsg('');
 
     try {
       const { error } = await supabase.auth.updateUser({
@@ -74,12 +71,20 @@ export default function SettingsPage() {
 
       if (error) throw error;
       
-      setSuccessMsg('Profil berhasil diperbarui! Silakan refresh halaman untuk melihat efeknya jika belum terganti.');
+      Swal.fire({
+        title: 'Berhasil!',
+        text: 'Profil berhasil diperbarui!',
+        icon: 'success',
+        confirmButtonColor: '#672cb9'
+      });
       
-      // Clear success msg after 3 detik
-      setTimeout(() => setSuccessMsg(''), 4000);
     } catch (err: any) {
-      setErrorMsg(err.message || 'Gagal memperbarui profil.');
+      Swal.fire({
+        title: 'Gagal',
+        text: err.message || 'Gagal memperbarui profil.',
+        icon: 'error',
+        confirmButtonColor: '#672cb9'
+      });
     } finally {
       setLoading(false);
     }
@@ -124,7 +129,7 @@ export default function SettingsPage() {
               <User size={18} className={activeTab === 'profile' ? 'text-[#672cb9]' : 'text-[#9ca3af]'} /> 
               Profil Saya
               {activeTab === 'profile' && (
-                <motion.div layoutId="activeInd" className="absolute left-0 top-[15%] bottom-[15%] w-1 bg-[#672cb9] rounded-r-full hidden md:block" />
+                <motion.div layoutId="activeInd" className="absolute left-0 top-[15%] bottom-[15%] w-1 bg-[#FFA515] rounded-r-full hidden md:block" />
               )}
             </button>
             <button
@@ -136,7 +141,7 @@ export default function SettingsPage() {
               <BatteryCharging size={18} className={activeTab === 'quota' ? 'text-[#672cb9]' : 'text-[#9ca3af]'} /> 
               Kuota AI & Paket
               {activeTab === 'quota' && (
-                <motion.div layoutId="activeInd" className="absolute left-0 top-[15%] bottom-[15%] w-1 bg-[#672cb9] rounded-r-full hidden md:block" />
+                <motion.div layoutId="activeInd" className="absolute left-0 top-[15%] bottom-[15%] w-1 bg-[#FFA515] rounded-r-full hidden md:block" />
               )}
             </button>
           </nav>
@@ -182,18 +187,6 @@ export default function SettingsPage() {
                   <p className="text-sm text-[#6b7280]">Perbarui foto dan nama yang akan ditampilkan di platform.</p>
                 </div>
 
-                {successMsg && (
-                  <motion.div initial={{opacity:0, height:0}} animate={{opacity:1, height:'auto'}} className="mb-6 p-4 bg-[#ecfdf5] border border-[#d1fae5] rounded-2xl flex items-start gap-3">
-                    <ShieldCheck size={20} className="text-[#059669] shrink-0 mt-0.5" />
-                    <p className="text-sm font-medium text-[#065f46]">{successMsg}</p>
-                  </motion.div>
-                )}
-                {errorMsg && (
-                  <motion.div initial={{opacity:0, height:0}} animate={{opacity:1, height:'auto'}} className="mb-6 p-4 bg-[#fef2f2] border border-[#fee2e2] rounded-2xl flex items-start gap-3">
-                    <Info size={20} className="text-[#dc2626] shrink-0 mt-0.5" />
-                    <p className="text-sm font-medium text-[#991b1b]">{errorMsg}</p>
-                  </motion.div>
-                )}
 
                 <form onSubmit={handleUpdateProfile} className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-3xl">

@@ -7,6 +7,7 @@ import { useAuth } from '@/components/AuthProvider';
 import { useRouter } from 'next/navigation';
 import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
+import Swal from 'sweetalert2';
 
 export default function Dashboard() {
   const { user, logout } = useAuth();
@@ -16,7 +17,6 @@ export default function Dashboard() {
   const [isUploading, setIsUploading] = useState(false);
   const [showLinkInput, setShowLinkInput] = useState(false);
   const [linkUrl, setLinkUrl] = useState('');
-  const [alertData, setAlertData] = useState<{title: string, message: string, type: 'error' | 'success'} | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -34,18 +34,20 @@ export default function Dashboard() {
 
     // Cross-validation
     if (isAudioInput && !isAudioFile) {
-       setAlertData({
+       Swal.fire({
          title: 'Format Tidak Valid',
-         message: 'Harap unggah file audio (MP3, WAV, M4A, dll) pada menu Upload Audio.',
-         type: 'error'
+         text: 'Harap unggah file audio (MP3, WAV, M4A, dll) pada menu Upload Audio.',
+         icon: 'error',
+         confirmButtonColor: '#672cb9'
        });
        return;
     }
     if (isDocInput && !isDocFile) {
-       setAlertData({
+       Swal.fire({
          title: 'Format Tidak Valid',
-         message: 'Harap unggah file dokumen (PDF, DOCX, PPTX) pada menu Upload Dokumen.',
-         type: 'error'
+         text: 'Harap unggah file dokumen (PDF, DOCX, PPTX) pada menu Upload Dokumen.',
+         icon: 'error',
+         confirmButtonColor: '#672cb9'
        });
        return;
     }
@@ -54,10 +56,11 @@ export default function Dashboard() {
     const maxSize = isAudio ? 25 * 1024 * 1024 : 10 * 1024 * 1024; // 25MB audio, 10MB doc
 
     if (file.size > maxSize) {
-      setAlertData({
+      Swal.fire({
         title: 'File Terlalu Besar',
-        message: `Ukuran file melebihi batas maksimal (${isAudio ? '25MB' : '10MB'})!`,
-        type: 'error'
+        text: `Ukuran file melebihi batas maksimal (${isAudio ? '25MB' : '10MB'})!`,
+        icon: 'error',
+        confirmButtonColor: '#672cb9'
       });
       return;
     }
@@ -81,29 +84,33 @@ export default function Dashboard() {
       const result = await response.json();
 
       if (!response.ok) {
-         setAlertData({
+         Swal.fire({
            title: 'Gagal Memproses',
-           message: result.error || 'Terjadi kesalahan saat memproses materi.',
-           type: 'error'
+           text: result.error || 'Terjadi kesalahan saat memproses materi.',
+           icon: 'error',
+           confirmButtonColor: '#672cb9'
          });
       } else {
          // Sukses
          setIsUploadPopupOpen(false);
-         setAlertData({
+         Swal.fire({
            title: 'Berhasil!',
-           message: 'Materi berhasil dibuat.',
-           type: 'success'
+           text: 'Materi berhasil dibuat.',
+           icon: 'success',
+           timer: 1500,
+           showConfirmButton: false,
+           timerProgressBar: true
          });
          setTimeout(() => {
-           setAlertData(null);
            router.push('/dashboard/library');
          }, 1500);
       }
     } catch (err: any) {
-       setAlertData({
+       Swal.fire({
          title: 'Terjadi Kesalahan',
-         message: 'Gagal mengunggah file. Periksa koneksi internet Anda dan coba lagi.',
-         type: 'error'
+         text: 'Gagal mengunggah file. Periksa koneksi internet Anda dan coba lagi.',
+         icon: 'error',
+         confirmButtonColor: '#672cb9'
        });
        console.error("Upload error:", err);
     } finally {
@@ -115,10 +122,11 @@ export default function Dashboard() {
     if (!linkUrl || !user) return;
 
     if (!linkUrl.includes('youtube.com') && !linkUrl.includes('youtu.be')) {
-      setAlertData({
+      Swal.fire({
          title: 'Link Tidak Valid',
-         message: 'Harap masukkan link URL dari YouTube yang benar (contoh: https://youtu.be/xxx).',
-         type: 'error'
+         text: 'Harap masukkan link URL dari YouTube yang benar (contoh: https://youtu.be/xxx).',
+         icon: 'error',
+         confirmButtonColor: '#672cb9'
       });
       return;
     }
@@ -144,29 +152,33 @@ export default function Dashboard() {
       const result = await response.json();
 
       if (!response.ok) {
-         setAlertData({
+         Swal.fire({
            title: 'Gagal Memproses Video',
-           message: result.error || 'Terjadi kesalahan saat memproses video YouTube.',
-           type: 'error'
+           text: result.error || 'Terjadi kesalahan saat memproses video YouTube.',
+           icon: 'error',
+           confirmButtonColor: '#672cb9'
          });
       } else {
          setLinkUrl('');
          setIsUploadPopupOpen(false);
-         setAlertData({
+         Swal.fire({
            title: 'Berhasil!',
-           message: 'Materi dari YouTube berhasil dibuat.',
-           type: 'success'
+           text: 'Materi dari YouTube berhasil dibuat.',
+           icon: 'success',
+           timer: 1500,
+           showConfirmButton: false,
+           timerProgressBar: true
          });
          setTimeout(() => {
-           setAlertData(null);
            router.push('/dashboard/library');
          }, 1500);
       }
     } catch (err: any) {
-       setAlertData({
+       Swal.fire({
          title: 'Terjadi Kesalahan',
-         message: 'Gagal memproses link YouTube. Periksa koneksi internet Anda.',
-         type: 'error'
+         text: 'Gagal memproses link YouTube. Periksa koneksi internet Anda.',
+         icon: 'error',
+         confirmButtonColor: '#672cb9'
        });
        console.error("Youtube error:", err);
     } finally {
@@ -321,24 +333,7 @@ export default function Dashboard() {
         </div>
 
         {/* Daily Tokens Card */}
-        <div className="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-slate-100">
-          <h3 className="text-[20px] font-bold text-[#672cb9] mb-6">Daily Tokens</h3>
-          
-          <div className="flex justify-between items-end mb-3">
-            <div>
-              <p className="text-slate-800 font-medium">Token Tersisa: <span className="font-bold">3/5</span></p>
-            </div>
-            <p className="text-slate-800 font-bold text-[15px]">3 token <span className="font-normal">digunakan</span></p>
-          </div>
-          
-          <div className="w-full h-3.5 bg-indigo-50 rounded-full overflow-hidden mb-6">
-            <div className="h-full bg-[#FFA515] rounded-full" style={{ width: '60%' }}></div>
-          </div>
-          
-          <div className="inline-flex py-2 px-4 bg-orange-50 rounded-xl text-[#000000] text-[14px] font-medium">
-            2 token tersisa untuk hari ini
-          </div>
-        </div>
+        <DailyTokensCard userId={user.id} />
 
         {/* Recent Activity Card */}
         <div className="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-slate-100 relative">
@@ -542,26 +537,80 @@ export default function Dashboard() {
         </div>
       )}
 
-      {/* CUSTOM ALERT POPUP */}
-      {alertData && (
-        <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/30 backdrop-blur-[2px] animate-in fade-in" onClick={() => setAlertData(null)}></div>
-          <div className="relative bg-white rounded-3xl p-6 sm:p-8 max-w-sm w-full shadow-2xl animate-in zoom-in-95 flex flex-col items-center text-center">
-            <div className={`w-16 h-16 rounded-full flex items-center justify-center mb-4 ${alertData.type === 'error' ? 'bg-rose-100 text-rose-500' : 'bg-emerald-100 text-emerald-500'}`}>
-              {alertData.type === 'error' ? <X size={32} strokeWidth={3} /> : <CheckCircle2 size={32} strokeWidth={3} />}
-            </div>
-            <h3 className="text-xl font-bold text-slate-800 mb-2">{alertData.title}</h3>
-            <p className="text-slate-500 mb-6">{alertData.message}</p>
-            <button 
-              onClick={() => setAlertData(null)}
-              className={`w-full py-3 rounded-xl font-bold text-white transition-colors ${alertData.type === 'error' ? 'bg-rose-500 hover:bg-rose-600' : 'bg-emerald-500 hover:bg-emerald-600'}`}
-            >
-              Tutup
-            </button>
-          </div>
-        </div>
-      )}
+      {/* CUSTOM ALERT POPUP REMOVED IN FAVOR OF SWEETALERT2 */}
+    </div>
+  );
+}
 
+function DailyTokensCard({ userId }: { userId: string }) {
+  const [usageCount, setUsageCount] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const MAX_LIMIT = 3;
+
+  useEffect(() => {
+    const fetchUsage = async () => {
+      try {
+        const startOfDay = new Date();
+        startOfDay.setHours(0, 0, 0, 0);
+
+        const { count, error } = await supabase
+          .from('materials')
+          .select('*', { count: 'exact', head: true })
+          .eq('user_id', userId)
+          .gte('created_at', startOfDay.toISOString());
+
+        if (error) throw error;
+        setUsageCount(count || 0);
+      } catch (err) {
+        console.error('Error fetching usage:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUsage();
+  }, [userId]);
+
+  const remaining = Math.max(MAX_LIMIT - usageCount, 0);
+  const percentage = Math.min((usageCount / MAX_LIMIT) * 100, 100);
+
+  return (
+    <div className="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-slate-100">
+      <h3 className="text-[20px] font-bold text-[#672cb9] mb-6">Daily Tokens</h3>
+      
+      {loading ? (
+        <div className="flex items-center justify-center py-8">
+          <div className="w-6 h-6 border-2 border-[#672cb9] border-t-transparent rounded-full animate-spin"></div>
+        </div>
+      ) : (
+        <>
+          <div className="flex justify-between items-end mb-3">
+            <div>
+              <p className="text-slate-800 font-medium">Token Tersisa: <span className="font-bold">{remaining}/{MAX_LIMIT}</span></p>
+            </div>
+            <p className="text-slate-800 font-bold text-[15px]">{usageCount} token <span className="font-normal">digunakan</span></p>
+          </div>
+          
+          <div className="w-full h-3.5 bg-indigo-50 rounded-full overflow-hidden mb-6">
+            <div 
+              className={`h-full rounded-full transition-all duration-700 ${
+                remaining === 0 ? 'bg-red-500' : remaining === 1 ? 'bg-orange-400' : 'bg-[#FFA515]'
+              }`} 
+              style={{ width: `${percentage}%` }}
+            ></div>
+          </div>
+          
+          <div className={`inline-flex py-2 px-4 rounded-xl text-[14px] font-medium ${
+            remaining === 0 
+              ? 'bg-red-50 text-red-700' 
+              : 'bg-orange-50 text-[#000000]'
+          }`}>
+            {remaining === 0 
+              ? 'Kuota harian habis, reset tengah malam' 
+              : `${remaining} token tersisa untuk hari ini`}
+          </div>
+        </>
+      )}
     </div>
   );
 }
