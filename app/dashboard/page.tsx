@@ -406,26 +406,7 @@ export default function Dashboard() {
         </div>
 
         {/* Daily Tokens Card */}
-<<<<<<< HEAD
         <DailyTokensCard userId={user.id} />
-=======
-        <div className="bg-white rounded-3xl p-5 md:p-8 shadow-sm border border-slate-100 col-span-1">
-          <h3 className="text-[16px] sm:text-[20px] font-bold text-[#672cb9] mb-4 sm:mb-6">Daily Token</h3>
-          
-          <div className="flex flex-row justify-between items-center mb-3">
-            <p className="text-slate-800 font-medium text-[13px] sm:text-[16px]">Token <span className="font-bold hidden sm:inline">Tersisa:</span></p>
-            <p className="text-slate-800 font-bold text-[13px] sm:text-[15px]">3/5</p>
-          </div>
-          
-          <div className="w-full h-2.5 sm:h-3.5 bg-indigo-50 flex rounded-full overflow-hidden mb-4 sm:mb-6 relative">
-            <div className="h-full bg-[#FFA515] rounded-l-full" style={{ width: '60%' }}></div>
-          </div>
-          
-          <div className="inline-flex justify-center py-3 sm:py-3 sm:px-16 w-full sm:w-auto bg-[#fef2e4] rounded-xl text-[#000000] text-[14px] sm:text-[14px] font-medium whitespace-nowrap">
-            2 Token Tersisa
-          </div>
-        </div>
->>>>>>> 3d96f67da57a94beb5718e8968461a1faefdb769
 
         {/* Recent Activity Card */}
         <div className="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-slate-100 relative col-span-2 lg:col-span-1">
