@@ -44,22 +44,24 @@ export default function DashboardLayout({
           </aside>
 
           {/* Mobile Header (Only visible on small screens) */}
-          <header className="h-16 bg-[#672cb9] text-white flex items-center justify-between px-4 sticky top-0 z-30 md:hidden absolute w-full shadow-md">
-            <Link href="/?view=landing" className="flex items-center gap-2">
-              <div className="relative w-8 h-8 flex items-center justify-center">
-                <Image src="/assets/logo.png" alt="OtakEncer Logo" fill className="object-contain brightness-0 invert p-1" />
-              </div>
-              <span className="font-bold text-[16px] tracking-tight">
-                OtakEncer
-              </span>
-            </Link>
-            <button className="w-10 h-10 flex items-center justify-center text-white focus:outline-none">
-              <Menu size={24} />
-            </button>
-          </header>
+          {pathname !== '/dashboard' && (
+            <header className="h-16 bg-[#672cb9] text-white flex items-center justify-between px-4 sticky top-0 z-30 md:hidden absolute w-full shadow-md">
+              <Link href="/?view=landing" className="flex items-center gap-2">
+                <div className="relative w-8 h-8 flex items-center justify-center">
+                  <Image src="/assets/logo.png" alt="OtakEncer Logo" fill className="object-contain brightness-0 invert p-1" />
+                </div>
+                <span className="font-bold text-[16px] tracking-tight">
+                  OtakEncer
+                </span>
+              </Link>
+              <button className="w-10 h-10 flex items-center justify-center text-white focus:outline-none">
+                <Menu size={24} />
+              </button>
+            </header>
+          )}
 
           {/* Main Content Area */}
-          <main className="flex-1 min-w-0 h-full overflow-y-auto bg-[#f8fafc] md:rounded-l-[40px] shadow-[-10px_0_30px_rgba(0,0,0,0.1)] content-area-scroll w-full pt-16 md:pt-0">
+          <main className={`flex-1 min-w-0 h-full overflow-y-auto bg-[#f8fafc] md:rounded-l-[40px] shadow-[-10px_0_30px_rgba(0,0,0,0.1)] content-area-scroll w-full ${pathname !== '/dashboard' ? 'pt-16 md:pt-0' : 'pt-0'}`}>
             {children}
           </main>
 
