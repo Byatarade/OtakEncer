@@ -298,7 +298,7 @@ export default function Dashboard() {
       </div>
 
       {/* Mobile Greeting */}
-      <h1 className="sm:hidden mt-7 text-[34px] font-bold text-[#0f172a] tracking-tight">Halo, {user.name.split(' ')[0]}!</h1>
+      <h1 className="sm:hidden ml-2 mt-7 text-[34px] font-bold text-[#0f172a] tracking-tight">Halo, {user.name.split(' ')[0]}!</h1>
 
       {/* Desktop Header Wrapper */}
       <div className="hidden sm:flex flex-col sm:flex-row sm:items-center justify-between gap-4 py-2">
@@ -377,14 +377,20 @@ export default function Dashboard() {
       <div className="grid grid-cols-2 lg:grid-cols-2 gap-4 md:gap-6 mt-4">
         
         {/* Total Visits Card */}
-        <div className="bg-white rounded-3xl p-5 md:p-8 shadow-sm border border-slate-100 flex flex-col justify-between col-span-1">
-          <div className="flex flex-col sm:flex-row sm:items-start gap-4">
-            <div className="bg-[#f8f5fd] p-3 rounded-2xl self-start">
-              <Calendar size={32} className="text-[#672cb9] sm:w-10 sm:h-10" strokeWidth={1.5} />
+        <div className="bg-white rounded-[24px] md:rounded-3xl p-4 md:p-8 shadow-sm md:shadow-sm shadow-slate-200/50 border border-slate-100 flex flex-col justify-between col-span-1">
+          <div className="flex flex-col sm:flex-row sm:items-start gap-0 sm:gap-4">
+            <div className="flex items-center gap-3 sm:block mb-3 sm:mb-0">
+              <div className="bg-[#f8f5fd] w-[64px] h-[64px] sm:w-auto sm:h-auto sm:p-3 rounded-[14px] sm:rounded-2xl flex items-center justify-center shrink-0">
+                <Calendar size={40} className="text-[#672cb9] sm:w-10 sm:h-10" strokeWidth={2} />
+              </div>
+              <div className="flex flex-col leading-[1.1] sm:hidden">
+                <span className="text-slate-500 text-[20px] font-medium">Total</span>
+                <span className="text-slate-500 text-[20px] font-medium">Visits</span>
+              </div>
             </div>
             <div>
-              <p className="text-slate-500 font-medium text-[13px] sm:text-[15px]">Total Visits</p>
-              <h2 className="text-[32px] sm:text-4xl font-bold text-slate-800 mt-1">145</h2>
+              <p className="hidden sm:block text-slate-500 font-medium sm:text-[15px]">Total Visits</p>
+              <h2 className="text-[52px] sm:text-4xl font-bold text-[#0f172a] sm:text-slate-800 mt-3 ml-1 sm:ml-0 sm:mt-1 leading-none tracking-tighter sm:tracking-normal">145</h2>
             </div>
           </div>
           
@@ -689,8 +695,8 @@ function DailyTokensCard({ userId }: { userId: string }) {
   const percentage = Math.min((usageCount / MAX_LIMIT) * 100, 100);
 
   return (
-    <div className="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-slate-100">
-      <h3 className="text-[20px] font-bold text-[#672cb9] mb-6">Daily Tokens</h3>
+    <div className="bg-white rounded-[24px] md:rounded-3xl p-4 md:p-8 shadow-sm md:shadow-sm border border-slate-100 flex flex-col justify-center h-full col-span-1">
+      <h3 className="text-[20px] sm:text-[20px] font-bold text-[#672cb9] mb-5 sm:mb-6">Daily Token<span className="hidden sm:inline">s</span></h3>
       
       {loading ? (
         <div className="flex items-center justify-center py-8">
@@ -698,14 +704,21 @@ function DailyTokensCard({ userId }: { userId: string }) {
         </div>
       ) : (
         <>
-          <div className="flex justify-between items-end mb-3">
+          {/* Mobile Text */}
+          <div className="flex sm:hidden justify-between items-center mb-2">
+            <p className="text-slate-800 text-[14px] font-medium">Token</p>
+            <p className="text-[#0f172a] text-[14px] font-medium">{remaining}/{MAX_LIMIT}</p>
+          </div>
+          
+          {/* Desktop Text */}
+          <div className="hidden sm:flex justify-between items-end mb-3">
             <div>
               <p className="text-slate-800 font-medium">Token Tersisa: <span className="font-bold">{remaining}/{MAX_LIMIT}</span></p>
             </div>
             <p className="text-slate-800 font-bold text-[15px]">{usageCount} token <span className="font-normal">digunakan</span></p>
           </div>
           
-          <div className="w-full h-3.5 bg-indigo-50 rounded-full overflow-hidden mb-6">
+          <div className="w-full h-[14px] sm:h-3.5 bg-[#f8f5fd] sm:bg-indigo-50 rounded-full overflow-hidden mb-5 sm:mb-6">
             <div 
               className={`h-full rounded-full transition-all duration-700 ${
                 remaining === 0 ? 'bg-red-500' : remaining === 1 ? 'bg-orange-400' : 'bg-[#FFA515]'
@@ -714,7 +727,19 @@ function DailyTokensCard({ userId }: { userId: string }) {
             ></div>
           </div>
           
-          <div className={`inline-flex py-2 px-4 rounded-xl text-[14px] font-medium ${
+          {/* Mobile Pill */}
+          <div className={`sm:hidden w-full py-1.5 rounded-[12px] text-[14px] font-medium text-center ${
+            remaining === 0 
+              ? 'bg-red-50 text-red-700' 
+              : 'bg-[#fff4e6] text-[#0f172a]'
+          }`}>
+            {remaining === 0 
+              ? 'Kuota harian habis' 
+              : `${remaining} Token Tersisa`}
+          </div>
+          
+          {/* Desktop Pill */}
+          <div className={`hidden sm:inline-flex self-start py-2 px-4 rounded-xl text-[14px] font-medium ${
             remaining === 0 
               ? 'bg-red-50 text-red-700' 
               : 'bg-orange-50 text-[#000000]'
