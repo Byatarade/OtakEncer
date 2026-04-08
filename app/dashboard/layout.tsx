@@ -14,7 +14,7 @@ export default function DashboardLayout({
 
   return (
     <AuthGuard>
-      <div className="h-screen w-screen flex font-['Montserrat',sans-serif] bg-[#672cb9] overflow-hidden relative">
+      <div className="h-screen w-full flex font-['Montserrat',sans-serif] bg-[#672cb9] overflow-hidden relative">
 
           {/* Main Card Container wrapper */}
         <div className="flex h-full w-full relative z-10">

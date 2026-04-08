@@ -219,31 +219,26 @@ export default function Dashboard() {
     <div className="flex flex-col min-h-full w-full p-4 lg:p-8 xl:p-10 max-w-[1600px] mx-auto gap-4 sm:gap-8">
 
       {/* Mobile Header (Only visible on small screens) */}
-      <div className="flex sm:hidden items-center justify-between mb-2">
-        <Link href="/?view=landing" className="flex items-center gap-2 shrink-0">
-          <div className="relative w-7 h-7 flex items-center justify-center">
+      <div className="flex sm:hidden items-center justify-between mb-2 gap-1">
+        <Link href="/?view=landing" className="flex items-center gap-1 sm:gap-2 shrink-0 min-w-0">
+          <div className="relative w-7 h-7 sm:w-7 sm:h-7 flex items-center justify-center shrink-0">
             <Image src="/assets/logo.svg" alt="OtakEncer Logo" fill className="object-contain" />
           </div>
-          <span className="font-bold text-[20px] md:text-[18px] tracking-tight text-gray-900">
+          <span className="font-bold text-[20px] sm:text-[20px] md:text-[18px] tracking-tight text-gray-900 truncate shrink-0">
             Otak<span className="text-[#672cb9]">Encer</span>
           </span>
         </Link>
         
-        <div className="flex items-center gap-3">
-          <button className="p-2 text-slate-500 hover:text-[#672cb9] bg-white rounded-full border border-slate-200 shadow-sm transition-colors relative">
-            <Bell size={18} strokeWidth={2} />
-            <span className="absolute top-0 right-0 w-2 h-2 bg-rose-500 rounded-full outline outline-2 outline-white"></span>
-          </button>
-          
+        <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
           <button 
             onClick={() => setIsUploadPopupOpen(true)}
-            className="flex items-center gap-1.5 bg-[#672cb9] text-white px-4 py-1.5 rounded-full text-[13px] font-semibold tracking-wide"
+            className="flex items-center gap-1 bg-[#672cb9] text-white px-3 sm:px-4 py-1.5 rounded-full text-[12px] sm:text-[13px] font-semibold tracking-wide"
           >
             <Plus size={18} strokeWidth={2.5}/>
             Upload
           </button>
           
-          <div className="w-[1px] h-7 bg-slate-200 mx-0.5"></div>
+          <div className="sm:w-[10px] sm:h-7 bg-slate-200 mx-0.5"></div>
 
           <div className="relative flex shrink-0 items-center" ref={mobileDropdownRef}>
              <button onClick={() => setIsDropdownOpen(!isDropdownOpen)} className="focus:outline-none group">
@@ -306,11 +301,6 @@ export default function Dashboard() {
         
         <div className="flex flex-wrap items-center gap-3 md:gap-4 justify-end">
           
-          <button className="p-2.5 text-slate-500 hover:text-[#672cb9] bg-white rounded-full border border-slate-200 shadow-sm transition-colors relative">
-            <Bell size={18} />
-            <span className="absolute top-0.5 right-0.5 w-2 h-2 bg-rose-500 rounded-full outline outline-2 outline-white"></span>
-          </button>
-
           <button 
             onClick={() => setIsUploadPopupOpen(true)}
             className="flex items-center gap-2 bg-[#672cb9] text-white px-5 py-2.5 rounded-full text-[14px] font-bold shadow-md hover:bg-[#58249c] hover:shadow-lg transition-all transform hover:-translate-y-0.5 ml-2"
