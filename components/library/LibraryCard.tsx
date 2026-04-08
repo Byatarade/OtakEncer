@@ -2,7 +2,7 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { MoreVertical, Clock, Search, Video, FileType2, Link as LinkIcon, LayoutGrid, FileText } from "lucide-react";
+import { MoreVertical, Clock, Search, Video, FileType2, Music, LayoutGrid, FileText } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 
@@ -26,9 +26,11 @@ export const LibraryCard = ({ material }: LibraryCardProps) => {
       case "youtube":
         return <Video size={14} />;
       case "pdf":
+      case "docx":
+      case "ppt":
         return <FileType2 size={14} />;
-      case "link":
-        return <LinkIcon size={14} />;
+      case "audio":
+        return <Music size={14} />;
       default:
         return <FileText size={14} />;
     }
@@ -39,9 +41,11 @@ export const LibraryCard = ({ material }: LibraryCardProps) => {
       case "youtube":
         return <Video size={24} />;
       case "pdf":
+      case "docx":
+      case "ppt":
         return <FileText size={24} />;
-      case "link":
-        return <LayoutGrid size={24} />;
+      case "audio":
+        return <Music size={24} />;
       default:
         return <FileText size={24} />;
     }
@@ -59,7 +63,7 @@ export const LibraryCard = ({ material }: LibraryCardProps) => {
 
         {/* Top bar inside thumbnail */}
         <div className="relative z-10 flex justify-between items-start w-full">
-          <Badge variant="secondary" size="sm" icon={getIcon(material.type)}>
+          <Badge variant="secondary" size="sm" icon={getIcon(material.type)} className="uppercase tracking-wider">
             {material.type}
           </Badge>
           <button className="text-white hover:text-white transition-colors bg-white/10 hover:bg-white/30 p-2 rounded-full backdrop-blur-md border border-white/10">

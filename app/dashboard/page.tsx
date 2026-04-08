@@ -559,8 +559,15 @@ export default function Dashboard() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-5">
               {isUploading ? (
                 <div className="col-span-1 md:col-span-3 flex flex-col items-center justify-center p-12 bg-white/70 backdrop-blur rounded-[24px] border border-white">
-                   <div className="flex gap-3 mb-6">
-                     <Sparkles className="text-[#672cb9] animate-bounce" size={32} />
+                   <div className="relative flex items-center justify-center mb-8 w-24 h-24">
+                     {/* Lingkaran Loading Ungu */}
+                     <div className="absolute inset-0 rounded-full border-4 border-[#672cb9]/20 border-t-[#672cb9] animate-spin"></div>
+                     <div className="absolute inset-[6px] rounded-full border-4 border-[#672cb9]/20 border-b-[#672cb9] animate-[spin_2s_linear_infinite_reverse]"></div>
+                     
+                     {/* Logo Otak Encer */}
+                     <div className="relative w-10 h-10 flex items-center justify-center animate-pulse">
+                       <Image src="/assets/logo.svg" alt="OtakEncer Loading" fill className="object-contain" />
+                     </div>
                    </div>
                    <h3 className="text-xl font-bold text-[#672cb9] mb-2 animate-pulse">AI Sedang Membaca & Merangkum Materi...</h3>
                    <p className="text-slate-500 font-medium text-center">Proses ini mungkin memakan waktu hingga satu menit. Harap jangan tutup jendela ini.</p>

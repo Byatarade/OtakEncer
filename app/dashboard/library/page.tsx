@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { Variants } from 'framer-motion';
-import { Search, FolderPlus, FileText, Video, Link as LinkIcon, Layers, Sparkles, Filter, Loader2 } from 'lucide-react';
+import { Search, FolderPlus, FileText, Video, Music, Layers, Sparkles, Filter, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { LibraryCard, Material } from '@/components/library/LibraryCard';
@@ -87,13 +87,23 @@ export default function LibraryPage() {
 
   const tabs = [
     { id: 'all', label: 'Semua Materi', icon: <Layers size={16} /> },
-    { id: 'youtube', label: 'Video', icon: <Video size={16} /> },
-    { id: 'pdf', label: 'Dokumen', icon: <FileText size={16} /> },
-    { id: 'link', label: 'Artikel Web', icon: <LinkIcon size={16} /> },
+    { id: 'pdf', label: 'PDF', icon: <FileText size={16} /> },
+    { id: 'youtube', label: 'YouTube', icon: <Video size={16} /> },
+    { id: 'audio', label: 'Audio', icon: <Music size={16} /> },
   ];
 
   const filteredMaterials = materials.filter(m => {
-    const matchesTab = activeTab === 'all' || m.type.toLowerCase().includes(activeTab);
+    const type = m.type.toLowerCase();
+    let matchesTab = activeTab === 'all';
+    
+    if (activeTab === 'pdf') {
+      matchesTab = ['pdf', 'docx', 'ppt', 'doc', 'pptx'].some(t => type.includes(t));
+    } else if (activeTab === 'youtube') {
+      matchesTab = type.includes('youtube') || type.includes('video');
+    } else if (activeTab === 'audio') {
+      matchesTab = type.includes('audio');
+    }
+    
     const matchesSearch = m.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
                           m.source.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesTab && matchesSearch;
