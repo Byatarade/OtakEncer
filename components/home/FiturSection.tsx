@@ -1,12 +1,12 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+
 import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
 export function FiturSection() {
-  const router = useRouter();
+
 
   return (
     <section id="fitur" className="relative w-full flex flex-col items-center pt-24 md:pt-36 pb-12 md:pb-24 bg-[#08020d] rounded-t-[40px] md:rounded-t-[80px] mt-16 md:mt-24 z-20 border-t border-white/5 overflow-hidden font-['Montserrat',sans-serif]">

@@ -2,13 +2,13 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+
 import { useAuth } from '@/components/AuthProvider';
 import { useState } from 'react';
 import Swal from 'sweetalert2';
 
 export default function LoginPage() {
-  const router = useRouter();
+
   const { login } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
 

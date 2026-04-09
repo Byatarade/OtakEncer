@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { forwardRef } from "react";
 import { motion } from "framer-motion";
-import { Card } from "@/components/ui/card";
+
 
 export const NeuraSection = forwardRef<HTMLElement>(function NeuraSection(_, ref) {
   return (

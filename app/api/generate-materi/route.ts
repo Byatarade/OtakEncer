@@ -130,7 +130,7 @@ export async function POST(request: Request) {
         } else {
           return NextResponse.json({ error: 'Format file tidak didukung. Harap gunakan PDF, DOCX, PPTX atau format Audio didukung.' }, { status: 400 });
         }
-      } catch (err: any) {
+      } catch (err: unknown) {
          console.error("Gagal membaca dokumen:", err);
          return NextResponse.json({ error: 'Gagal membaca dokumen. Pastikan file tidak rusak atau terenkripsi.' }, { status: 400 });
       }
@@ -154,7 +154,7 @@ export async function POST(request: Request) {
         
         // Gabungkan semua array dari CC menjadi satu teks panjang
         extractedText = transcript.map(t => t.text).join(' ');
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error('YouTube Transcript Error:', err);
         return NextResponse.json({ error: 'Gagal mengambil subtitle (CC) dari video. Pastikan video bersifat publik dan tidak diblokir.' }, { status: 400 });
       }
@@ -179,7 +179,7 @@ ${safeText}
 ---`;
 
     // Susun input prompt plus buffer (jika PDF) secara native ke model Flash terbaru
-    const contentsToAI: any[] = [prompt];
+    const contentsToAI: (string | { inlineData: { data: string; mimeType: string } })[] = [prompt];
     if (inlinePdfData) {
       contentsToAI.push(inlinePdfData);
     }
@@ -208,8 +208,9 @@ ${safeText}
 
     return NextResponse.json({ success: true, data });
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('API Error:', error);
-    return NextResponse.json({ error: error.message || 'Terjadi kesalahan internal server.' }, { status: 500 });
+    const message = error instanceof Error ? error.message : 'Terjadi kesalahan internal server.';
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

@@ -5,6 +5,15 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 
+// Generated at module level to avoid impure function calls during render
+const PARTICLE_DATA = Array.from({ length: 6 }, () => ({
+  x: Math.random() * 20 - 10,
+  duration: 5 + Math.random() * 5,
+  delay: Math.random() * 5,
+  left: Math.random() * 100,
+  top: Math.random() * 100,
+}));
+
 export default function NotFound() {
   return (
     <div className="min-h-screen w-full bg-white flex flex-col items-center justify-center p-6 relative overflow-hidden font-['Montserrat',sans-serif]">
@@ -79,26 +88,26 @@ export default function NotFound() {
 
       {/* Subtle Floating Particles for Depth */}
       <div className="absolute inset-0 pointer-events-none z-0">
-        {[...Array(6)].map((_, i) => (
+        {PARTICLE_DATA.map((particle, i) => (
            <motion.div
-             key={i}
-             animate={{ 
-               y: [0, -40, 0], 
-               x: [0, Math.random() * 20 - 10, 0],
-               opacity: [0.3, 0.6, 0.3] 
-             }}
-             transition={{ 
-               repeat: Infinity, 
-               duration: 5 + Math.random() * 5, 
-               delay: Math.random() * 5 
-             }}
-             className="absolute w-2 h-2 bg-[#7c3aed]/15 rounded-full"
-             style={{ 
-               left: `${Math.random() * 100}%`, 
-               top: `${Math.random() * 100}%` 
-             }}
-           />
-        ))}
+              key={i}
+              animate={{ 
+                y: [0, -40, 0], 
+                x: [0, particle.x, 0],
+                opacity: [0.3, 0.6, 0.3] 
+              }}
+              transition={{ 
+                repeat: Infinity, 
+                duration: particle.duration, 
+                delay: particle.delay 
+              }}
+              className="absolute w-2 h-2 bg-[#7c3aed]/15 rounded-full"
+              style={{ 
+                left: `${particle.left}%`, 
+                top: `${particle.top}%` 
+              }}
+            />
+         ))}
       </div>
 
     </div>

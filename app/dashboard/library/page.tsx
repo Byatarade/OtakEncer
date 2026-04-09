@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { Variants } from 'framer-motion';
 import { Search, FolderPlus, FileText, Video, Music, Layers, Sparkles, Filter, Loader2 } from 'lucide-react';
@@ -28,15 +28,7 @@ export default function LibraryPage() {
   const [loading, setLoading] = useState(true);
   const { user, isLoaded } = useAuth();
 
-  useEffect(() => {
-    if (user?.id) {
-      fetchMaterials();
-    } else if (isLoaded && user === null) {
-      setLoading(false);
-    }
-  }, [user, isLoaded]);
-
-  const fetchMaterials = async () => {
+  const fetchMaterials = useCallback(async () => {
     try {
       setLoading(true);
       const { data, error } = await supabase
@@ -83,7 +75,17 @@ export default function LibraryPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user?.id]);
+
+  useEffect(() => {
+    if (user?.id) {
+      fetchMaterials();
+    } else if (isLoaded && user === null) {
+      setLoading(false);
+    }
+  }, [user, isLoaded, fetchMaterials]);
+
+
 
   const tabs = [
     { id: 'all', label: 'Semua Materi', icon: <Layers size={16} /> },
@@ -252,7 +254,7 @@ export default function LibraryPage() {
                   <FolderPlus size={40} />
                 </div>
                 <h3 className="text-xl font-bold text-gray-800 mb-2">Belum ada materi</h3>
-                <p className="text-gray-500 max-w-md">Klik "Tambah Materi Baru" untuk mulai menghasilkan rangkuman cerdas Anda.</p>
+                <p className="text-gray-500 max-w-md">Klik &quot;Tambah Materi Baru&quot; untuk mulai menghasilkan rangkuman cerdas Anda.</p>
               </motion.div>
             )}
           </motion.div>

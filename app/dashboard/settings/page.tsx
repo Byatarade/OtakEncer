@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { User, Settings as SettingsIcon, BatteryCharging, Save, ShieldCheck, Mail, Camera, Loader2, Info, Sparkles } from 'lucide-react';
+import { User, BatteryCharging, Save, Mail, Camera, Loader2, Info, Sparkles } from 'lucide-react';
 import { useAuth } from '@/components/AuthProvider';
 import { supabase } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
@@ -24,15 +24,7 @@ export default function SettingsPage() {
   // Batas 3 kali sehari per akun
   const MAX_LIMIT = 3;
 
-  useEffect(() => {
-    if (user) {
-      setName(user.name || '');
-      setAvatar(user.picture || '');
-      fetchUsageCount();
-    }
-  }, [user]);
-
-  const fetchUsageCount = async () => {
+  const fetchUsageCount = useCallback(async () => {
     try {
       if (!user?.id) return;
       
@@ -55,7 +47,15 @@ export default function SettingsPage() {
     } finally {
       setUsageLoading(false);
     }
-  };
+  }, [user?.id]);
+
+  useEffect(() => {
+    if (user) {
+      setName(user.name || '');
+      setAvatar(user.picture || '');
+      fetchUsageCount();
+    }
+  }, [user, fetchUsageCount]);
 
   const handleUpdateProfile = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -78,10 +78,11 @@ export default function SettingsPage() {
         confirmButtonColor: '#672cb9'
       });
       
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Gagal memperbarui profil.';
       Swal.fire({
         title: 'Gagal',
-        text: err.message || 'Gagal memperbarui profil.',
+        text: message,
         icon: 'error',
         confirmButtonColor: '#672cb9'
       });

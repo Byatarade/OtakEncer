@@ -2,6 +2,7 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
+import Image from "next/image";
 
 // Tipe untuk pesan
 type Message = {
@@ -50,6 +51,7 @@ export default function NeuraChatbot({ showTrigger = true }: NeuraChatbotProps) 
   ]);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const msgIdCounter = useRef(0);
 
   // Auto-scroll ke bawah saat ada pesan baru
   useEffect(() => {
@@ -75,14 +77,14 @@ export default function NeuraChatbot({ showTrigger = true }: NeuraChatbotProps) 
     if (e) e.preventDefault();
     if (!input.trim()) return;
 
-    const userMessage: Message = { id: Date.now().toString(), sender: "user", text: input };
+    const userMessage: Message = { id: String(++msgIdCounter.current), sender: "user", text: input };
     setMessages((prev) => [...prev, userMessage]);
     setInput("");
 
     // Simulate bot typing delay
     setTimeout(() => {
       const botResponseText = getBotResponse(userMessage.text);
-      const botMessage: Message = { id: (Date.now() + 1).toString(), sender: "bot", text: botResponseText };
+      const botMessage: Message = { id: String(++msgIdCounter.current), sender: "bot", text: botResponseText };
       setMessages((prev) => [...prev, botMessage]);
     }, 600);
   };
@@ -112,9 +114,11 @@ export default function NeuraChatbot({ showTrigger = true }: NeuraChatbotProps) 
           className="bg-[#672cb9] hover:bg-[#522199] transition-all duration-300 rounded-l-[30px] md:rounded-l-[40px] rounded-r-none pl-3 pr-5 md:pl-4 md:pr-6 py-2 md:py-2.5 flex items-center gap-2.5 md:gap-3 shadow-[-8px_4px_24px_rgba(103,44,185,0.35)] hover:shadow-[-12px_6px_32px_rgba(103,44,185,0.5)] group border-y border-l border-white/10"
         >
           <div className="w-[36px] h-[36px] md:w-[44px] md:h-[44px] flex items-center justify-center overflow-visible z-10 relative">
-            <img
+            <Image
               alt="AI"
               src="/assets/maskot-neura.svg"
+              width={44}
+              height={44}
               className="w-full h-full object-contain scale-[1.1] md:scale-[1.15] group-hover:scale-[1.25] transition-transform duration-300 origin-bottom"
             />
           </div>
@@ -148,9 +152,11 @@ export default function NeuraChatbot({ showTrigger = true }: NeuraChatbotProps) 
             
             <div className="flex items-center gap-3 relative z-10">
               <div className="w-10 h-10 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center overflow-hidden shrink-0 border border-white/20 shadow-inner">
-                <img
+                <Image
                   alt="AI"
                   src="/assets/maskot-neura.svg"
+                  width={32}
+                  height={32}
                   className="w-8 h-8 object-contain scale-[1.2] mt-1"
                 />
               </div>
@@ -176,7 +182,7 @@ export default function NeuraChatbot({ showTrigger = true }: NeuraChatbotProps) 
           <div className="flex-1 overflow-y-auto p-4 bg-[#f8fafc] flex flex-col gap-4 relative">
             {/* Background Logo Watermark (Subtle) */}
             <div className="absolute inset-0 pointer-events-none flex items-center justify-center opacity-[0.03]">
-               <img src="/assets/logo.png" alt="" className="w-40 h-40 filter grayscale" />
+               <Image src="/assets/logo.png" alt="" width={160} height={160} className="w-40 h-40 filter grayscale" />
             </div>
 
             {messages.map((msg) => (
@@ -186,7 +192,7 @@ export default function NeuraChatbot({ showTrigger = true }: NeuraChatbotProps) 
               >
                 {msg.sender === "bot" && (
                   <div className="w-7 h-7 rounded-full bg-[#672cb9]/10 border border-[#672cb9]/20 flex items-center justify-center shrink-0 mr-2 mt-auto">
-                    <img src="/assets/maskot-neura.svg" alt="bot" className="w-5 h-5 object-contain" />
+                    <Image src="/assets/maskot-neura.svg" alt="bot" width={20} height={20} className="w-5 h-5 object-contain" />
                   </div>
                 )}
                 

@@ -1,7 +1,7 @@
 "use client"; // Trigger rescan
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, Settings, Menu, Users, Library, Trophy } from 'lucide-react';
+import { LayoutDashboard, Menu, Users, Library, Trophy } from 'lucide-react';
 import Image from 'next/image';
 import { AuthGuard } from '@/components/AuthProvider';
 

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/components/AuthProvider';
@@ -14,9 +14,42 @@ export default function MaterialReader() {
   const router = useRouter();
   const { user, isLoaded } = useAuth();
   
-  const [material, setMaterial] = useState<any>(null);
+  interface MaterialRecord {
+    id: string;
+    title: string;
+    source_type: string;
+    ai_summary: string | null;
+    created_at: string;
+    file_size_bytes: number;
+    user_id: string;
+  }
+
+  const [material, setMaterial] = useState<MaterialRecord | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const fetchMaterial = useCallback(async () => {
+    try {
+      setLoading(true);
+      const { data, error: fetchError } = await supabase
+        .from('materials')
+        .select('*')
+        .eq('id', params.id)
+        .eq('user_id', user?.id)
+        .single();
+
+      if (fetchError) {
+        throw fetchError;
+      }
+
+      setMaterial(data as MaterialRecord);
+    } catch (err: unknown) {
+      console.error('Failed to load material:', err);
+      setError('Materi tidak ditemukan atau Anda tidak memiliki akses.');
+    } finally {
+      setLoading(false);
+    }
+  }, [params.id, user?.id]);
 
   useEffect(() => {
     if (user?.id && params.id) {
@@ -25,30 +58,9 @@ export default function MaterialReader() {
       setLoading(false);
       setError('Sesi berakhir. Silakan login kembali.');
     }
-  }, [user, params.id, isLoaded]);
+  }, [user, params.id, isLoaded, fetchMaterial]);
 
-  const fetchMaterial = async () => {
-    try {
-      setLoading(true);
-      const { data, error } = await supabase
-        .from('materials')
-        .select('*')
-        .eq('id', params.id)
-        .eq('user_id', user?.id)
-        .single();
 
-      if (error) {
-        throw error;
-      }
-
-      setMaterial(data);
-    } catch (err: any) {
-      console.error('Failed to load material:', err);
-      setError('Materi tidak ditemukan atau Anda tidak memiliki akses.');
-    } finally {
-      setLoading(false);
-    }
-  };
 
   if (loading) {
     return (

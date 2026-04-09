@@ -1,7 +1,7 @@
 "use client";
 import { supabase } from '@/lib/supabase';
 
-import {Bell, Plus, Filter, LogOut, Settings, HelpCircle, ChevronDown, Calendar, Eye, FileText, CheckCircle2, CheckCircle, X, Sparkles, Menu, MonitorPlay, Volume2, Link as LinkIcon, LayoutDashboard, Trophy, Users, Library } from 'lucide-react';
+import {Plus, LogOut, Settings, HelpCircle, ChevronDown, Calendar, Eye, FileText, CheckCircle2, CheckCircle, X, MonitorPlay, Volume2, Link as LinkIcon, LayoutDashboard, Trophy, Users, Library } from 'lucide-react';
 import Image from 'next/image';
 import { useAuth } from '@/components/AuthProvider';
 import { useRouter } from 'next/navigation';
@@ -107,7 +107,7 @@ export default function Dashboard() {
            router.push('/dashboard/library');
          }, 1500);
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
        Swal.fire({
          title: 'Terjadi Kesalahan',
          text: 'Gagal mengunggah file. Periksa koneksi internet Anda dan coba lagi.',
@@ -175,7 +175,7 @@ export default function Dashboard() {
            router.push('/dashboard/library');
          }, 1500);
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
        Swal.fire({
          title: 'Terjadi Kesalahan',
          text: 'Gagal memproses link YouTube. Periksa koneksi internet Anda.',
@@ -414,7 +414,7 @@ export default function Dashboard() {
                 <Eye size={20} className="text-[#672cb9]" />
               </div>
               <div className="flex-1">
-                <p className="text-slate-800 font-medium">Viewed "Introduction to Python"</p>
+                <p className="text-slate-800 font-medium">Viewed &quot;Introduction to Python&quot;</p>
                 <p className="text-slate-400 text-[13px] mt-0.5">2 minutes ago</p>
               </div>
             </div>
@@ -424,7 +424,7 @@ export default function Dashboard() {
                 <FileText size={20} className="text-[#672cb9]" />
               </div>
               <div className="flex-1">
-                <p className="text-slate-800 font-medium">Uploaded "Project Proposal.pdf"</p>
+                <p className="text-slate-800 font-medium">Uploaded &quot;Project Proposal.pdf&quot;</p>
                 <p className="text-slate-400 text-[13px] mt-0.5">3 minutes ago</p>
               </div>
             </div>
@@ -434,7 +434,7 @@ export default function Dashboard() {
                 <CheckCircle2 size={20} className="text-white" />
               </div>
               <div className="flex-1">
-                <p className="text-slate-800 font-medium">Completed quiz "Math 101"</p>
+                <p className="text-slate-800 font-medium">Completed quiz &quot;Math 101&quot;</p>
                 <p className="text-slate-400 text-[13px] mt-0.5">3 minutes ago</p>
               </div>
             </div>
@@ -444,7 +444,7 @@ export default function Dashboard() {
                 <CheckCircle2 size={20} className="text-white" />
               </div>
               <div className="flex-1">
-                <p className="text-slate-800 font-medium">Completed quiz "Project Proposal.pdf"</p>
+                <p className="text-slate-800 font-medium">Completed quiz &quot;Project Proposal.pdf&quot;</p>
                 <p className="text-slate-400 text-[13px] mt-0.5">3 minutes ago</p>
               </div>
             </div>

@@ -1,8 +1,8 @@
 "use client";
 
 import React from "react";
-import { motion } from "framer-motion";
-import { MoreVertical, Clock, Search, Video, FileType2, Music, LayoutGrid, FileText } from "lucide-react";
+
+import { MoreVertical, Clock, Search, Video, FileType2, Music, FileText } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 
