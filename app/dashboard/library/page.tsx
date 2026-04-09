@@ -9,7 +9,6 @@ import { Input } from '@/components/ui/input';
 import { LibraryCard, Material } from '@/components/library/LibraryCard';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/components/AuthProvider';
-import Link from 'next/link';
 
 const containerVariants: Variants = {
   hidden: { opacity: 0 },
@@ -240,9 +239,13 @@ export default function LibraryPage() {
           >
             {filteredMaterials.length > 0 ? (
               filteredMaterials.map((material) => (
-                <Link key={material.id} href={`/dashboard/library/${material.id}`} className="block h-full">
-                  <LibraryCard material={material} />
-                </Link>
+                <LibraryCard 
+                  key={material.id} 
+                  material={material} 
+                  onDeleteSuccess={() => {
+                    setMaterials(prev => prev.filter(m => m.id !== material.id));
+                  }}
+                />
               ))
             ) : (
               <motion.div 

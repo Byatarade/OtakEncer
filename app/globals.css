@@ -77,3 +77,10 @@ html {
 ::-webkit-scrollbar-corner {
   background: transparent;
 }
+
+/* Penyesuaian saat Mode Render PDF aktif (agar format sesuai A4) */
+.pdf-mode-active {
+  padding: 40px !important;
+  width: 800px !important; /* Fix Width agar Canvas stabil sebelum PDF diparsing */
+  margin: 0 auto;
+}

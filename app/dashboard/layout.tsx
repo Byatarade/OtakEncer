@@ -12,6 +12,9 @@ export default function DashboardLayout({
 }) {
   const pathname = usePathname();
 
+  // Deteksi jika user sedang membaca materi (misal /dashboard/library/123)
+  const isMaterialView = pathname.includes('/dashboard/library/') && pathname.split('/').length >= 4 && pathname !== '/dashboard/library/create'; // Jangan sembunyikan jika ada halaman create
+
   return (
     <AuthGuard>
       <div className="h-screen w-full flex font-['Montserrat',sans-serif] bg-[#672cb9] overflow-hidden relative">
@@ -20,31 +23,33 @@ export default function DashboardLayout({
         <div className="flex h-full w-full relative z-10">
           
           {/* Sidebar - Solid Color, Left part of the screen */}
-          <aside className="w-[280px] bg-[#672cb9] text-white hidden md:flex flex-col relative z-20 shrink-0 py-6">
-            {/* Logo Section */}
-            <div className="pt-4 pb-12 px-10 shrink-0">
-              <Link href="/?view=landing" className="flex items-center gap-3">
-                <div className="w-8 h-8 relative flex items-center justify-center p-0.5">
-                  <Image src="/assets/logo.svg" alt="Logo" fill className="object-contain brightness-0 invert" />
-                </div>
-                <div className="leading-[1.1]">
-                  <div className="text-[20px] font-bold text-white tracking-tight">OtakEncer</div>
-                </div>
-              </Link>
-            </div>
+          {!isMaterialView && (
+            <aside className="w-[280px] bg-[#672cb9] text-white hidden md:flex flex-col relative z-20 shrink-0 py-6">
+              {/* Logo Section */}
+              <div className="pt-4 pb-12 px-10 shrink-0">
+                <Link href="/?view=landing" className="flex items-center gap-3">
+                  <div className="w-8 h-8 relative flex items-center justify-center p-0.5">
+                    <Image src="/assets/logo.svg" alt="Logo" fill className="object-contain brightness-0 invert" />
+                  </div>
+                  <div className="leading-[1.1]">
+                    <div className="text-[20px] font-bold text-white tracking-tight">OtakEncer</div>
+                  </div>
+                </Link>
+              </div>
 
-            {/* Navigation */}
-            <nav className="flex-1 px-0 flex flex-col space-y-1">
-              <NavLink href="/dashboard" icon={<LayoutDashboard size={20} />} active={pathname === '/dashboard'}>Dashboard</NavLink>
-              <NavLink href="/dashboard/library" icon={<Library size={20} />} active={pathname.startsWith('/dashboard/library')}>Library</NavLink>
-              <NavLink href="/dashboard/leaderboard" icon={<Trophy size={20} />} active={pathname.startsWith('/dashboard/leaderboard')}>Leaderboard</NavLink>
-              <NavLink href="/dashboard/kolaborasi" icon={<Users size={20} />} active={pathname.startsWith('/dashboard/kolaborasi')}>Ruang Kolaborasi</NavLink>
+              {/* Navigation */}
+              <nav className="flex-1 px-0 flex flex-col space-y-1">
+                <NavLink href="/dashboard" icon={<LayoutDashboard size={20} />} active={pathname === '/dashboard'}>Dashboard</NavLink>
+                <NavLink href="/dashboard/library" icon={<Library size={20} />} active={pathname.startsWith('/dashboard/library') && !isMaterialView}>Library</NavLink>
+                <NavLink href="/dashboard/leaderboard" icon={<Trophy size={20} />} active={pathname.startsWith('/dashboard/leaderboard')}>Leaderboard</NavLink>
+                <NavLink href="/dashboard/kolaborasi" icon={<Users size={20} />} active={pathname.startsWith('/dashboard/kolaborasi')}>Ruang Kolaborasi</NavLink>
 
-            </nav>
-          </aside>
+              </nav>
+            </aside>
+          )}
 
           {/* Mobile Header (Only visible on small screens) */}
-          {pathname !== '/dashboard' && (
+          {!isMaterialView && pathname !== '/dashboard' && (
             <header className="h-16 bg-[#672cb9] text-white flex items-center justify-between px-4 sticky top-0 z-30 md:hidden absolute w-full shadow-md">
               <Link href="/?view=landing" className="flex items-center gap-2">
                 <div className="relative w-8 h-8 flex items-center justify-center">
@@ -61,7 +66,9 @@ export default function DashboardLayout({
           )}
 
           {/* Main Content Area */}
-          <main className={`flex-1 min-w-0 h-full overflow-y-auto bg-[#f8fafc] md:rounded-l-[40px] shadow-[-10px_0_30px_rgba(0,0,0,0.1)] content-area-scroll w-full ${pathname !== '/dashboard' ? 'pt-16 md:pt-0' : 'pt-0'}`}>
+          <main className={`flex-1 min-w-0 h-full w-full 
+            ${!isMaterialView ? 'overflow-y-auto bg-[#f8fafc] md:rounded-l-[40px] shadow-[-10px_0_30px_rgba(0,0,0,0.1)] content-area-scroll' : 'overflow-hidden bg-white'} 
+            ${pathname !== '/dashboard' && !isMaterialView ? 'pt-16 md:pt-0' : 'pt-0'}`}>
             {children}
           </main>
 

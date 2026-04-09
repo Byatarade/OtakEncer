@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { OfficeParser } from 'officeparser';
+import pdfParse from 'pdf-parse';
 import { YoutubeTranscript } from 'youtube-transcript';
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
@@ -63,6 +64,7 @@ export async function POST(request: Request) {
     let sourceType = 'other';
     let title = 'Materi Baru';
     let fileSizeBytes = 0;
+    let fileBuffer: Buffer | null = null;
     
     // Siapkan object untuk Native PDF upload ke Gemini
     let inlinePdfData: { inlineData: { data: string, mimeType: string } } | null = null;
@@ -80,6 +82,7 @@ export async function POST(request: Request) {
       
       const bytes = await file.arrayBuffer();
       const buffer = Buffer.from(bytes);
+      fileBuffer = buffer;
       const fileName = file.name.toLowerCase();
 
       try {
@@ -184,10 +187,72 @@ ${safeText}
       contentsToAI.push(inlinePdfData);
     }
 
-    // Menggunakan Gemini 2.5 Flash yang lebih stabil menahan spike "high demand" / error 503
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
-    const aiResult = await model.generateContent(contentsToAI);
-    const aiSummary = aiResult.response.text();
+    let aiSummary = '';
+
+    try {
+      const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
+      const aiResult = await model.generateContent(contentsToAI);
+      aiSummary = aiResult.response.text();
+    } catch (aiError: unknown) {
+      const errMsg = aiError instanceof Error ? aiError.message : String(aiError);
+      const errStatus = (aiError as { status?: number })?.status;
+      console.warn("Gemini API Error, checking possibility for fallback:", errMsg);
+      
+      const isHighDemand = errStatus === 503 || errMsg.includes('503') || errMsg.includes('demand');
+      
+      if (isHighDemand || errMsg.includes('GenerateContent')) {
+        console.log("=== MELAKUKAN FALLBACK OTOMATIS KE GROQ LLAMA 3.3 ===");
+        
+        let finalPrompt = prompt;
+
+        // Jika dokumen berbentuk PDF murni, kita harus ekstraksi teksnya terlebih dahulu untuk Groq
+        if (inlinePdfData && fileBuffer) {
+           console.log("PDF detected during fallback. Extracting text for Groq...");
+           try {
+             // Menggunakan pdf-parse karena officeparser tidak stabil untuk PDF asli di Node/Windows fallback
+             const pdfData = await pdfParse(fileBuffer);
+             const safePdfText = pdfData.text.substring(0, 30000);
+             
+             finalPrompt = `Kamu adalah seorang guru AI yang sangat pintar, asik, dan mudah dimengerti.
+Tugas kamu adalah MENGUBAH teks dokumen di bawah ini menjadi sebuah MATERI BELAJAR yang terstruktur.
+Gunakan markdown (Heading, Bullet points, Bold) untuk merapikannya.
+Jelaskan seakan kamu mengajar orang awam agar cepat paham.
+    
+Berikut teks / dokumen pembantu:
+---
+${safePdfText}
+---`;
+           } catch (parseErr) {
+             console.error("Gagal mengekstrak teks PDF saat fallback:", parseErr);
+             throw new Error("Gagal fallback: Teks PDF tidak dapat dibaca oleh sistem cadangan.");
+           }
+        }
+        
+        const groqRes = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${process.env.GROQ_API_KEY}`
+          },
+          body: JSON.stringify({
+            model: 'llama-3.3-70b-versatile',
+            messages: [{ role: 'user', content: finalPrompt }],
+            temperature: 0.7
+          })
+        });
+
+        if (!groqRes.ok) {
+          const failErr = await groqRes.text();
+          throw new Error(`Google API sibuk dan Backup Groq gagal: ${failErr}`);
+        }
+        
+        const groqData = await groqRes.json();
+        aiSummary = groqData.choices[0].message.content;
+      } else {
+        // Lempar ke frontend jika bukan masalah 503
+        throw aiError;
+      }
+    }
 
     // Simpan ke Database
     const { data, error } = await supabase.from('materials').insert([

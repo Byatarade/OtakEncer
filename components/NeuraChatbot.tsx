@@ -73,11 +73,12 @@ export default function NeuraChatbot({ showTrigger = true }: NeuraChatbotProps) 
     return "Maaf, saya tidak mengerti pertanyaan tersebut. Coba tanyakan seputar 'tujuan', 'fitur', atau 'kontak'.";
   };
 
-  const handleSend = (e?: React.FormEvent) => {
+  const handleSend = (e?: React.FormEvent, textOverride?: string) => {
     if (e) e.preventDefault();
-    if (!input.trim()) return;
+    const textToUse = textOverride !== undefined ? textOverride : input;
+    if (!textToUse.trim()) return;
 
-    const userMessage: Message = { id: String(++msgIdCounter.current), sender: "user", text: input };
+    const userMessage: Message = { id: String(++msgIdCounter.current), sender: "user", text: textToUse };
     setMessages((prev) => [...prev, userMessage]);
     setInput("");
 
@@ -90,12 +91,7 @@ export default function NeuraChatbot({ showTrigger = true }: NeuraChatbotProps) 
   };
 
   const submitQuickAction = (suggestion: string) => {
-    setInput(suggestion);
-    setTimeout(() => {
-      handleSend({
-        preventDefault: () => {},
-      } as React.FormEvent);
-    }, 100);
+    handleSend(undefined, suggestion);
   };
 
   return (
