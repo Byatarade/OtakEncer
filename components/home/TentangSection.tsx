@@ -37,7 +37,7 @@ export function TentangSection() {
           transition={{ delay: 0.2 }}
           className="mt-6 text-[15px] md:text-[17px] leading-[1.6] text-gray-500 font-medium max-w-[620px]"
         >
-          OtakEncer hadir sebagai pionir asisten edukasi digital yang tidak hanya merangkum, tapi membantu Anda menguasai materi tersulit sekalipun dalam hitungan detik.
+          OtakEncer hadir sebagai asisten edukasi digital yang tidak hanya merangkum, tapi membantu Anda menguasai materi tersulit sekalipun dalam hitungan detik.
         </motion.p>
       </div>
 
