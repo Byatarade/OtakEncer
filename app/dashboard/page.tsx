@@ -660,30 +660,30 @@ function DailyTokensCard({ userId }: { userId: string }) {
   const percentage = Math.min((usageCount / MAX_LIMIT) * 100, 100);
 
   return (
-    <div className="bg-white rounded-[24px] md:rounded-3xl p-4 md:p-8 shadow-sm md:shadow-sm border border-slate-100 flex flex-col justify-center h-full col-span-1">
-      <h3 className="text-[20px] sm:text-[20px] font-bold text-[#672cb9] mb-5 sm:mb-6">Daily Token<span className="hidden sm:inline">s</span></h3>
+    <div className="bg-white rounded-[24px] md:rounded-3xl p-6 md:p-8 shadow-sm md:shadow-sm border border-slate-100 flex flex-col h-full col-span-1">
+      <h3 className="text-[18px] md:text-[22px] font-bold text-[#672cb9] mb-6 md:mb-8">Daily Token</h3>
       
       {loading ? (
-        <div className="flex items-center justify-center py-8">
+        <div className="flex items-center justify-center py-8 flex-1">
           <div className="w-6 h-6 border-2 border-[#672cb9] border-t-transparent rounded-full animate-spin"></div>
         </div>
       ) : (
-        <>
+        <div className="flex flex-col flex-1">
           {/* Mobile Text */}
-          <div className="flex sm:hidden justify-between items-center mb-2">
-            <p className="text-slate-800 text-[14px] font-medium">Token</p>
-            <p className="text-[#0f172a] text-[14px] font-medium">{remaining}/{MAX_LIMIT}</p>
+          <div className="flex sm:hidden justify-between items-center mb-3">
+            <p className="text-[#0f172a] text-[15px] font-medium">Token</p>
+            <p className="text-[#0f172a] text-[15px] font-medium">{remaining}/{MAX_LIMIT}</p>
           </div>
           
           {/* Desktop Text */}
           <div className="hidden sm:flex justify-between items-end mb-3">
             <div>
-              <p className="text-slate-800 font-medium">Token Tersisa: <span className="font-bold">{remaining}/{MAX_LIMIT}</span></p>
+              <p className="text-[#0f172a] font-medium text-[15px]">Token Tersisa: <span className="font-bold">{remaining}/{MAX_LIMIT}</span></p>
             </div>
-            <p className="text-slate-800 font-bold text-[15px]">{usageCount} token <span className="font-normal">digunakan</span></p>
+            <p className="text-slate-800 font-bold text-[14px]">{usageCount} token <span className="font-normal text-[#0f172a]">digunakan</span></p>
           </div>
           
-          <div className="w-full h-[14px] sm:h-3.5 bg-[#f8f5fd] sm:bg-indigo-50 rounded-full overflow-hidden mb-5 sm:mb-6">
+          <div className="w-full h-3 sm:h-3.5 bg-[#f5f3ff] rounded-full overflow-hidden mb-4 md:mb-5">
             <div 
               className={`h-full rounded-full transition-all duration-700 ${
                 remaining === 0 ? 'bg-red-500' : remaining === 1 ? 'bg-orange-400' : 'bg-[#FFA515]'
@@ -692,28 +692,34 @@ function DailyTokensCard({ userId }: { userId: string }) {
             ></div>
           </div>
           
-          {/* Mobile Pill */}
-          <div className={`sm:hidden w-full py-1.5 rounded-[12px] text-[14px] font-medium text-center ${
-            remaining === 0 
-              ? 'bg-red-50 text-red-700' 
-              : 'bg-[#fff4e6] text-[#0f172a]'
-          }`}>
-            {remaining === 0 
-              ? 'Kuota harian habis' 
-              : `${remaining} Token Tersisa`}
-          </div>
+          <p className="text-[#8a8a8e] text-[13px] font-medium leading-[1.4] block decoration-[1.5px] mb-5">
+            Periksa Pengaturan Akun untuk selengkapnya
+          </p>
           
-          {/* Desktop Pill */}
-          <div className={`hidden sm:inline-flex self-start py-2 px-4 rounded-xl text-[14px] font-medium ${
-            remaining === 0 
-              ? 'bg-red-50 text-red-700' 
-              : 'bg-orange-50 text-[#000000]'
-          }`}>
-            {remaining === 0 
-              ? 'Kuota harian habis, reset tengah malam' 
-              : `${remaining} token tersisa untuk hari ini`}
+          <div className="mt-auto">
+            {/* Mobile Pill */}
+            <div className={`sm:hidden flex w-full justify-center items-center py-2.5 px-4 rounded-xl text-[11px] text-center font-semibold ${
+              remaining === 0 
+                ? 'bg-red-50 text-red-700' 
+                : 'bg-[#fff4e6] text-[#0f172a]'
+            }`}>
+              {remaining === 0 
+                ? 'Kuota harian habis' 
+                : `${remaining} Token Tersisa`}
+            </div>
+            
+            {/* Desktop Pill */}
+            <div className={`hidden sm:inline-flex py-2.5 px-5 rounded-[14px] text-[14px] font-semibold ${
+              remaining === 0 
+                ? 'bg-red-50 text-red-700' 
+                : 'bg-[#fff4e6] text-[#0f172a]'
+            }`}>
+              {remaining === 0 
+                ? 'Kuota harian habis, reset tengah malam' 
+                : `${remaining} token tersisa untuk hari ini`}
+            </div>
           </div>
-        </>
+        </div>
       )}
     </div>
   );
@@ -751,11 +757,37 @@ function DailyStreakCard({ userId }: { userId: string }) {
   }, [userId]);
 
   return (
-    <div className="bg-gradient-to-br from-white to-orange-50/40 rounded-[24px] md:rounded-3xl p-6 md:p-8 shadow-sm md:shadow-sm shadow-slate-200/50 border border-orange-100 flex flex-col justify-between col-span-1 relative overflow-hidden group">
-      {/* Background Decor */}
-      <div className="absolute -top-12 -right-12 w-40 h-40 bg-orange-200/50 rounded-full blur-3xl opacity-60 pointer-events-none group-hover:bg-orange-300/50 transition-colors duration-500"></div>
+    <div className="bg-white md:bg-gradient-to-br md:from-white md:to-orange-50/40 rounded-[24px] md:rounded-3xl p-5 md:p-8 shadow-sm md:shadow-sm shadow-slate-200/50 border-[3px] border-[#FFA515] md:border md:border-orange-100 flex flex-col justify-between col-span-1 relative overflow-hidden group">
+      {/* Background Decor (Desktop Only) */}
+      <div className="hidden md:block absolute -top-12 -right-12 w-40 h-40 bg-orange-200/50 rounded-full blur-3xl opacity-60 pointer-events-none group-hover:bg-orange-300/50 transition-colors duration-500"></div>
       
-      <div className="relative z-10 flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+      {/* MOBILE DESAIN */}
+      <div className="flex sm:hidden flex-col h-full justify-between relative z-10">
+        <div className="flex gap-2.5 mb-5 items-center">
+          <div className="bg-[#feebd6] w-[48px] h-[48px] rounded-[14px] flex items-center justify-center shrink-0">
+            <Flame size={26} className="text-[#fb6f08]" strokeWidth={2.5} />
+          </div>
+          <div className="flex flex-col">
+            <h3 className="text-[17px] font-semibold text-black leading-[1.1] tracking-tight">Streak</h3>
+            <h3 className="text-[17px] font-semibold text-black leading-[1.1] tracking-tight">Harian</h3>
+          </div>
+        </div>
+
+        <div className="mb-4">
+          <h2 className="text-[64px] font-extrabold text-black leading-none tracking-tighter">
+            {loading ? '-' : streak}
+          </h2>
+        </div>
+
+        <div className="mt-auto pt-2">
+          <Link href="/dashboard" className="text-[#8a8a8e] text-[13px] font-medium leading-[1.4] block decoration-[1.5px]">
+            {loading ? 'Memuat...' : streak === 0 ? 'Ayo mulai kerjakan quiz hari ini untuk streak pertamamu' : 'Luar biasa! Pertahankan streak belajarmu hari ini'}
+          </Link>
+        </div>
+      </div>
+
+      {/* DESKTOP DESAIN */}
+      <div className="hidden sm:flex relative z-10 flex-col sm:items-start justify-between gap-4 h-full">
         <div className="flex items-center gap-3 md:gap-4">
           <div className="bg-gradient-to-br from-orange-100 to-orange-200 w-12 h-12 md:w-14 md:h-14 rounded-2xl flex items-center justify-center shrink-0 shadow-sm border border-orange-50">
             <Flame size={28} className="text-orange-500 md:w-8 md:h-8" strokeWidth={2.5} />
@@ -769,35 +801,35 @@ function DailyStreakCard({ userId }: { userId: string }) {
             </div>
           </div>
         </div>
-      </div>
       
-      <div className="relative z-10 mt-6 md:mt-8">
-        <p className="text-[13px] md:text-[14px] text-slate-500 font-medium mb-4">
-          {loading ? 'Memuat...' : streak === 0 ? 'Ayo mulai kerjakan quiz hari ini untuk streak pertamamu!' : `Luar biasa! Pertahankan streak belajarmu.`}
-        </p>
-        <div className="flex items-center justify-between gap-1.5 sm:gap-2">
-          {['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'].map((day, idx) => {
-             const currentDayOfWeek = new Date().getDay(); 
-             const targetIndex = currentDayOfWeek === 0 ? 6 : currentDayOfWeek - 1; 
-             const isChecked = streak > 0 && targetIndex >= idx && (targetIndex - idx) < streak;
-             const isToday = targetIndex === idx;
+        <div className="mt-6 md:mt-8 w-full">
+          <p className="text-[13px] md:text-[14px] text-slate-500 font-medium mb-4">
+            {loading ? 'Memuat...' : streak === 0 ? 'Ayo mulai kerjakan quiz hari ini untuk streak pertamamu!' : `Luar biasa! Pertahankan streak belajarmu.`}
+          </p>
+          <div className="flex items-center justify-between gap-1.5 sm:gap-2">
+            {['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'].map((day, idx) => {
+               const currentDayOfWeek = new Date().getDay(); 
+               const targetIndex = currentDayOfWeek === 0 ? 6 : currentDayOfWeek - 1; 
+               const isChecked = streak > 0 && targetIndex >= idx && (targetIndex - idx) < streak;
+               const isToday = targetIndex === idx;
 
-             return (
-               <div key={idx} className="flex flex-col items-center gap-2 flex-1">
-                 <div className={`w-full max-w-[44px] aspect-square rounded-[14px] flex items-center justify-center text-[13px] font-bold transition-all duration-300
-                   ${isChecked
-                     ? 'bg-gradient-to-b from-orange-400 to-orange-500 text-white shadow-md shadow-orange-200 ring-2 ring-orange-100 ring-offset-2' 
-                     : isToday
-                       ? 'bg-white border-2 border-orange-400 text-orange-600 shadow-sm'
-                       : 'bg-slate-50 border border-slate-100 text-slate-400'}`}>
-                   {isChecked ? <Check size={20} strokeWidth={3} className="text-white" /> : day[0]}
+               return (
+                 <div key={idx} className="flex flex-col items-center gap-2 flex-1">
+                   <div className={`w-full max-w-[44px] aspect-square rounded-[14px] flex items-center justify-center text-[13px] font-bold transition-all duration-300
+                     ${isChecked
+                       ? 'bg-gradient-to-b from-orange-400 to-orange-500 text-white shadow-md shadow-orange-200 ring-2 ring-orange-100 ring-offset-2' 
+                       : isToday
+                         ? 'bg-white border-2 border-[#FFA515] text-black shadow-sm'
+                         : 'bg-slate-50 border border-slate-100 text-slate-400'}`}>
+                     {isChecked ? <Check size={20} strokeWidth={3} className="text-white" /> : day[0]}
+                   </div>
+                   <span className={`text-[11px] font-semibold ${isToday ? 'text-black' : 'text-slate-400'}`}>
+                     {day}
+                   </span>
                  </div>
-                 <span className={`text-[11px] font-semibold ${isToday ? 'text-orange-600' : 'text-slate-400'}`}>
-                   {day}
-                 </span>
-               </div>
-             );
-          })}
+               );
+            })}
+          </div>
         </div>
       </div>
     </div>
