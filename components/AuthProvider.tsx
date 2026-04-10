@@ -13,14 +13,14 @@ export interface User {
 
 interface AuthContextType {
   user: User | null;
-  login: () => Promise<void>;
+  loginWithGoogle: () => Promise<void>;
   logout: () => Promise<void>;
   isLoaded: boolean;
 }
 
 const AuthContext = createContext<AuthContextType>({
   user: null,
-  login: async () => {},
+  loginWithGoogle: async () => {},
   logout: async () => {},
   isLoaded: false,
 });
@@ -75,7 +75,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
   }, []);
 
-  const login = async () => {
+  const loginWithGoogle = async () => {
     await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
@@ -90,7 +90,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, isLoaded }}>
+    <AuthContext.Provider value={{ user, loginWithGoogle, logout, isLoaded }}>
       {children}
     </AuthContext.Provider>
   );

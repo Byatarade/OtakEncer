@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import type { User } from "@/components/AuthProvider";
 import { Button } from "@/components/ui/button";
@@ -23,6 +24,8 @@ export function HomeNavbar({
   handleScroll,
   user,
 }: HomeNavbarProps) {
+  const router = useRouter();
+
   return (
     <div className="w-full flex justify-center fixed top-2 md:top-6 z-[100] px-4 md:px-8 pointer-events-none font-['Montserrat',sans-serif]">
       <motion.nav
@@ -68,11 +71,11 @@ export function HomeNavbar({
           <div className="flex items-center gap-2 md:gap-4">
             {user ? (
               <div className="flex items-center gap-2 md:gap-4">
-                <Button size="sm" variant="secondary" className="hidden md:flex px-5 py-2.5 rounded-full group h-auto" onClick={() => (window.location.href = "/dashboard")}>
+                <Button size="sm" variant="secondary" className="hidden md:flex px-5 py-2.5 rounded-full group h-auto" onClick={() => router.push("/dashboard")}>
                   Dashboard
                   <span className="ml-2 inline-block transition-transform group-hover:translate-x-1">👉</span>
                 </Button>
-                <Button size="sm" variant="secondary" className="md:hidden flex px-3 py-2 rounded-full group" onClick={() => (window.location.href = "/dashboard")}>
+                <Button size="sm" variant="secondary" className="md:hidden flex px-3 py-2 rounded-full group" onClick={() => router.push("/dashboard")}>
                   Dashboard
                 </Button>
                 {user.picture ? (
@@ -90,7 +93,7 @@ export function HomeNavbar({
                 <Link href="/login" className="hidden md:block text-[13px] font-bold text-gray-800 hover:text-[#672cb9] transition-colors px-2">
                   Log In
                 </Link>
-                <Button size="sm" variant="secondary" className="px-5 py-2.5 rounded-full" onClick={() => (window.location.href = "/login")}>
+                <Button size="sm" variant="secondary" className="px-5 py-2.5 rounded-full" onClick={() => router.push("/login")}>
                   Sign In
                 </Button>
               </div>
@@ -128,3 +131,4 @@ export function HomeNavbar({
     </div>
   );
 }
+

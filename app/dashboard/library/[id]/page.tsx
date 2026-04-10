@@ -4,12 +4,13 @@ import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/components/AuthProvider';
-import { ArrowLeft, Loader2, FileText, Calendar, Clock, Download, BookOpen, Layers, ListTodo, ChevronLeft, ChevronRight, RefreshCcw } from 'lucide-react';
+import { ArrowLeft, Loader2, FileText, Calendar, Clock, Download, BookOpen, Layers, ListTodo, ChevronLeft, ChevronRight, RefreshCcw, Sparkles } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { Button } from '@/components/ui/button';
 import { jsPDF } from 'jspdf';
 import html2canvas from 'html2canvas';
+import NeuraSidebar from '@/components/library/NeuraSidebar';
 
 export interface QuizItem {
   question: string;
@@ -53,6 +54,12 @@ export default function MaterialReader() {
   const [activeCardData, setActiveCardData] = useState(0);
   const [generatingInteractive, setGeneratingInteractive] = useState(false);
   const [submitMessage, setSubmitMessage] = useState<string | null>(null);
+
+  // States for Ask Neura
+  const [isNeuraSidebarOpen, setIsNeuraSidebarOpen] = useState(false);
+  const [initialNeuraQuery, setInitialNeuraQuery] = useState<string | null>(null);
+  const [selectedText, setSelectedText] = useState<string | null>(null);
+  const [askNeuraPos, setAskNeuraPos] = useState<{ x: number, y: number } | null>(null);
 
   const fetchInteractiveMedia = useCallback(async (type: 'quiz' | 'flashcard') => {
     if (!material) return;
@@ -169,6 +176,42 @@ export default function MaterialReader() {
       setError('Sesi berakhir. Silakan login kembali.');
     }
   }, [user, params.id, isLoaded]);
+
+  const handleTextSelection = () => {
+    if (activeTab !== 'materi') return;
+    
+    // Tunggu event sinkron selesai
+    setTimeout(() => {
+      const selection = window.getSelection();
+      if (selection && selection.toString().trim().length > 0) {
+        const text = selection.toString().trim();
+        const range = selection.getRangeAt(0);
+        const rect = range.getBoundingClientRect();
+        
+        // Cek apakah posisi masuk akal (tidak di luar view)
+        if (rect.width > 0 && rect.height > 0) {
+          setSelectedText(text);
+          setAskNeuraPos({
+            x: rect.left + rect.width / 2,
+            y: rect.top - 10
+          });
+        }
+      } else {
+        setSelectedText(null);
+        setAskNeuraPos(null);
+      }
+    }, 10);
+  };
+
+  const handleAskNeura = () => {
+    if (selectedText) {
+      setInitialNeuraQuery(selectedText);
+      setIsNeuraSidebarOpen(true);
+      setSelectedText(null);
+      setAskNeuraPos(null);
+      window.getSelection()?.removeAllRanges();
+    }
+  };
 
   const handleDownload = async () => {
     if (!contentRef.current || !material) return;
@@ -332,8 +375,31 @@ export default function MaterialReader() {
       </div>
 
       {/* Kolom Kanan: Area Baca Ergonomis */}
-      <main className="flex-1 h-full overflow-y-auto content-area-scroll pt-16 md:pt-0 relative bg-white ml-2 md:scroll-smooth">
+      <main 
+        className="flex-1 h-full overflow-y-auto content-area-scroll pt-16 md:pt-0 relative bg-white ml-2 md:scroll-smooth"
+        onMouseUp={handleTextSelection}
+        onTouchEnd={handleTextSelection}
+      >
         
+        {/* Floating Ask Neura Button */}
+        {selectedText && askNeuraPos && (
+          <div 
+            className="fixed z-50 transform -translate-x-1/2 -translate-y-full pb-2 animate-in fade-in slide-in-from-bottom-2 duration-200"
+            style={{ left: askNeuraPos.x, top: askNeuraPos.y }}
+            onMouseDown={(e) => e.preventDefault()} // Mencegah klik menghilangkan seleksi teks
+          >
+            <button
+              onClick={handleAskNeura}
+              className="bg-[#672cb9] text-white shadow-xl hover:bg-[#522199] transition-all duration-300 rounded-full px-4 py-2.5 flex items-center gap-2 font-bold text-sm border-2 border-white cursor-pointer"
+            >
+              <Sparkles size={16} className="text-yellow-300 mr-1" />
+              Ask to Neura
+            </button>
+            {/* Arrow/Triangle pointing down */}
+            <div className="absolute left-1/2 bottom-0 transform -translate-x-1/2 translate-y-1/2 rotate-45 w-3 h-3 bg-[#672cb9] border-r-2 border-b-2 border-white"></div>
+          </div>
+        )}
+
         {activeTab === 'materi' && (
           <div className="max-w-[760px] mx-auto px-6 md:px-12 py-10 md:py-16">
             <div ref={contentRef} className="bg-white pdf-content-wrapper">
@@ -594,9 +660,9 @@ export default function MaterialReader() {
                  {/* Kartu Navigasi Controls */}
                  <div className="flex items-center justify-between mt-4 mb-4 w-full max-w-sm mx-auto">
                     <button 
-                      disabled={activeCardData === 0}
-                      onClick={() => { setIsFlipped(false); setTimeout(() => setActiveCardData(i => i - 1), 150); }}
-                      className={`w-14 h-14 rounded-full flex items-center justify-center bg-gray-50 border border-gray-100 hover:bg-gray-100 hover:border-gray-200 transition-all text-gray-600 disabled:opacity-30 disabled:hover:bg-white ${activeCardData === 0 ? 'invisible' : ''}`}
+                      disabled={activeCardData <= 0}
+                      onClick={() => { setIsFlipped(false); setTimeout(() => setActiveCardData(i => Math.max(0, i - 1)), 150); }}
+                      className={`w-14 h-14 rounded-full flex items-center justify-center bg-gray-50 border border-gray-100 hover:bg-gray-100 hover:border-gray-200 transition-all text-gray-600 disabled:opacity-30 disabled:hover:bg-white ${activeCardData <= 0 ? 'invisible' : ''}`}
                     >
                       <ChevronLeft size={24} />
                     </button>
@@ -614,9 +680,9 @@ export default function MaterialReader() {
                        })}
                     </div>
                     <button 
-                      disabled={activeCardData === material.ai_flashcard.length - 1}
-                      onClick={() => { setIsFlipped(false); setTimeout(() => setActiveCardData(i => i + 1), 150); }}
-                      className={`w-14 h-14 rounded-full flex items-center justify-center bg-[#672cb9] text-white hover:bg-[#56219c] hover:scale-105 transition-all text-gray-600 shadow-md shadow-[#672cb9]/20 disabled:opacity-30 disabled:scale-100 ${activeCardData === material.ai_flashcard.length - 1 ? 'invisible' : ''}`}
+                      disabled={activeCardData >= material.ai_flashcard.length - 1}
+                      onClick={() => { setIsFlipped(false); setTimeout(() => setActiveCardData(i => Math.min(material.ai_flashcard!.length - 1, i + 1)), 150); }}
+                      className={`w-14 h-14 rounded-full flex items-center justify-center bg-[#672cb9] text-white hover:bg-[#56219c] hover:scale-105 transition-all shadow-md shadow-[#672cb9]/20 disabled:opacity-30 disabled:scale-100 ${activeCardData >= material.ai_flashcard.length - 1 ? 'invisible' : ''}`}
                     >
                       <ChevronRight size={24} />
                     </button>
@@ -632,6 +698,15 @@ export default function MaterialReader() {
         )}
 
       </main>
+
+      {/* Neura Right Sidebar for Material Context */}
+      <NeuraSidebar
+        isOpen={isNeuraSidebarOpen}
+        onClose={() => setIsNeuraSidebarOpen(false)}
+        initialQuery={initialNeuraQuery}
+        onClearInitialQuery={() => setInitialNeuraQuery(null)}
+        materialContext={material.ai_summary || material.title}
+      />
 
     </div>
   );
