@@ -1,7 +1,7 @@
 "use client";
 import { supabase } from '@/lib/supabase';
 
-import {Plus, LogOut, Settings, HelpCircle, ChevronDown, Calendar, Eye, FileText, CheckCircle2, CheckCircle, X, MonitorPlay, Volume2, Link as LinkIcon, LayoutDashboard, Trophy, Users, Library } from 'lucide-react';
+import {Plus, LogOut, Settings, HelpCircle, ChevronDown, Eye, FileText, CheckCircle2, Check, X, MonitorPlay, Volume2, Link as LinkIcon, LayoutDashboard, Trophy, Users, Library, Flame } from 'lucide-react';
 import Image from 'next/image';
 import { useAuth } from '@/components/AuthProvider';
 import { useRouter } from 'next/navigation';
@@ -366,40 +366,8 @@ export default function Dashboard() {
       {/* Konten Dashboard Grid */}
       <div className="grid grid-cols-2 lg:grid-cols-2 gap-4 md:gap-6 mt-4">
         
-        {/* Total Visits Card */}
-        <div className="bg-white rounded-[24px] md:rounded-3xl p-4 md:p-8 shadow-sm md:shadow-sm shadow-slate-200/50 border border-slate-100 flex flex-col justify-between col-span-1">
-          <div className="flex flex-col sm:flex-row sm:items-start gap-0 sm:gap-4">
-            <div className="flex items-center gap-3 sm:block mb-3 sm:mb-0">
-              <div className="bg-[#f8f5fd] w-[64px] h-[64px] sm:w-auto sm:h-auto sm:p-3 rounded-[14px] sm:rounded-2xl flex items-center justify-center shrink-0">
-                <Calendar size={40} className="text-[#672cb9] sm:w-10 sm:h-10" strokeWidth={2} />
-              </div>
-              <div className="flex flex-col leading-[1.1] sm:hidden">
-                <span className="text-slate-500 text-[20px] font-medium">Total</span>
-                <span className="text-slate-500 text-[20px] font-medium">Visits</span>
-              </div>
-            </div>
-            <div>
-              <p className="hidden sm:block text-slate-500 font-medium sm:text-[15px]">Total Visits</p>
-              <h2 className="text-[52px] sm:text-4xl font-bold text-[#0f172a] sm:text-slate-800 mt-3 ml-1 sm:ml-0 sm:mt-1 leading-none tracking-tighter sm:tracking-normal">145</h2>
-            </div>
-          </div>
-          
-          <div className="hidden sm:flex items-center gap-2 lg:gap-3 mt-8">
-            {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((day, idx) => (
-              <div key={idx} className="flex flex-col items-center gap-2 flex-1">
-                <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-bold text-[14px] transition-colors
-                  ${['M', 'T', 'W', 'F', 'S'].includes(day) && (idx !== 3 && idx !== 6) 
-                    ? 'bg-[#672cb9] text-white' 
-                    : 'border border-slate-200 text-slate-400'}`}>
-                  {day}
-                </div>
-                {['M', 'T', 'W', 'F', 'S'].includes(day) && (idx !== 3 && idx !== 6) && (
-                  <CheckCircle size={20} className="text-[#FFA515]" />
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
+        {/* Daily Streak Card */}
+        <DailyStreakCard userId={user.id} />
 
         {/* Daily Tokens Card */}
         <DailyTokensCard userId={user.id} />
@@ -747,6 +715,91 @@ function DailyTokensCard({ userId }: { userId: string }) {
           </div>
         </>
       )}
+    </div>
+  );
+}
+
+function DailyStreakCard({ userId }: { userId: string }) {
+  const [streak, setStreak] = useState<number>(0);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchStreak = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('user_streaks')
+          .select('current_streak')
+          .eq('user_id', userId)
+          .single();
+
+        if (error && error.code !== 'PGRST116') {
+          console.error('Error fetching streak:', error);
+        }
+
+        if (data) {
+          setStreak(data.current_streak);
+        } else {
+          setStreak(0);
+        }
+      } catch (err) {
+        console.error('Failed to fetch streak', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchStreak();
+  }, [userId]);
+
+  return (
+    <div className="bg-gradient-to-br from-white to-orange-50/40 rounded-[24px] md:rounded-3xl p-6 md:p-8 shadow-sm md:shadow-sm shadow-slate-200/50 border border-orange-100 flex flex-col justify-between col-span-1 relative overflow-hidden group">
+      {/* Background Decor */}
+      <div className="absolute -top-12 -right-12 w-40 h-40 bg-orange-200/50 rounded-full blur-3xl opacity-60 pointer-events-none group-hover:bg-orange-300/50 transition-colors duration-500"></div>
+      
+      <div className="relative z-10 flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+        <div className="flex items-center gap-3 md:gap-4">
+          <div className="bg-gradient-to-br from-orange-100 to-orange-200 w-12 h-12 md:w-14 md:h-14 rounded-2xl flex items-center justify-center shrink-0 shadow-sm border border-orange-50">
+            <Flame size={28} className="text-orange-500 md:w-8 md:h-8" strokeWidth={2.5} />
+          </div>
+          <div className="flex flex-col">
+            <p className="text-slate-500 font-medium text-[14px] md:text-[15px]">Streak Harian</p>
+            <div className="flex items-center gap-2 mt-0.5">
+              <h2 className="text-4xl md:text-5xl font-extrabold text-slate-800 tracking-tight leading-none">
+                {loading ? '...' : streak}
+              </h2>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div className="relative z-10 mt-6 md:mt-8">
+        <p className="text-[13px] md:text-[14px] text-slate-500 font-medium mb-4">
+          {loading ? 'Memuat...' : streak === 0 ? 'Ayo mulai kerjakan quiz hari ini untuk streak pertamamu!' : `Luar biasa! Pertahankan streak belajarmu.`}
+        </p>
+        <div className="flex items-center justify-between gap-1.5 sm:gap-2">
+          {['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'].map((day, idx) => {
+             const currentDayOfWeek = new Date().getDay(); 
+             const targetIndex = currentDayOfWeek === 0 ? 6 : currentDayOfWeek - 1; 
+             const isChecked = streak > 0 && targetIndex >= idx && (targetIndex - idx) < streak;
+             const isToday = targetIndex === idx;
+
+             return (
+               <div key={idx} className="flex flex-col items-center gap-2 flex-1">
+                 <div className={`w-full max-w-[44px] aspect-square rounded-[14px] flex items-center justify-center text-[13px] font-bold transition-all duration-300
+                   ${isChecked
+                     ? 'bg-gradient-to-b from-orange-400 to-orange-500 text-white shadow-md shadow-orange-200 ring-2 ring-orange-100 ring-offset-2' 
+                     : isToday
+                       ? 'bg-white border-2 border-orange-400 text-orange-600 shadow-sm'
+                       : 'bg-slate-50 border border-slate-100 text-slate-400'}`}>
+                   {isChecked ? <Check size={20} strokeWidth={3} className="text-white" /> : day[0]}
+                 </div>
+                 <span className={`text-[11px] font-semibold ${isToday ? 'text-orange-600' : 'text-slate-400'}`}>
+                   {day}
+                 </span>
+               </div>
+             );
+          })}
+        </div>
+      </div>
     </div>
   );
 }
