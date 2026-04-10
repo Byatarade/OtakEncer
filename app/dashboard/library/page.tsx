@@ -3,8 +3,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { Variants } from 'framer-motion';
-import { Search, FolderPlus, FileText, Video, Music, Layers, Sparkles, Filter, Loader2 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Search, FolderPlus, FileText, Video, Music, Layers, Loader2, Library } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { LibraryCard, Material } from '@/components/library/LibraryCard';
 import { supabase } from '@/lib/supabase';
@@ -136,7 +135,7 @@ export default function LibraryPage() {
               className="flex items-center gap-3 mb-5"
             >
               <div className="bg-white/20 backdrop-blur-md p-2.5 rounded-xl text-white shadow-inner border border-white/10">
-                <Sparkles size={20} className="animate-pulse" />
+                <Library size={20} className="animate-pulse" />
               </div>
               <span className="text-yellow-500 font-bold tracking-widest text-sm uppercase letter-spacing-2">
                 library
@@ -158,7 +157,7 @@ export default function LibraryPage() {
               transition={{ delay: 0.4 }}
               className="text-white/80 text-lg leading-relaxed max-w-xl font-medium"
             >
-              Akses kembali semua modul pembelajaran, rangkuman, dan materi yang telah disusun oleh Neura AI dari berbagai sumber digital.
+              Akses kembali semua modul pembelajaran, rangkuman, dan materi yang telah disusun oleh AI dari berbagai sumber digital.
             </motion.p>
           </div>
           
@@ -168,14 +167,6 @@ export default function LibraryPage() {
             transition={{ delay: 0.5, type: "spring" }}
             className="shrink-0 flex items-center"
           >
-            <Button 
-              variant="primary" 
-              size="lg" 
-              leftIcon={<FolderPlus size={22} />}
-              className="px-8 py-4 shadow-[0_0_40px_rgba(255,255,255,0.3)] group h-auto"
-            >
-              <span>Tambah Materi Baru</span>
-            </Button>
           </motion.div>
         </div>
       </motion.div>
@@ -217,9 +208,6 @@ export default function LibraryPage() {
             placeholder="Cari materi..."
             className="lg:w-80"
           />
-          <button className="flex items-center justify-center p-3 bg-white border border-gray-100 text-gray-600 rounded-2xl hover:bg-gray-50 transition-colors shadow-sm shrink-0 hover:text-[#672cb9]">
-            <Filter size={20} />
-          </button>
         </div>
       </div>
 
@@ -272,10 +260,6 @@ export default function LibraryPage() {
           transition={{ delay: 0.8 }}
           className="mt-12 flex justify-center"
         >
-          <Button variant="outline" size="lg" className="group">
-            <span>Muat Lebih Banyak</span>
-            <Search size={16} className="text-gray-400 group-hover:text-[#672cb9] transition-colors" />
-          </Button>
         </motion.div>
       )}
     </div>

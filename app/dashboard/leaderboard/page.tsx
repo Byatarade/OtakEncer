@@ -2,9 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
-import { Trophy, Award, Crown, Loader2, ArrowLeft } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { useRouter } from 'next/navigation';
+import { Trophy, Award, Crown, Loader2 } from 'lucide-react';
 
 interface LeaderboardEntry {
   user_id: string;
@@ -17,7 +15,6 @@ export default function LeaderboardPage() {
   const [data, setData] = useState<LeaderboardEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const router = useRouter();
 
   useEffect(() => {
     const fetchLeaderboard = async () => {
@@ -57,9 +54,6 @@ export default function LeaderboardPage() {
 
   return (
     <div className="min-h-screen bg-[#f8fafc] text-gray-900 font-sans pb-20 p-8 sm:p-12">
-       <Button variant="ghost" onClick={() => router.push('/dashboard/library')} className="mb-6 hover:bg-gray-200">
-         <ArrowLeft size={18} className="mr-2" /> Kembali ke Library
-       </Button>
        
        <div className="max-w-2xl mx-auto">
           <div className="text-center mb-10">

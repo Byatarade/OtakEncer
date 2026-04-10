@@ -238,9 +238,9 @@ export const LibraryCard = ({ material, onDeleteSuccess }: LibraryCardProps) => 
            </div>
         )}
 
-        <div className={`relative h-44 w-full bg-gradient-to-br ${material.coverColor} p-5 flex flex-col justify-between overflow-hidden shrink-0 rounded-t-[32px]`}>
-          <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors duration-500"></div>
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mix-blend-overlay"></div>
+        <div className={`relative h-44 w-full bg-gradient-to-br ${material.coverColor} p-5 flex flex-col justify-between overflow-visible shrink-0 rounded-t-[32px]`}>
+          <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors duration-500 rounded-t-[32px] overflow-hidden"></div>
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mix-blend-overlay rounded-t-[32px] overflow-hidden"></div>
           
           {/* Top bar inside thumbnail */}
           <div className="relative z-10 flex justify-between items-start w-full" ref={menuRef}>
@@ -258,24 +258,24 @@ export const LibraryCard = ({ material, onDeleteSuccess }: LibraryCardProps) => 
 
               {/* Custom Dropdown Menu */}
               {isMenuOpen && (
-                <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-xl overflow-hidden z-50 border border-gray-100 font-medium text-sm animate-in fade-in zoom-in-95 duration-200">
+                <div className="absolute right-0 top-full mt-2 w-41 bg-white rounded-xl shadow-xl overflow-hidden z-50 border border-gray-100 font-medium text-sm animate-in fade-in zoom-in-95 duration-200">
                   <button 
                     onClick={handleShareClick}
                     className="w-full text-left px-4 py-3 hover:bg-gray-50 flex items-center gap-3 text-gray-700 transition-colors"
                   >
-                    <Share2 size={16} className="text-[#672cb9]" /> Share
+                    <Share2 size={16} className="text-[#672cb9]" /> Bagikan
                   </button>
                   <button 
                     onClick={handleDownloadClick}
                     className="w-full text-left px-4 py-3 hover:bg-gray-50 flex items-center gap-3 text-gray-700 transition-colors border-t border-gray-50"
                   >
-                    <Download size={16} className="text-blue-500" /> Download
+                    <Download size={16} className="text-blue-500" /> Unduh
                   </button>
                   <button 
                     onClick={handleDeleteClick}
                     className="w-full text-left px-4 py-3 hover:bg-red-50 flex items-center gap-3 text-red-600 transition-colors border-t border-gray-50"
                   >
-                    <Trash2 size={16} /> Delete
+                    <Trash2 size={16} /> Hapus
                   </button>
                 </div>
               )}
@@ -289,7 +289,7 @@ export const LibraryCard = ({ material, onDeleteSuccess }: LibraryCardProps) => 
 
         {/* Content Area */}
         <div className="p-6 flex-1 flex flex-col pt-5">
-          <h3 className="font-bold text-gray-800 text-[16px] mb-3 line-clamp-2 leading-relaxed group-hover:text-[#672cb9] transition-colors">
+          <h3 className="font-bold text-gray-800 text-[16px] mb-3 line-clamp-2 leading-relaxed">
             {material.title}
           </h3>
 
