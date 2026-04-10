@@ -2,13 +2,15 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '@/components/AuthProvider';
 import { supabase } from '@/lib/supabase';
 import Swal from 'sweetalert2';
+import { useRouter } from 'next/navigation';
 
 export default function RegisterPage() {
-  const { loginWithGoogle } = useAuth();
+  const { loginWithGoogle, user, isLoaded } = useAuth();
+  const router = useRouter();
   
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
@@ -18,6 +20,21 @@ export default function RegisterPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+
+  useEffect(() => {
+    if (isLoaded && user) {
+      router.replace('/dashboard');
+    }
+  }, [user, isLoaded, router]);
+
+  if (!isLoaded || user) {
+    return (
+      <div className="flex h-screen w-full items-center justify-center bg-[#f8fafc]">
+        {/* Loading state / redirecting state - no UI flicker */}
+        <div className="w-8 h-8 border-4 border-[#672cb9] border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();

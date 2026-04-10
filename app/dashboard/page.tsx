@@ -216,7 +216,7 @@ export default function Dashboard() {
   if (!user) return null; // Handled by AuthGuard
 
   return (
-    <div className="flex flex-col h-full w-full p-4 lg:p-6 xl:p-8 max-w-[1600px] mx-auto gap-4 sm:gap-6">
+    <div className="flex flex-col min-h-[100dvh] lg:h-screen w-full p-4 lg:p-6 xl:p-8 max-w-[1600px] mx-auto gap-4 sm:gap-6 lg:overflow-hidden">
 
       {/* Mobile Header (Only visible on small screens) */}
       <div className="flex sm:hidden items-center justify-between mb-2 gap-1">
@@ -364,11 +364,11 @@ export default function Dashboard() {
       </div>
 
       {/* Konten Dashboard Grid - REFACTORED HIERARCHY */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 md:gap-6 mt-2 flex-1 min-h-0 pb-4 lg:pb-0">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 md:gap-6 mt-2 flex-1 lg:min-h-0 pb-[100px] lg:pb-0 overflow-y-auto lg:overflow-hidden content-area-scroll">
         
         {/* Left Column: Quick Upload / Main CTA (col-span-8) */}
-        <div className="lg:col-span-8 order-2 lg:order-1 flex flex-col gap-4 lg:gap-5 h-full min-h-0">
-          <div className="bg-white rounded-3xl p-5 md:p-6 lg:p-8 shadow-sm border border-slate-100 relative flex flex-col h-full min-h-0 overflow-hidden">
+        <div className="lg:col-span-8 order-2 lg:order-1 flex flex-col gap-4 lg:gap-5 h-auto lg:h-full lg:min-h-0">
+          <div className="bg-white rounded-3xl p-5 md:p-6 lg:p-8 shadow-sm border border-slate-100 relative flex flex-col h-auto lg:h-full lg:min-h-0 overflow-hidden">
             
             {/* Dekorasi Background Halus */}
             <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-[#672cb9]/5 to-transparent rounded-bl-full pointer-events-none"></div>
@@ -386,9 +386,9 @@ export default function Dashboard() {
               )}
             </div>
             
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-5 relative z-10 flex-1 min-h-0 pb-2">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-5 relative z-10 flex-1 lg:min-h-0 pb-2">
                {/* File PDF / DOCX */}
-               <div className={`relative flex sm:flex-col items-center sm:items-start flex-row bg-slate-50 hover:bg-white hover:shadow-md p-4 sm:p-5 lg:p-6 rounded-[20px] border border-slate-200 transition-all text-left group cursor-pointer h-full ${isUploading ? 'opacity-60 pointer-events-none' : ''}`}>
+               <div className={`relative flex sm:flex-col items-center sm:items-start flex-row bg-slate-50 hover:bg-white hover:shadow-md p-4 sm:p-5 lg:p-6 rounded-[20px] border border-slate-200 transition-all text-left group cursor-pointer lg:h-full ${isUploading ? 'opacity-60 pointer-events-none' : ''}`}>
                  <div className="w-[42px] h-[42px] sm:w-[48px] sm:h-[48px] shrink-0 rounded-2xl bg-gradient-to-br from-[#ed2d07] to-[#871c07] flex items-center justify-center sm:mb-4 mr-4 sm:mr-0 shadow-sm group-hover:scale-105 transition-transform relative">
                    <FileText className="text-white w-5 h-5 sm:w-6 sm:h-6" />
                    <span className="absolute text-[7px] sm:text-[8px] font-bold text-[#672cb9] bg-white px-1 leading-none rounded-sm mt-3.5 sm:mt-4">DOC</span>
@@ -409,7 +409,7 @@ export default function Dashboard() {
                </div>
 
                {/* Audio File */}
-               <div className={`relative flex sm:flex-col items-center sm:items-start flex-row bg-slate-50 hover:bg-white hover:shadow-md p-4 sm:p-5 lg:p-6 rounded-[20px] border border-slate-200 transition-all text-left group cursor-pointer h-full ${isUploading ? 'opacity-60 pointer-events-none' : ''}`}>
+               <div className={`relative flex sm:flex-col items-center sm:items-start flex-row bg-slate-50 hover:bg-white hover:shadow-md p-4 sm:p-5 lg:p-6 rounded-[20px] border border-slate-200 transition-all text-left group cursor-pointer lg:h-full ${isUploading ? 'opacity-60 pointer-events-none' : ''}`}>
                  <div className="w-[42px] h-[42px] sm:w-[48px] sm:h-[48px] shrink-0 rounded-2xl bg-gradient-to-br from-[#10b981] to-[#047857] flex items-center justify-center sm:mb-4 mr-4 sm:mr-0 shadow-sm group-hover:scale-105 transition-transform relative">
                    <Volume2 className="text-white w-5 h-5 sm:w-6 sm:h-6" />
                    <span className="absolute text-[7px] sm:text-[8px] font-bold text-[#672cb9] bg-white px-1 leading-none rounded-sm mt-3.5 sm:mt-4">MP3</span>
@@ -431,7 +431,7 @@ export default function Dashboard() {
 
                {/* Link YouTube */}
                {!showLinkInput ? (
-                 <button onClick={() => setShowLinkInput(true)} disabled={isUploading} className={`flex sm:flex-col items-center sm:items-start flex-row bg-slate-50 hover:bg-white hover:shadow-md p-4 sm:p-5 lg:p-6 rounded-[20px] border border-slate-200 transition-all text-left outline-none group h-full ${isUploading ? 'opacity-60 pointer-events-none' : ''}`}>
+                 <button onClick={() => setShowLinkInput(true)} disabled={isUploading} className={`flex sm:flex-col items-center sm:items-start flex-row bg-slate-50 hover:bg-white hover:shadow-md p-4 sm:p-5 lg:p-6 rounded-[20px] border border-slate-200 transition-all text-left outline-none group lg:h-full ${isUploading ? 'opacity-60 pointer-events-none' : ''}`}>
                    <div className="w-[42px] h-[42px] sm:w-[48px] sm:h-[48px] shrink-0 rounded-2xl bg-gradient-to-br from-[#ef4444] to-[#991b1b] flex items-center justify-center sm:mb-4 mr-4 sm:mr-0 shadow-sm group-hover:scale-105 transition-transform relative">
                      <MonitorPlay className="text-white w-5 h-5 sm:w-6 sm:h-6" strokeWidth={2} />
                    </div>
@@ -442,7 +442,7 @@ export default function Dashboard() {
                    </div>
                  </button>
                ) : (
-                 <div className="flex flex-col items-start bg-white p-4 sm:p-5 lg:p-6 rounded-[20px] border border-slate-200 shadow-md transition-all text-left w-full relative sm:h-full justify-between h-full">
+                 <div className="flex flex-col items-start bg-white p-4 sm:p-5 lg:p-6 rounded-[20px] border border-slate-200 shadow-md transition-all text-left w-full relative sm:h-full justify-between lg:h-full">
                    <div className="w-full">
                      <div className="flex justify-between items-center mb-3">
                        <h3 className="text-[15px] sm:text-[16px] font-bold text-slate-800">Paste Link Youtube</h3>
@@ -490,13 +490,13 @@ export default function Dashboard() {
         </div>
 
         {/* Right Column: Key Metrics (col-span-4) */}
-        <div className="lg:col-span-4 order-1 lg:order-2 flex flex-col gap-4 md:gap-5 w-full h-full lg:overflow-hidden">
-           <div className="flex-[1.5] lg:flex-[1.3] w-full min-h-0">
+        <div className="lg:col-span-4 order-1 lg:order-2 flex flex-col gap-4 md:gap-5 w-full h-auto lg:h-full lg:overflow-hidden">
+           <div className="flex-[1.5] lg:flex-[1.3] w-full min-h-[220px] lg:min-h-0">
              <DailyStreakCard userId={user.id} />
            </div>
            
            {/* Insight / Daily Motivation Card */}
-           <div className="flex-1 w-full min-h-0 bg-gradient-to-br from-[#672cb9] to-[#8c4ae1] rounded-[24px] md:rounded-3xl p-5 md:p-6 shadow-md shadow-[#672cb9]/20 relative overflow-hidden group flex flex-col justify-center">
+           <div className="flex-1 w-full min-h-[160px] lg:min-h-0 bg-gradient-to-br from-[#672cb9] to-[#8c4ae1] rounded-[24px] md:rounded-3xl p-5 md:p-6 shadow-md shadow-[#672cb9]/20 relative overflow-hidden group flex flex-col justify-center">
               <div className="absolute -right-4 -bottom-6 opacity-[0.07] rotate-12 group-hover:rotate-0 transition-transform duration-500 pointer-events-none">
                 <Lightbulb size={120} />
               </div>

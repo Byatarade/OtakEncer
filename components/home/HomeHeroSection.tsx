@@ -5,9 +5,11 @@ import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { AuroraBackground } from "@/components/ui/aurora-background";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/components/AuthProvider";
 
 export function HomeHeroSection() {
   const router = useRouter();
+  const { user, isLoaded } = useAuth();
 
   return (
     <motion.section
@@ -33,22 +35,25 @@ export function HomeHeroSection() {
           </p>
 
           <div className="flex flex-row flex-wrap items-center justify-center md:justify-start gap-3 md:gap-5 mt-8 md:mt-10 z-10 w-full px-1 md:px-0">
-            <Button
-              variant="glass"
-              size="lg"
-              onClick={() => router.push("/login")}
-              leftIcon={<Image src="/assets/google-icon.svg" alt="G" width={16} height={16} className="md:w-[18px] md:h-[18px]" />}
-              className="px-6 md:px-8 py-3.5 md:py-4 rounded-[16px] md:rounded-[20px]"
-            >
-              Mulai Gratis
-            </Button>
-            <Button
-              variant="glass"
-              size="lg"
-              className="bg-white/5 hover:bg-white/10 border-white/10 hover:border-white/20 shadow-[0_8px_32px_rgba(255,255,255,0.05)] px-6 md:px-8 py-3.5 md:py-4 rounded-[16px] md:rounded-[20px]"
-            >
-              Lihat Demo
-            </Button>
+            {isLoaded && user ? (
+              <Button
+                variant="glass"
+                size="lg"
+                onClick={() => router.push("/dashboard")}
+                className="px-6 md:px-8 py-3.5 md:py-4 rounded-[16px] md:rounded-[20px]"
+              >
+                Buka Dashboard
+              </Button>
+            ) : (
+              <Button
+                variant="glass"
+                size="lg"
+                onClick={() => router.push("/login")}
+                className="px-6 md:px-8 py-3.5 md:py-4 rounded-[16px] md:rounded-[20px]"
+              >
+                Mulai Gratis
+              </Button>
+            )}
           </div>
         </div>
 
