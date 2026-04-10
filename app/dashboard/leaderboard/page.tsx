@@ -26,27 +26,22 @@ export default function LeaderboardPage() {
         // Karena supabase client biasa gak bisa nge-sum direct tanpa di-group by user
         // Namun sebagai jalan pintas React, kita bisa select * table poin aja lalu disum di client array
         
-        const { data: scoresData, error: dbError } = await supabase
-          .from('quiz_scores')
-          .select('user_id, score, user_name, user_avatar');
+        // Ambil dari tabel streak
+        const { data: streakData, error: dbError } = await supabase
+          .from('user_streaks')
+          .select('user_id, current_streak, user_name, user_avatar')
+          .order('current_streak', { ascending: false })
+          .limit(100);
 
         if (dbError) throw dbError;
 
-        const grouped: Record<string, LeaderboardEntry> = {};
-
-        scoresData.forEach(row => {
-           if (!grouped[row.user_id]) {
-               grouped[row.user_id] = { user_id: row.user_id, user_name: row.user_name || 'Pelajar Misterius', user_avatar: row.user_avatar, total_score: 0 };
-           }
-           grouped[row.user_id].total_score += row.score;
-        });
-
-        // Convert obj to array
-        const results = Object.values(grouped)
-           // Hapus batasan filter = asal ada poin akan ditampilkan
-           .filter(user => user.total_score >= 0)
-           // Urut dr ranking 1 ke bawah
-           .sort((a, b) => b.total_score - a.total_score);
+        // Map data agar sesuai dengan interface (kita ganti total_score jadi refer ke current_streak)
+        const results = (streakData || []).map(row => ({
+           user_id: row.user_id,
+           user_name: row.user_name || 'Pelajar Misterius',
+           user_avatar: row.user_avatar,
+           total_score: row.current_streak || 0 // total_score ini sekarang adalah nilai Streak
+        })).filter(user => user.total_score > 0);
 
         setData(results);
 
@@ -72,13 +67,13 @@ export default function LeaderboardPage() {
               <Trophy size={40} className="text-yellow-600" />
             </div>
             <h1 className="text-4xl font-extrabold text-gray-900 tracking-tight">Papan Peringkat</h1>
-            <p className="text-gray-500 mt-3 text-lg">Top pelajar OtakEncer yang berhasil mengumpulkan poin Quiz terbanyak.</p>
+            <p className="text-gray-500 mt-3 text-lg">Top pelajar OtakEncer dengan rekor Streak belajar berturut-turut.</p>
           </div>
 
           {loading ? (
              <div className="flex flex-col items-center py-20">
                <Loader2 size={40} className="animate-spin text-[#672cb9] mb-4" />
-               <span className="font-medium text-gray-500">Mengkalkulasi skor...</span>
+               <span className="font-medium text-gray-500">Mengkalkulasi streak...</span>
              </div>
           ) : error ? (
             <div className="text-center bg-red-50 text-red-500 p-6 rounded-2xl border border-red-100">
@@ -88,7 +83,7 @@ export default function LeaderboardPage() {
             <div className="text-center bg-white p-12 rounded-3xl border border-gray-200 shadow-sm border-dashed">
               <Award size={48} className="text-gray-300 mx-auto mb-4" />
               <h3 className="text-xl font-bold text-gray-800 mb-2">Belum Ada Juara</h3>
-              <p className="text-gray-500">Belum ada pengguna yang mencapai minimal 10 Poin. Kerjakan quiz sekarang dan rebut posisi pertama!</p>
+              <p className="text-gray-500">Belum ada pengguna yang mencapai streak. Kerjakan quiz tiap hari dari sekarang dan rebut posisi pertama!</p>
             </div>
           ) : (
             <div className="space-y-4">
@@ -125,7 +120,7 @@ export default function LeaderboardPage() {
                            <h3 className={`font-bold ${isTop3 ? 'text-gray-900 text-lg' : 'text-gray-700 text-base'}`}>
                              {user.user_name}
                            </h3>
-                           <span className="text-xs font-medium text-gray-400">Total Poin Quiz Master</span>
+                           <span className="text-xs font-medium text-gray-400">Total Hari Beruntun 🔥</span>
                          </div>
                        </div>
                      </div>
@@ -137,7 +132,7 @@ export default function LeaderboardPage() {
                         ) : (
                           <span className="text-gray-800">{user.total_score}</span>
                         )}
-                        <span className="text-sm font-semibold text-gray-400 ml-1">pts</span>
+                        <span className="text-sm font-semibold text-gray-400 ml-1">hari</span>
                      </div>
                   </div>
                 );
