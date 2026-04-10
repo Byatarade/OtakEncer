@@ -5,14 +5,15 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 
-// Generated at module level to avoid impure function calls during render
-const PARTICLE_DATA = Array.from({ length: 6 }, () => ({
-  x: Math.random() * 20 - 10,
-  duration: 5 + Math.random() * 5,
-  delay: Math.random() * 5,
-  left: Math.random() * 100,
-  top: Math.random() * 100,
-}));
+// Generated statically to prevent hydration errors between server and client
+const PARTICLE_DATA = [
+  { x: -5.2, duration: 8.4, delay: 1.2, left: 15.3, top: 24.1 },
+  { x: 8.1, duration: 6.2, delay: 3.4, left: 82.5, top: 12.8 },
+  { x: -2.3, duration: 9.1, delay: 0.5, left: 45.2, top: 76.4 },
+  { x: 4.7, duration: 7.5, delay: 4.1, left: 73.1, top: 88.2 },
+  { x: -8.5, duration: 5.8, delay: 2.3, left: 22.4, top: 55.6 },
+  { x: 6.9, duration: 8.9, delay: 1.8, left: 61.7, top: 34.9 },
+];
 
 export default function NotFound() {
   return (
