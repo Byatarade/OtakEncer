@@ -1,26 +1,26 @@
 "use client";
 import { supabase } from '@/lib/supabase';
 
-import {Plus, LogOut, Settings, HelpCircle, ChevronDown, FileText, CheckCircle2, Check, X, MonitorPlay, Volume2, Link as LinkIcon, LayoutDashboard, Trophy, Users, Library, Flame } from 'lucide-react';
+import {Plus, LogOut, Settings, HelpCircle, ChevronDown, FileText, CheckCircle2, Check, X, MonitorPlay, Volume2, Link as LinkIcon, Flame } from 'lucide-react';
 import Image from 'next/image';
 import { useAuth } from '@/components/AuthProvider';
-import { useRouter } from 'next/navigation';
-import { useState, useRef, useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useState, useRef, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import Swal from 'sweetalert2';
 import { formatDistanceToNow } from 'date-fns';
 
-export default function Dashboard() {
+function Dashboard() {
   const { user, logout } = useAuth();
   const router = useRouter();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
   const [isUploadPopupOpen, setIsUploadPopupOpen] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [showLinkInput, setShowLinkInput] = useState(false);
   const [linkUrl, setLinkUrl] = useState('');
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const mobileDropdownRef = useRef<HTMLDivElement>(null);
+  const searchParams = useSearchParams();
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -196,108 +196,39 @@ export default function Dashboard() {
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      const isOutsideDesktop = dropdownRef.current && !dropdownRef.current.contains(event.target as Node);
-      const isOutsideMobile = mobileDropdownRef.current && !mobileDropdownRef.current.contains(event.target as Node);
-      
-      // If both elements exist and click is outside both, or one exists and click is outside it
-      if (
-        (!dropdownRef.current || isOutsideDesktop) && 
-        (!mobileDropdownRef.current || isOutsideMobile)
-      ) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setIsDropdownOpen(false);
       }
     };
-    
     document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+  // Listen for mobile navbar upload button event
+  useEffect(() => {
+    const handleMobileUpload = () => setIsUploadPopupOpen(true);
+    window.addEventListener('mobile-open-upload', handleMobileUpload);
+    return () => window.removeEventListener('mobile-open-upload', handleMobileUpload);
+  }, []);
+
+  // Open upload modal if navigated with ?upload=true
+  useEffect(() => {
+    if (searchParams.get('upload') === 'true') {
+      setIsUploadPopupOpen(true);
+    }
+  }, [searchParams]);
 
   if (!user) return null; // Handled by AuthGuard
 
   return (
     <div className="flex flex-col min-h-full w-full p-4 lg:p-8 xl:p-10 max-w-[1600px] mx-auto gap-4 sm:gap-8">
 
-      {/* Mobile Header (Only visible on small screens) */}
-      <div className="flex sm:hidden items-center justify-between mb-2 gap-1">
-        <Link href="/?view=landing" className="flex items-center gap-1 sm:gap-2 shrink-0 min-w-0">
-          <div className="relative w-7 h-7 sm:w-7 sm:h-7 flex items-center justify-center shrink-0">
-            <Image src="/assets/logo.svg" alt="OtakEncer Logo" fill className="object-contain" />
-          </div>
-          <span className="font-bold text-[20px] sm:text-[20px] md:text-[18px] tracking-tight text-gray-900 truncate shrink-0">
-            Otak<span className="text-[#672cb9]">Encer</span>
-          </span>
-        </Link>
-        
-        <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
-          <button 
-            onClick={() => setIsUploadPopupOpen(true)}
-            className="flex items-center gap-1 bg-[#672cb9] text-white px-3 sm:px-4 py-1.5 rounded-full text-[12px] sm:text-[13px] font-semibold tracking-wide"
-          >
-            <Plus size={18} strokeWidth={2.5}/>
-            Upload
-          </button>
-          
-          <div className="sm:w-[10px] sm:h-7 bg-slate-200 mx-0.5"></div>
+      {/* Mobile Greeting (small screens only) */}
+      <h1 className="md:hidden text-[28px] font-bold text-[#0f172a] tracking-tight pt-1">Halo, {user.name.split(' ')[0]}!</h1>
 
-          <div className="relative flex shrink-0 items-center" ref={mobileDropdownRef}>
-             <button onClick={() => setIsDropdownOpen(!isDropdownOpen)} className="focus:outline-none group">
-             {user.picture ? (
-               <Image src={user.picture} alt={user.name} width={34} height={34} className="rounded-full ring-2 ring-white shadow-sm" />
-             ) : (
-               <div className="w-[34px] h-[34px] rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 font-bold text-[14px] ring-2 ring-white shadow-sm">
-                 {user.name?.[0] || 'U'}
-               </div>
-             )}
-             </button>
-             {/* Dropdown Menu Mobile */}
-             {isDropdownOpen && (
-               <div className="absolute right-0 top-full mt-3 w-56 bg-white rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.1)] border border-slate-100 py-2 z-50 animate-in fade-in slide-in-from-top-4 duration-200">
-                 <div className="px-4 py-3 border-b border-slate-100 mb-1">
-                   <p className="text-[14px] font-bold text-slate-800">{user.name}</p>
-                   <p className="text-[12px] text-slate-500 truncate">{user.email}</p>
-                 </div>
-                 
-                 <div className="flex flex-col px-2">
-                   <Link href="/dashboard/settings" className="flex items-center gap-3 px-3 py-2.5 text-[14px] font-medium text-slate-600 hover:text-[#672cb9] hover:bg-indigo-50/50 rounded-xl transition-colors">
-                     <Settings size={18} />
-                     Pengaturan Akun
-                   </Link>
-                   
-                   <Link href="mailto:support@otakencer.com" className="flex items-center gap-3 px-3 py-2.5 text-[14px] font-medium text-slate-600 hover:text-[#672cb9] hover:bg-indigo-50/50 rounded-xl transition-colors">
-                     <HelpCircle size={18} />
-                     Bantuan & Support
-                   </Link>
-                   
-                   <div className="h-px w-full bg-slate-100 my-1"></div>
-                   
-                   <button 
-                     onClick={handleLogout}
-                     className="flex items-center gap-3 px-3 py-2.5 text-[14px] font-medium text-rose-600 hover:bg-rose-50 rounded-xl transition-colors w-full text-left"
-                   >
-                     <LogOut size={18} />
-                     Keluar / Logout
-                   </button>
-                 </div>
-               </div>
-             )}
-          </div>
-          
-          <button
-            type="button"
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="p-2 md:hidden bg-white/40 rounded-full border border-white/50 backdrop-blur-md transition-colors hover:bg-white/60">
-              <Image src="/assets/menu-icon.svg" alt="Menu" width={18} height={18} />
-            </button>
-        </div>
-      </div>
-
-      {/* Mobile Greeting */}
-      <h1 className="sm:hidden ml-2 mt-7 text-[34px] font-bold text-[#0f172a] tracking-tight">Halo, {user.name.split(' ')[0]}!</h1>
 
       {/* Desktop Header Wrapper */}
-      <div className="hidden sm:flex flex-col sm:flex-row sm:items-center justify-between gap-4 py-2">
+      <div className="hidden md:flex flex-col md:flex-row md:items-center justify-between gap-4 py-2">
         <h1 className="text-[28px] font-bold text-[#0f172a] tracking-tight whitespace-nowrap">Halo, {user.name.split(' ')[0]}!</h1>
         
         <div className="flex flex-wrap items-center gap-3 md:gap-4 justify-end">
@@ -307,10 +238,10 @@ export default function Dashboard() {
             className="flex items-center gap-2 bg-[#672cb9] text-white px-5 py-2.5 rounded-full text-[14px] font-bold shadow-md hover:bg-[#58249c] hover:shadow-lg transition-all transform hover:-translate-y-0.5 ml-2"
           >
             <Plus size={18} strokeWidth={2.5}/>
-            <span className="hidden sm:inline">Upload</span>
+            <span className="hidden md:inline">Upload</span>
           </button>
           
-          <div className="w-px h-8 bg-slate-200 mx-2 hidden sm:block"></div>
+          <div className="w-px h-8 bg-slate-200 mx-2 hidden md:block"></div>
 
           {/* Profile Dropdown */}
           <div className="relative flex items-center" ref={dropdownRef}>
@@ -325,7 +256,7 @@ export default function Dashboard() {
                    {user.name?.[0] || 'U'}
                  </div>
                )}
-               <ChevronDown size={16} className={`text-slate-400 transition-transform hidden sm:block ${isDropdownOpen ? 'rotate-180' : ''}`} />
+               <ChevronDown size={16} className={`text-slate-400 transition-transform hidden md:block ${isDropdownOpen ? 'rotate-180' : ''}`} />
              </button>
 
              {/* Dropdown Menu */}
@@ -381,46 +312,7 @@ export default function Dashboard() {
 
       </div>
 
-      {/* Mobile Drawer Navigation */}
-      {isMobileMenuOpen && (
-        <div className="fixed inset-0 z-[150] md:hidden flex">
-          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setIsMobileMenuOpen(false)}></div>
-          <div className="relative w-64 max-w-[80vw] h-full bg-[#672cb9] flex flex-col pt-6 shadow-2xl animate-in slide-in-from-left duration-200">
-            <button onClick={() => setIsMobileMenuOpen(false)} className="absolute top-4 right-4 text-white/70 hover:text-white p-2">
-              <X size={24} />
-            </button>
-            <div className="px-6 mb-8 pt-2">
-              <Link href="/?view=landing" className="flex items-center gap-3">
-                <div className="w-8 h-8 relative flex items-center justify-center p-0.5">
-                  <Image src="/assets/logo.svg" alt="Logo" fill className="object-contain brightness-0 invert" />
-                </div>
-                <div className="text-[20px] font-bold text-white tracking-tight">OtakEncer</div>
-              </Link>
-            </div>
-            <nav className="flex flex-col space-y-2 px-3">
-              <Link href="/dashboard" className="relative flex items-center gap-4 px-4 py-3 cursor-pointer text-[#672cb9]">
-                <div className="absolute left-0 right-0 top-0 bottom-0 bg-[#f8fafc] rounded-xl shadow-sm"></div>
-                <div className="relative z-10 flex items-center gap-4 text-[#672cb9] font-bold w-full">
-                  <LayoutDashboard size={20} />
-                  <span>Dashboard</span>
-                </div>
-              </Link>
-              <Link href="/dashboard/library" className="flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-white/5 text-white/80 hover:text-white transition-colors font-medium">
-                <Library size={20} />
-                <span>Library</span>
-              </Link>
-              <Link href="/dashboard/leaderboard" className="flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-white/5 text-white/80 hover:text-white transition-colors font-medium">
-                <Trophy size={20} />
-                <span>Leaderboard</span>
-              </Link>
-              <Link href="/dashboard/kolaborasi" className="flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-white/5 text-white/80 hover:text-white transition-colors font-medium">
-                <Users size={20} />
-                <span>Ruang Kolaborasi</span>
-              </Link>
-            </nav>
-          </div>
-        </div>
-      )}
+
 
       {/* Modal Upload Popup */}
       {isUploadPopupOpen && (
@@ -597,13 +489,13 @@ function DailyTokensCard({ userId }: { userId: string }) {
       ) : (
         <div className="flex flex-col flex-1">
           {/* Mobile Text */}
-          <div className="flex sm:hidden justify-between items-center mb-3">
+          <div className="flex md:hidden justify-between items-center mb-3">
             <p className="text-[#0f172a] text-[15px] font-medium">Token</p>
             <p className="text-[#0f172a] text-[15px] font-medium">{remaining}/{MAX_LIMIT}</p>
           </div>
           
           {/* Desktop Text */}
-          <div className="hidden sm:flex justify-between items-end mb-3">
+          <div className="hidden md:flex justify-between items-end mb-3">
             <div>
               <p className="text-[#0f172a] font-medium text-[15px]">Token Tersisa: <span className="font-bold">{remaining}/{MAX_LIMIT}</span></p>
             </div>
@@ -625,7 +517,7 @@ function DailyTokensCard({ userId }: { userId: string }) {
           
           <div className="mt-auto">
             {/* Mobile Pill */}
-            <div className={`sm:hidden flex w-full justify-center items-center py-2.5 px-4 rounded-xl text-[11px] text-center font-semibold ${
+            <div className={`md:hidden flex w-full justify-center items-center py-2.5 px-4 rounded-xl text-[11px] text-center font-semibold ${
               remaining === 0 
                 ? 'bg-red-50 text-red-700' 
                 : 'bg-[#fff4e6] text-[#0f172a]'
@@ -636,7 +528,7 @@ function DailyTokensCard({ userId }: { userId: string }) {
             </div>
             
             {/* Desktop Pill */}
-            <div className={`hidden sm:inline-flex py-2.5 px-5 rounded-[14px] text-[14px] font-semibold ${
+            <div className={`hidden md:inline-flex py-2.5 px-5 rounded-[14px] text-[14px] font-semibold ${
               remaining === 0 
                 ? 'bg-red-50 text-red-700' 
                 : 'bg-[#fff4e6] text-[#0f172a]'
@@ -689,7 +581,7 @@ function DailyStreakCard({ userId }: { userId: string }) {
       <div className="hidden md:block absolute -top-12 -right-12 w-40 h-40 bg-orange-200/50 rounded-full blur-3xl opacity-60 pointer-events-none group-hover:bg-orange-300/50 transition-colors duration-500"></div>
       
       {/* MOBILE DESAIN */}
-      <div className="flex sm:hidden flex-col h-full justify-between relative z-10">
+      <div className="flex md:hidden flex-col h-full justify-between relative z-10">
         <div className="flex gap-2.5 mb-5 items-center">
           <div className="bg-[#feebd6] w-[48px] h-[48px] rounded-[14px] flex items-center justify-center shrink-0">
             <Flame size={26} className="text-[#fb6f08]" strokeWidth={2.5} />
@@ -714,7 +606,7 @@ function DailyStreakCard({ userId }: { userId: string }) {
       </div>
 
       {/* DESKTOP DESAIN */}
-      <div className="hidden sm:flex relative z-10 flex-col sm:items-start justify-between gap-4 h-full">
+      <div className="hidden md:flex relative z-10 flex-col sm:items-start justify-between gap-4 h-full">
         <div className="flex items-center gap-3 md:gap-4">
           <div className="bg-gradient-to-br from-orange-100 to-orange-200 w-12 h-12 md:w-14 md:h-14 rounded-2xl flex items-center justify-center shrink-0 shadow-sm border border-orange-50">
             <Flame size={28} className="text-orange-500 md:w-8 md:h-8" strokeWidth={2.5} />
@@ -974,5 +866,13 @@ function LeaderboardRankWidget({ userId, userName }: { userId: string, userName:
         </>
       )}
     </div>
+  );
+}
+
+export default function DashboardPage() {
+  return (
+    <Suspense fallback={null}>
+      <Dashboard />
+    </Suspense>
   );
 }
