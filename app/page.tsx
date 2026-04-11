@@ -54,7 +54,7 @@ export default function Home() {
       { rootMargin: "-30% 0px -70% 0px" },
     );
 
-    const sections = ["beranda", "tentang", "neura", "fitur", "comment"].map((id) => document.getElementById(id));
+    const sections = ["beranda", "tentang", "neura", "fitur", "testimoni"].map((id) => document.getElementById(id));
     sections.forEach((s) => s && observer.observe(s));
 
     return () => sections.forEach((s) => s && observer.unobserve(s));

@@ -8,7 +8,7 @@ export function TestimonialsSection() {
   const triple = [...testimonials, ...testimonials, ...testimonials];
 
   return (
-    <section id="comment" className="w-full bg-[#fdfaff] flex flex-col items-center pt-14 pb-10 md:pt-16 md:pb-16 overflow-hidden z-20 relative">
+    <section id="testimoni" className="w-full bg-[#fdfaff] flex flex-col items-center pt-14 pb-10 md:pt-16 md:pb-16 overflow-hidden z-20 relative">
       <div className="text-center mb-8 md:mb-12 px-6">
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
