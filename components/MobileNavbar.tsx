@@ -22,16 +22,18 @@ export default function MobileNavbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const pathname = usePathname();
+  const [prevPathname, setPrevPathname] = useState(pathname);
   const { user, logout } = useAuth();
   const router = useRouter();
   const profileRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
 
-  // Close menu & dropdown on route change
-  useEffect(() => {
+  // Close menu & dropdown on route change without triggering useEffect cascading renders
+  if (pathname !== prevPathname) {
+    setPrevPathname(pathname);
     setIsMenuOpen(false);
     setIsProfileOpen(false);
-  }, [pathname]);
+  }
 
   // Prevent body scroll when drawer open
   useEffect(() => {

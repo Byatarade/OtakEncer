@@ -19,30 +19,30 @@ export function QuotesSection() {
   const quotesTextYRaw = useTransform(quotesScrollProgress, [0, 1], [30, -30]);
   const quotesTextY = useSpring(quotesTextYRaw, springConfig);
 
-  const ts = { stiffness: 120, damping: 20, mass: 0.8 };
+  const ts = { stiffness: 200, damping: 18, mass: 0.6 };
 
-  const textOp1Raw = useTransform(quotesScrollProgress, [0.35, 0.43], [0, 1]);
-  const textY1Raw = useTransform(quotesScrollProgress, [0.35, 0.43], [60, 0]);
+  const textOp1Raw = useTransform(quotesScrollProgress, [0.35, 0.40], [0, 1]);
+  const textY1Raw = useTransform(quotesScrollProgress, [0.35, 0.40], [60, 0]);
   const textOp1 = useSpring(textOp1Raw, ts);
   const textY1 = useSpring(textY1Raw, ts);
 
-  const textOp2Raw = useTransform(quotesScrollProgress, [0.4, 0.48], [0, 1]);
-  const textY2Raw = useTransform(quotesScrollProgress, [0.4, 0.48], [60, 0]);
+  const textOp2Raw = useTransform(quotesScrollProgress, [0.37, 0.42], [0, 1]);
+  const textY2Raw = useTransform(quotesScrollProgress, [0.37, 0.42], [60, 0]);
   const textOp2 = useSpring(textOp2Raw, ts);
   const textY2 = useSpring(textY2Raw, ts);
 
-  const textOp3Raw = useTransform(quotesScrollProgress, [0.45, 0.53], [0, 1]);
-  const textY3Raw = useTransform(quotesScrollProgress, [0.45, 0.53], [60, 0]);
+  const textOp3Raw = useTransform(quotesScrollProgress, [0.39, 0.44], [0, 1]);
+  const textY3Raw = useTransform(quotesScrollProgress, [0.39, 0.44], [60, 0]);
   const textOp3 = useSpring(textOp3Raw, ts);
   const textY3 = useSpring(textY3Raw, ts);
 
-  const textOp4Raw = useTransform(quotesScrollProgress, [0.5, 0.58], [0, 1]);
-  const textY4Raw = useTransform(quotesScrollProgress, [0.5, 0.58], [60, 0]);
+  const textOp4Raw = useTransform(quotesScrollProgress, [0.41, 0.46], [0, 1]);
+  const textY4Raw = useTransform(quotesScrollProgress, [0.41, 0.46], [60, 0]);
   const textOp4 = useSpring(textOp4Raw, ts);
   const textY4 = useSpring(textY4Raw, ts);
 
-  const textOp5Raw = useTransform(quotesScrollProgress, [0.55, 0.63], [0, 1]);
-  const textY5Raw = useTransform(quotesScrollProgress, [0.55, 0.63], [60, 0]);
+  const textOp5Raw = useTransform(quotesScrollProgress, [0.43, 0.48], [0, 1]);
+  const textY5Raw = useTransform(quotesScrollProgress, [0.43, 0.48], [60, 0]);
   const textOp5 = useSpring(textOp5Raw, ts);
   const textY5 = useSpring(textY5Raw, ts);
 

@@ -28,12 +28,12 @@ export default function NotFound() {
         {/* Illustration Container */}
         <div className="relative w-full flex justify-center mb-6">
           {/* Large 404 Gradient Background Text */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 select-none pointer-events-none z-0 mt-4 md:mt-8">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 select-none pointer-events-none z-0 mt-2">
             <motion.h1 
               initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 0.15, scale: 1 }}
+              animate={{ opacity: 0.35, scale: 1 }}
               transition={{ duration: 1, ease: "easeOut" }}
-              className="text-[120px] sm:text-[160px] md:text-[320px] font-bold leading-none bg-clip-text text-transparent bg-gradient-to-r from-[#7c3aed] to-[#ffa515]"
+              className="text-[150px] sm:text-[220px] md:text-[220px] font-bold leading-none bg-clip-text text-transparent bg-gradient-to-r from-[#7c3aed] to-[#ffa515] whitespace-nowrap tracking-widest"
             >
               404
             </motion.h1>

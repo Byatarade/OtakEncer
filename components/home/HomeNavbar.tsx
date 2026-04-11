@@ -40,17 +40,17 @@ export function HomeNavbar({
           activeSection === "fitur" ? "bg-white border-transparent" : "bg-white/40 hover:bg-white/50 border-white/50"
         }`}
       >
-        <div className="flex items-center justify-between px-4 md:px-6 py-3 w-full">
-          <Link href="#beranda" className="flex items-center gap-2">
-            <div className="relative w-7 h-7 md:w-8 md:h-8">
+        <div className="flex items-center justify-between gap-6 lg:gap-8 px-4 md:px-6 py-3 w-full">
+          <Link href="#beranda" className="flex items-center gap-2 shrink-0">
+            <div className="relative w-7 h-7 md:w-8 md:h-8 shrink-0">
               <Image src="/assets/logo.svg" alt="Logo" fill className="object-contain" />
             </div>
-            <span className="font-bold text-[18px] md:text-[18px] tracking-tight text-gray-900">
+            <span className="font-bold text-[18px] md:text-[18px] tracking-tight text-gray-900 whitespace-nowrap">
               Otak<span className="text-[#672cb9]">Encer</span>
             </span>
           </Link>
 
-          <div className="hidden md:flex items-center gap-4 lg:gap-6 font-medium text-[13px] md:text-[14px]">
+          <div className="hidden md:flex items-center gap-3 lg:gap-6 font-medium text-[12.5px] lg:text-[14px] whitespace-nowrap shrink-0">
             <Link onClick={handleScroll} href="#beranda" className={`font-bold transition-colors duration-300 ${activeSection === "beranda" ? "text-[#672cb9]" : "text-gray-800 hover:text-[#672cb9]"}`}>
               Beranda
             </Link>
@@ -71,9 +71,11 @@ export function HomeNavbar({
           <div className="flex items-center gap-2 md:gap-4">
             {user ? (
               <div className="flex items-center gap-2 md:gap-4">
-                <Button size="sm" variant="secondary" className="hidden md:flex px-5 py-2.5 rounded-full group h-auto" onClick={() => router.push("/dashboard")}>
+                <Button size="sm" variant="secondary" className="hidden md:flex px-5 py-2.5 rounded-full group h-auto items-center" onClick={() => router.push("/dashboard")}>
                   Dashboard
-                  <span className="ml-2 inline-block transition-transform group-hover:translate-x-1">👉</span>
+                  <span className="ml-2 inline-flex items-center transition-transform group-hover:translate-x-1">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                  </span>
                 </Button>
                 <Button size="sm" variant="secondary" className="md:hidden flex px-3 py-2 rounded-full group" onClick={() => router.push("/dashboard")}>
                   Dashboard

@@ -114,7 +114,7 @@ export function TentangSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ delay: 0.5 }}
-          className="md:col-span-1 lg:col-span-2 bg-[#ffffff] rounded-[24px] p-8 md:p-10 border border-gray-200/60 shadow-[0_4px_24px_rgba(0,0,0,0.02)] flex flex-col sm:flex-row items-start sm:items-center gap-6 sm:gap-8 group hover:shadow-[0_8px_32px_rgba(0,0,0,0.04)] transition-all duration-500"
+          className="md:col-span-2 lg:col-span-2 bg-[#ffffff] rounded-[24px] p-8 md:p-10 border border-gray-200/60 shadow-[0_4px_24px_rgba(0,0,0,0.02)] flex flex-col sm:flex-row items-start sm:items-center gap-6 sm:gap-8 group hover:shadow-[0_8px_32px_rgba(0,0,0,0.04)] transition-all duration-500"
         >
           <div className="w-16 h-16 shrink-0 rounded-[18px] bg-[#fafafa] border border-gray-100 shadow-[0_2px_8px_rgba(0,0,0,0.02)] flex items-center justify-center text-gray-700">
             <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -136,7 +136,7 @@ export function TentangSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ delay: 0.6 }}
-          className="md:col-span-2 lg:col-span-2 bg-[#0a0a0a] rounded-[24px] overflow-hidden border border-gray-800 shadow-[0_8px_32px_rgba(0,0,0,0.15)] relative group min-h-[200px]"
+          className="md:col-span-3 lg:col-span-2 bg-[#0a0a0a] rounded-[24px] overflow-hidden border border-gray-800 shadow-[0_8px_32px_rgba(0,0,0,0.15)] relative group min-h-[200px]"
         >
           <div
             className="absolute inset-0"

@@ -65,36 +65,36 @@ export const SiteFooter = forwardRef<HTMLElement>(function SiteFooter(_, ref) {
               </div>
             </div>
             <div className="flex flex-col">
-              <h4 className="font-bold text-[16px] md:text-[18px] mb-6 text-white">Perusahaan</h4>
+              <h4 className="font-bold text-[16px] md:text-[18px] mb-6 text-white">Eksplorasi</h4>
               <div className="flex flex-col gap-4 font-['Montserrat',sans-serif] text-[14px] md:text-[15px] text-white/60">
                 <Link href="#" className="hover:text-[#ffa515] hover:translate-x-1 transition-all w-fit">
-                  Tentang Kami
+                  Tentang OtakEncer
                 </Link>
                 <Link href="#comment" className="hover:text-[#ffa515] hover:translate-x-1 transition-all w-fit">
-                  Testimoni
+                  Cerita Pengguna
                 </Link>
                 <Link href="#" className="hover:text-[#ffa515] hover:translate-x-1 transition-all w-fit">
-                  Blog
+                  Tips & Trik Belajar
                 </Link>
                 <Link href="#" className="hover:text-[#ffa515] hover:translate-x-1 transition-all w-fit">
-                  Karir
+                  Komunitas Kita
                 </Link>
               </div>
             </div>
             <div className="flex flex-col col-span-2 md:col-span-1">
-              <h4 className="font-bold text-[16px] md:text-[18px] mb-6 text-white">Dukungan</h4>
+              <h4 className="font-bold text-[16px] md:text-[18px] mb-6 text-white">Bantuan & Legal</h4>
               <div className="flex flex-col gap-4 font-['Montserrat',sans-serif] text-[14px] md:text-[15px] text-white/60">
                 <Link href="#" className="hover:text-[#ffa515] hover:translate-x-1 transition-all w-fit">
-                  Pusat Bantuan
+                  Panduan Penggunaan
+                </Link>
+                <Link href="#" className="hover:text-[#ffa515] hover:translate-x-1 transition-all w-fit">
+                  Pusat Bantuan (FAQ)
                 </Link>
                 <Link href="#" className="hover:text-[#ffa515] hover:translate-x-1 transition-all w-fit">
                   Syarat & Ketentuan
                 </Link>
                 <Link href="#" className="hover:text-[#ffa515] hover:translate-x-1 transition-all w-fit">
                   Kebijakan Privasi
-                </Link>
-                <Link href="#" className="hover:text-[#ffa515] hover:translate-x-1 transition-all w-fit">
-                  Kontak
                 </Link>
               </div>
             </div>
