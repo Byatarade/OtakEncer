@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { User, Save, Mail, Camera, Loader2, ArrowLeft } from 'lucide-react';
+import { User, Save, Mail, Camera, Loader2, ArrowLeft, X, Crop } from 'lucide-react';
 import { useAuth } from '@/components/AuthProvider';
 import { supabase } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
@@ -10,6 +10,8 @@ import { Input } from '@/components/ui/input';
 import Image from 'next/image';
 import Swal from 'sweetalert2';
 import Link from 'next/link';
+import Cropper from 'react-easy-crop';
+import getCroppedImg from '@/lib/get-cropped-img';
 
 export default function SettingsPage() {
   const { user, isLoaded } = useAuth();
@@ -18,6 +20,69 @@ export default function SettingsPage() {
   const [name, setName] = useState('');
   const [avatar, setAvatar] = useState('');
   const [loading, setLoading] = useState(false);
+
+  // Cropper states
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [imageSrc, setImageSrc] = useState<string | null>(null);
+  const [crop, setCrop] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
+  const [zoom, setZoom] = useState<number>(1);
+  
+  // Types for react-easy-crop
+  type Area = { x: number; y: number; width: number; height: number };
+  
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null);
+  const [isCropping, setIsCropping] = useState(false);
+
+  const onCropComplete = useCallback((croppedArea: Area, croppedAreaPixels: Area) => {
+    setCroppedAreaPixels(croppedAreaPixels);
+  }, []);
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const file = e.target.files[0];
+      if (file.size > 2 * 1024 * 1024) {
+        Swal.fire({ title: 'Terlalu Besar', text: 'Ukuran foto maksimal 2MB', icon: 'error', confirmButtonColor: '#672cb9' });
+        if (fileInputRef.current) fileInputRef.current.value = '';
+        return;
+      }
+      const reader = new FileReader();
+      reader.addEventListener('load', () => setImageSrc(reader.result?.toString() || null));
+      reader.readAsDataURL(file);
+      setIsCropping(true);
+    }
+  };
+
+  const showCroppedImage = useCallback(async () => {
+    try {
+      if (!imageSrc || !croppedAreaPixels || !user) return;
+      setLoading(true);
+      const croppedImageBlob = await getCroppedImg(imageSrc, croppedAreaPixels);
+      if (!croppedImageBlob) throw new Error('Gagal crop foto');
+      
+      const ext = 'jpeg'; // converted to jpeg by getCroppedImg
+      const filename = `${user.id}-${Date.now()}.${ext}`;
+      
+      const { error } = await supabase.storage.from('avatars').upload(filename, croppedImageBlob, { upsert: true });
+      if (error) throw error;
+      
+      const { data: { publicUrl } } = supabase.storage.from('avatars').getPublicUrl(filename);
+      setAvatar(publicUrl);
+      setIsCropping(false);
+      setImageSrc(null);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    } catch (e) {
+      console.error(e);
+      Swal.fire({ title: 'Gagal', text: 'Gagal mengupload foto', icon: 'error', confirmButtonColor: '#672cb9' });
+    } finally {
+      setLoading(false);
+    }
+  }, [imageSrc, croppedAreaPixels, user]);
+
+  const cancelCrop = () => {
+    setIsCropping(false);
+    setImageSrc(null);
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
 
   useEffect(() => {
     if (user) {
@@ -31,7 +96,8 @@ export default function SettingsPage() {
     setLoading(true);
 
     try {
-      const { error } = await supabase.auth.updateUser({
+      // Update profile di auth
+      const { data: authData, error } = await supabase.auth.updateUser({
         data: {
           full_name: name,
           avatar_url: avatar
@@ -40,7 +106,23 @@ export default function SettingsPage() {
 
       if (error) throw error;
 
-      // Sync nama dan avatar ke tabel user_streaks untuk ditampilkan di leaderboard via API
+      // Langsung update ke tabel user_streaks & quiz_scores (butuh RLS policy yang tepat)
+      const userId = (authData.user || user)?.id;
+      if (userId) {
+        // Sync ke user_streaks
+        await supabase
+          .from('user_streaks')
+          .update({ user_name: name, user_avatar: avatar })
+          .eq('user_id', userId);
+
+        // Sync ke quiz_scores
+        await supabase
+          .from('quiz_scores')
+          .update({ user_name: name, user_avatar: avatar })
+          .eq('user_id', userId);
+      }
+      
+      // Jika perlu, trigger API route as fallback (optional)
       const { data: { session } } = await supabase.auth.getSession();
       if (session) {
         try {
@@ -205,32 +287,8 @@ export default function SettingsPage() {
                          <input 
                            type="file" 
                            accept="image/png, image/jpeg, image/jpg, image/webp"
-                           onChange={async (e) => {
-                             const file = e.target.files?.[0];
-                             if(!file || !user) return;
-                             try {
-                               // Validate size (< 2MB)
-                               if(file.size > 2 * 1024 * 1024) {
-                                 Swal.fire({ title: 'Terlalu Besar', text: 'Ukuran foto maksimal 2MB', icon: 'error', confirmButtonColor: '#672cb9' });
-                                 return;
-                               }
-                               
-                               setLoading(true);
-                               const ext = file.name.split('.').pop();
-                               const filename = `${user.id}-${Date.now()}.${ext}`;
-                               const { error } = await supabase.storage.from('avatars').upload(filename, file, { upsert: true });
-                               
-                               if(error) throw error;
-                               
-                               const { data: { publicUrl } } = supabase.storage.from('avatars').getPublicUrl(filename);
-                               setAvatar(publicUrl);
-                             } catch(err) {
-                               console.error(err);
-                               Swal.fire({ title: 'Gagal Upload', text: 'Pastikan bucket storage "avatars" tersedia', icon: 'error', confirmButtonColor: '#672cb9' });
-                             } finally {
-                               setLoading(false);
-                             }
-                           }}
+                           onChange={handleFileChange}
+                           ref={fileInputRef}
                            disabled={loading}
                            className="absolute inset-0 opacity-0 cursor-pointer z-10 w-full h-full"
                          />
@@ -261,6 +319,77 @@ export default function SettingsPage() {
           {/* Tab Content Removed - Kept activeTab logic intact but unused for quota */}
         </AnimatePresence>
       </div>
+
+      {/* Cropper Modal */}
+      <AnimatePresence>
+        {isCropping && imageSrc && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4"
+          >
+            <motion.div
+              initial={{ scale: 0.95 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0.95 }}
+              className="bg-white rounded-[24px] p-6 w-full max-w-md shadow-2xl relative"
+            >
+              <button 
+                onClick={cancelCrop}
+                className="absolute top-4 right-4 p-2 text-gray-500 hover:bg-gray-100 rounded-full transition-colors z-20"
+              >
+                <X size={20} />
+              </button>
+              
+              <h3 className="text-xl font-bold text-gray-900 mb-4">Sesuaikan Foto</h3>
+              
+              <div className="relative w-full h-[300px] mb-6 rounded-xl overflow-hidden border border-gray-200">
+                <Cropper
+                  image={imageSrc}
+                  crop={crop}
+                  zoom={zoom}
+                  aspect={1}
+                  cropShape="round"
+                  showGrid={false}
+                  onCropChange={setCrop}
+                  onCropComplete={onCropComplete}
+                  onZoomChange={setZoom}
+                  classes={{ containerClassName: 'bg-gray-50' }}
+                />
+              </div>
+
+              <div className="flex items-center gap-4 mb-6">
+                <span className="text-sm font-medium text-gray-600">Zoom</span>
+                <input
+                  type="range"
+                  value={zoom}
+                  min={1}
+                  max={3}
+                  step={0.1}
+                  aria-labelledby="Zoom"
+                  onChange={(e) => setZoom(Number(e.target.value))}
+                  className="flex-1 h-1 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                />
+              </div>
+
+              <div className="flex gap-3 justify-end mt-4 pt-4 border-t border-gray-100">
+                <Button variant="outline" onClick={cancelCrop} disabled={loading}>
+                  Batal
+                </Button>
+                <Button 
+                  onClick={showCroppedImage} 
+                  disabled={loading}
+                  className="bg-[#672cb9] hover:bg-[#5a26a3] text-white flex items-center gap-2"
+                >
+                  {loading ? <Loader2 size={16} className="animate-spin" /> : <Crop size={16} />}
+                  Potong & Simpan
+                </Button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
