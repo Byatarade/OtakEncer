@@ -1,13 +1,14 @@
 "use client";
 import { supabase } from '@/lib/supabase';
 
-import {Plus, LogOut, Settings, HelpCircle, ChevronDown, FileText, Check, X, MonitorPlay, Volume2, Link as LinkIcon, LayoutDashboard, Trophy, Users, Library, Flame, Lightbulb } from 'lucide-react';
+import {Plus, LogOut, Settings, HelpCircle, ChevronDown, FileText, CheckCircle2, Check, X, MonitorPlay, Volume2, Link as LinkIcon, LayoutDashboard, Trophy, Users, Library, Flame } from 'lucide-react';
 import Image from 'next/image';
 import { useAuth } from '@/components/AuthProvider';
 import { useRouter } from 'next/navigation';
 import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import Swal from 'sweetalert2';
+import { formatDistanceToNow } from 'date-fns';
 
 export default function Dashboard() {
   const { user, logout } = useAuth();
@@ -216,7 +217,7 @@ export default function Dashboard() {
   if (!user) return null; // Handled by AuthGuard
 
   return (
-    <div className="flex flex-col min-h-[100dvh] lg:h-screen w-full p-4 lg:p-6 xl:p-8 max-w-[1600px] mx-auto gap-4 sm:gap-6 lg:overflow-hidden">
+    <div className="flex flex-col min-h-full w-full p-4 lg:p-8 xl:p-10 max-w-[1600px] mx-auto gap-4 sm:gap-8">
 
       {/* Mobile Header (Only visible on small screens) */}
       <div className="flex sm:hidden items-center justify-between mb-2 gap-1">
@@ -363,156 +364,21 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Konten Dashboard Grid - REFACTORED HIERARCHY */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 md:gap-6 mt-2 flex-1 lg:min-h-0 pb-[100px] lg:pb-0 overflow-y-auto lg:overflow-hidden content-area-scroll">
+      {/* Konten Dashboard Grid */}
+      <div className="grid grid-cols-2 lg:grid-cols-2 gap-4 md:gap-6 mt-4">
         
-        {/* Left Column: Quick Upload / Main CTA (col-span-8) */}
-        <div className="lg:col-span-8 order-2 lg:order-1 flex flex-col gap-4 lg:gap-5 h-auto lg:h-full lg:min-h-0">
-          <div className="bg-white rounded-3xl p-5 md:p-6 lg:p-8 shadow-sm border border-slate-100 relative flex flex-col h-auto lg:h-full lg:min-h-0 overflow-hidden">
-            
-            {/* Dekorasi Background Halus */}
-            <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-[#672cb9]/5 to-transparent rounded-bl-full pointer-events-none"></div>
+        {/* Daily Streak Card */}
+        <DailyStreakCard userId={user.id} />
 
-            <div className="flex justify-between items-center mb-6 lg:mb-8 relative z-10">
-              <div>
-                <h3 className="text-[20px] md:text-[24px] font-bold text-slate-800 tracking-tight">Buat Materi Baru</h3>
-                <p className="text-[14px] md:text-[15px] text-slate-500 mt-1">Pilih metode jalan pintas untuk mulai belajar</p>
-              </div>
-              {isUploading && (
-                <div className="flex items-center gap-2 text-sm font-semibold text-[#672cb9] bg-[#672cb9]/10 px-4 py-2 rounded-full animate-pulse backdrop-blur-sm shadow-sm">
-                  <div className="w-4 h-4 border-2 border-[#672cb9] border-t-transparent rounded-full animate-spin"></div>
-                  Memproses...
-                </div>
-              )}
-            </div>
-            
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-5 relative z-10 flex-1 lg:min-h-0 pb-2">
-               {/* File PDF / DOCX */}
-               <div className={`relative flex sm:flex-col items-center sm:items-start flex-row bg-slate-50 hover:bg-white hover:shadow-md p-4 sm:p-5 lg:p-6 rounded-[20px] border border-slate-200 transition-all text-left group cursor-pointer lg:h-full ${isUploading ? 'opacity-60 pointer-events-none' : ''}`}>
-                 <div className="w-[42px] h-[42px] sm:w-[48px] sm:h-[48px] shrink-0 rounded-2xl bg-gradient-to-br from-[#ed2d07] to-[#871c07] flex items-center justify-center sm:mb-4 mr-4 sm:mr-0 shadow-sm group-hover:scale-105 transition-transform relative">
-                   <FileText className="text-white w-5 h-5 sm:w-6 sm:h-6" />
-                   <span className="absolute text-[7px] sm:text-[8px] font-bold text-[#672cb9] bg-white px-1 leading-none rounded-sm mt-3.5 sm:mt-4">DOC</span>
-                 </div>
-                 <div>
-                   <h3 className="text-[16px] sm:text-[18px] font-bold text-slate-800 mb-1 sm:mb-2">Gunakan Dokumen</h3>
-                   <p className="text-[13px] sm:text-[14px] text-slate-600 leading-relaxed hidden sm:block">Unggah file teks PDF, DOCX, atau PPT (Max 10MB).</p>
-                   <p className="text-[13px] text-slate-500 leading-relaxed sm:hidden">PDF, DOCX, PPT (Maks 10MB)</p>
-                 </div>
-                 <input 
-                   type="file" 
-                   accept=".pdf, .docx, .pptx"
-                   onChange={handleFileUpload}
-                   disabled={isUploading}
-                   className="absolute inset-0 w-full h-full opacity-0 outline-none cursor-pointer z-10"
-                   title="Pilih File"
-                 />
-               </div>
+        {/* Daily Tokens Card */}
+        <DailyTokensCard userId={user.id} />
 
-               {/* Audio File */}
-               <div className={`relative flex sm:flex-col items-center sm:items-start flex-row bg-slate-50 hover:bg-white hover:shadow-md p-4 sm:p-5 lg:p-6 rounded-[20px] border border-slate-200 transition-all text-left group cursor-pointer lg:h-full ${isUploading ? 'opacity-60 pointer-events-none' : ''}`}>
-                 <div className="w-[42px] h-[42px] sm:w-[48px] sm:h-[48px] shrink-0 rounded-2xl bg-gradient-to-br from-[#10b981] to-[#047857] flex items-center justify-center sm:mb-4 mr-4 sm:mr-0 shadow-sm group-hover:scale-105 transition-transform relative">
-                   <Volume2 className="text-white w-5 h-5 sm:w-6 sm:h-6" />
-                   <span className="absolute text-[7px] sm:text-[8px] font-bold text-[#672cb9] bg-white px-1 leading-none rounded-sm mt-3.5 sm:mt-4">MP3</span>
-                 </div>
-                 <div>
-                   <h3 className="text-[16px] sm:text-[18px] font-bold text-slate-800 mb-1 sm:mb-2">Gunakan Audio</h3>
-                   <p className="text-[13px] sm:text-[14px] text-slate-600 leading-relaxed hidden sm:block">Unggah rekaman suara mp3/wav (Max 10/25MB).</p>
-                   <p className="text-[13px] text-slate-500 leading-relaxed sm:hidden">MP3/WAV (Maks 10/25MB)</p>
-                 </div>
-                 <input 
-                   type="file" 
-                   accept="audio/*, .mp3, .wav, .m4a, .mp4, .mpeg, .mpga, .webm"
-                   onChange={handleFileUpload}
-                   disabled={isUploading}
-                   className="absolute inset-0 w-full h-full opacity-0 outline-none cursor-pointer z-10"
-                   title="Pilih File Audio"
-                 />
-               </div>
+        {/* Recent Activity Card */}
+        <RecentActivityWidget userId={user.id} />
 
-               {/* Link YouTube */}
-               {!showLinkInput ? (
-                 <button onClick={() => setShowLinkInput(true)} disabled={isUploading} className={`flex sm:flex-col items-center sm:items-start flex-row bg-slate-50 hover:bg-white hover:shadow-md p-4 sm:p-5 lg:p-6 rounded-[20px] border border-slate-200 transition-all text-left outline-none group lg:h-full ${isUploading ? 'opacity-60 pointer-events-none' : ''}`}>
-                   <div className="w-[42px] h-[42px] sm:w-[48px] sm:h-[48px] shrink-0 rounded-2xl bg-gradient-to-br from-[#ef4444] to-[#991b1b] flex items-center justify-center sm:mb-4 mr-4 sm:mr-0 shadow-sm group-hover:scale-105 transition-transform relative">
-                     <MonitorPlay className="text-white w-5 h-5 sm:w-6 sm:h-6" strokeWidth={2} />
-                   </div>
-                   <div>
-                     <h3 className="text-[16px] sm:text-[18px] font-bold text-slate-800 mb-1 sm:mb-2">Link YouTube</h3>
-                     <p className="text-[13px] sm:text-[14px] text-slate-600 leading-relaxed hidden sm:block">Ambil materi dari video publik YouTube lewat URL.</p>
-                     <p className="text-[13px] text-slate-500 leading-relaxed sm:hidden">Konversi URL Video YouTube</p>
-                   </div>
-                 </button>
-               ) : (
-                 <div className="flex flex-col items-start bg-white p-4 sm:p-5 lg:p-6 rounded-[20px] border border-slate-200 shadow-md transition-all text-left w-full relative sm:h-full justify-between lg:h-full">
-                   <div className="w-full">
-                     <div className="flex justify-between items-center mb-3">
-                       <h3 className="text-[15px] sm:text-[16px] font-bold text-slate-800">Paste Link Youtube</h3>
-                       <button onClick={() => setShowLinkInput(false)} className="text-slate-400 hover:text-rose-500 transition-colors p-1">
-                          <X size={18} />
-                       </button>
-                     </div>
-                     <div className="relative w-full mb-3">
-                       <LinkIcon className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
-                       <input 
-                         disabled={isUploading}
-                         type="url" 
-                         placeholder="https://youtu.be/..." 
-                         value={linkUrl}
-                         onChange={(e) => setLinkUrl(e.target.value)}
-                         onKeyDown={(e) => { if(e.key==='Enter') handleLinkSubmit(); }}
-                         className="w-full bg-slate-50 border border-slate-200 text-[13px] rounded-xl py-2 pl-9 pr-3 outline-none focus:border-[#ef4444] focus:ring-1 focus:ring-[#ef4444]/30 transition-all font-medium text-slate-700"
-                       />
-                     </div>
-                   </div>
-                   <button 
-                     onClick={handleLinkSubmit}
-                     disabled={isUploading || linkUrl.trim().length < 10}
-                     className="w-full py-2 bg-[#ef4444] hover:bg-[#dc2626] text-white rounded-xl font-bold text-[14px] transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-sm border border-transparent shadow-[#ef4444]/20"
-                   >
-                     {isUploading ? 'Memproses...' : 'Proses'}
-                   </button>
-                 </div>
-               )}
-            </div>
+        {/* Leaderboard Rank Card */}
+        <LeaderboardRankWidget userId={user.id} userName={user.name} />
 
-            {/* Tambahan / Footer Card biar terkesan padat */}
-            <div className="mt-auto relative z-10 bg-indigo-50/50 border border-indigo-100/50 rounded-2xl p-4 flex items-start gap-4">
-              <div className="w-10 h-10 rounded-full bg-white shadow-sm flex items-center justify-center shrink-0">
-                 <Flame className="text-[#672cb9] w-5 h-5" />
-              </div>
-              <div className="flex-1">
-                 <h4 className="text-[14px] font-bold text-slate-800">Tips OtakEncer</h4>
-                 <p className="text-[13px] text-slate-600 mt-1 leading-relaxed">
-                   Unggah materi kuliah atau video referensi kamu. AI kami akan otomatis menyusun Ringkasan, Kuis, & Flashcard interaktif hanya dalam hitungan detik!
-                 </p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Right Column: Key Metrics (col-span-4) */}
-        <div className="lg:col-span-4 order-1 lg:order-2 flex flex-col gap-4 md:gap-5 w-full h-auto lg:h-full lg:overflow-hidden">
-           <div className="flex-[1.5] lg:flex-[1.3] w-full min-h-[220px] lg:min-h-0">
-             <DailyStreakCard userId={user.id} />
-           </div>
-           
-           {/* Insight / Daily Motivation Card */}
-           <div className="flex-1 w-full min-h-[160px] lg:min-h-0 bg-gradient-to-br from-[#672cb9] to-[#8c4ae1] rounded-[24px] md:rounded-3xl p-5 md:p-6 shadow-md shadow-[#672cb9]/20 relative overflow-hidden group flex flex-col justify-center">
-              <div className="absolute -right-4 -bottom-6 opacity-[0.07] rotate-12 group-hover:rotate-0 transition-transform duration-500 pointer-events-none">
-                <Lightbulb size={120} />
-              </div>
-              <div className="relative z-10">
-                <h3 className="text-white/80 font-bold text-[12px] md:text-[13px] uppercase tracking-wider mb-2 md:mb-3 flex items-center gap-1.5">
-                  <Lightbulb size={16} className="text-yellow-300" /> Insight Hari Ini
-                </h3>
-                <p className="text-white font-medium text-[13px] md:text-[15px] leading-relaxed italic line-clamp-4">
-                  &quot;Pendidikan adalah senjata paling mematikan di dunia, karena dengan pendidikan, Anda dapat mengubah dunia.&quot;
-                </p>
-                <div className="mt-3 md:mt-4 text-white/70 text-[12px] md:text-[13px] font-bold">
-                  — Nelson Mandela
-                </div>
-              </div>
-           </div>
-        </div>
       </div>
 
       {/* Mobile Drawer Navigation */}
@@ -688,6 +554,104 @@ export default function Dashboard() {
   );
 }
 
+function DailyTokensCard({ userId }: { userId: string }) {
+  const [usageCount, setUsageCount] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const MAX_LIMIT = 3;
+
+  useEffect(() => {
+    const fetchUsage = async () => {
+      try {
+        const startOfDay = new Date();
+        startOfDay.setHours(0, 0, 0, 0);
+
+        const { count, error } = await supabase
+          .from('materials')
+          .select('*', { count: 'exact', head: true })
+          .eq('user_id', userId)
+          .gte('created_at', startOfDay.toISOString());
+
+        if (error) throw error;
+        setUsageCount(count || 0);
+      } catch (err) {
+        console.error('Error fetching usage:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUsage();
+  }, [userId]);
+
+  const remaining = Math.max(MAX_LIMIT - usageCount, 0);
+  const percentage = Math.min((usageCount / MAX_LIMIT) * 100, 100);
+
+  return (
+    <div className="bg-white rounded-[24px] md:rounded-3xl p-6 md:p-8 shadow-sm md:shadow-sm border border-slate-100 flex flex-col h-full col-span-1">
+      <h3 className="text-[18px] md:text-[22px] font-bold text-[#672cb9] mb-6 md:mb-8">Daily Token</h3>
+      
+      {loading ? (
+        <div className="flex items-center justify-center py-8 flex-1">
+          <div className="w-6 h-6 border-2 border-[#672cb9] border-t-transparent rounded-full animate-spin"></div>
+        </div>
+      ) : (
+        <div className="flex flex-col flex-1">
+          {/* Mobile Text */}
+          <div className="flex sm:hidden justify-between items-center mb-3">
+            <p className="text-[#0f172a] text-[15px] font-medium">Token</p>
+            <p className="text-[#0f172a] text-[15px] font-medium">{remaining}/{MAX_LIMIT}</p>
+          </div>
+          
+          {/* Desktop Text */}
+          <div className="hidden sm:flex justify-between items-end mb-3">
+            <div>
+              <p className="text-[#0f172a] font-medium text-[15px]">Token Tersisa: <span className="font-bold">{remaining}/{MAX_LIMIT}</span></p>
+            </div>
+            <p className="text-slate-800 font-bold text-[14px]">{usageCount} token <span className="font-normal text-[#0f172a]">digunakan</span></p>
+          </div>
+          
+          <div className="w-full h-3 sm:h-3.5 bg-[#f5f3ff] rounded-full overflow-hidden mb-4 md:mb-5">
+            <div 
+              className={`h-full rounded-full transition-all duration-700 ${
+                remaining === 0 ? 'bg-red-500' : remaining === 1 ? 'bg-orange-400' : 'bg-[#FFA515]'
+              }`} 
+              style={{ width: `${percentage}%` }}
+            ></div>
+          </div>
+          
+          <p className="text-[#8a8a8e] text-[13px] font-medium leading-[1.4] block decoration-[1.5px] mb-5">
+            Periksa Pengaturan Akun untuk selengkapnya
+          </p>
+          
+          <div className="mt-auto">
+            {/* Mobile Pill */}
+            <div className={`sm:hidden flex w-full justify-center items-center py-2.5 px-4 rounded-xl text-[11px] text-center font-semibold ${
+              remaining === 0 
+                ? 'bg-red-50 text-red-700' 
+                : 'bg-[#fff4e6] text-[#0f172a]'
+            }`}>
+              {remaining === 0 
+                ? 'Kuota harian habis' 
+                : `${remaining} Token Tersisa`}
+            </div>
+            
+            {/* Desktop Pill */}
+            <div className={`hidden sm:inline-flex py-2.5 px-5 rounded-[14px] text-[14px] font-semibold ${
+              remaining === 0 
+                ? 'bg-red-50 text-red-700' 
+                : 'bg-[#fff4e6] text-[#0f172a]'
+            }`}>
+              {remaining === 0 
+                ? 'Kuota harian habis, reset tengah malam' 
+                : `${remaining} token tersisa untuk hari ini`}
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 function DailyStreakCard({ userId }: { userId: string }) {
   const [streak, setStreak] = useState<number>(0);
   const [loading, setLoading] = useState(true);
@@ -720,7 +684,7 @@ function DailyStreakCard({ userId }: { userId: string }) {
   }, [userId]);
 
   return (
-    <div className="bg-white md:bg-gradient-to-br md:from-white md:to-orange-50/40 rounded-[24px] md:rounded-3xl p-5 md:p-6 lg:p-6 shadow-sm md:shadow-sm shadow-slate-200/50 border-[2px] border-[#FFA515] md:border md:border-orange-100 flex flex-col justify-between h-full relative overflow-hidden group">
+    <div className="bg-white md:bg-gradient-to-br md:from-white md:to-orange-50/40 rounded-[24px] md:rounded-3xl p-5 md:p-8 shadow-sm md:shadow-sm shadow-slate-200/50 border-[3px] border-[#FFA515] md:border md:border-orange-100 flex flex-col justify-between col-span-1 relative overflow-hidden group">
       {/* Background Decor (Desktop Only) */}
       <div className="hidden md:block absolute -top-12 -right-12 w-40 h-40 bg-orange-200/50 rounded-full blur-3xl opacity-60 pointer-events-none group-hover:bg-orange-300/50 transition-colors duration-500"></div>
       
@@ -799,3 +763,216 @@ function DailyStreakCard({ userId }: { userId: string }) {
   );
 }
 
+interface ActivityItem {
+  id: string;
+  type: 'viewed' | 'upload' | 'quiz';
+  title: string;
+  date: Date;
+}
+
+function RecentActivityWidget({ userId }: { userId: string }) {
+  const [activities, setActivities] = useState<ActivityItem[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchActivities = async () => {
+      try {
+        const { data: materialsData, error: errMat } = await supabase
+          .from('materials')
+          .select('id, title, created_at')
+          .eq('user_id', userId)
+          .order('created_at', { ascending: false })
+          .limit(10);
+
+        const { data: quizData, error: errQuiz } = await supabase
+          .from('quiz_scores')
+          .select('material_id, created_at, materials(title)')
+          .eq('user_id', userId)
+          .order('created_at', { ascending: false })
+          .limit(10);
+
+        const formattedActivities: ActivityItem[] = [];
+
+        if (materialsData && !errMat) {
+          materialsData.forEach((m) => {
+            formattedActivities.push({
+              id: `mat-${m.id}`,
+              type: 'upload',
+              title: m.title || 'Unknown Material',
+              date: new Date(m.created_at)
+            });
+          });
+        }
+
+        if (quizData && !errQuiz) {
+           (quizData as unknown as { material_id: string; created_at: string; materials: { title: string } | { title: string }[] | null }[]).forEach((q) => {
+             const mat = q.materials;
+             const title = Array.isArray(mat) ? mat[0]?.title : mat?.title;
+             formattedActivities.push({
+               id: `quiz-${q.material_id}-${q.created_at}`,
+               type: 'quiz',
+               title: title || 'Unknown Material',
+               date: new Date(q.created_at)
+             });
+           });
+        }
+
+        formattedActivities.sort((a, b) => b.date.getTime() - a.date.getTime());
+        setActivities(formattedActivities.slice(0, 4));
+      } catch (error) {
+        console.error('Error fetching recent activities:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchActivities();
+  }, [userId]);
+
+  return (
+    <div className="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-slate-100 relative col-span-2 lg:col-span-1">
+      <h3 className="text-[20px] font-bold text-[#672cb9] mb-6">Recent Activity</h3>
+      
+      {loading ? (
+        <div className="flex items-center justify-center py-6">
+          <div className="w-6 h-6 border-2 border-[#672cb9] border-t-transparent rounded-full animate-spin"></div>
+        </div>
+      ) : activities.length === 0 ? (
+        <p className="text-slate-500 font-medium z-10 relative">Belum ada aktivitas.</p>
+      ) : (
+        <div className="space-y-6 relative z-10">
+          {activities.map((act) => (
+            <div key={act.id} className="flex gap-4 items-start">
+              {act.type === 'upload' || act.type === 'viewed' ? (
+                <div className="bg-[#f4effa] p-2.5 rounded-full shrink-0">
+                  <FileText size={20} className="text-[#672cb9]" />
+                </div>
+              ) : (
+                <div className="bg-[#672cb9] p-2.5 rounded-full shrink-0">
+                  <CheckCircle2 size={20} className="text-white" />
+                </div>
+              )}
+              <div className="flex-1">
+                <p className="text-slate-800 font-medium">
+                  {act.type === 'upload' ? 'Uploaded' : act.type === 'quiz' ? 'Completed quiz' : 'Viewed'} &quot;{act.title}&quot;
+                </p>
+                <p className="text-slate-400 text-[13px] mt-0.5">
+                  {formatDistanceToNow(act.date, { addSuffix: true })}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+      
+      {/* Vertical line indicator */}
+      {activities.length > 0 && (
+        <div className="absolute right-8 top-1/2 -translate-y-1/2 w-1 h-32 bg-slate-200 rounded-full"></div>
+      )}
+    </div>
+  );
+}
+
+interface LeaderboardItem {
+  user_id: string;
+  user_name: string;
+  current_streak: number;
+  rank: number;
+}
+
+function LeaderboardRankWidget({ userId, userName }: { userId: string, userName: string }) {
+  const [data, setData] = useState<LeaderboardItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [currentUserRank, setCurrentUserRank] = useState<number | string>('-');
+  const [currentUserStreak, setCurrentUserStreak] = useState<number>(0);
+
+  useEffect(() => {
+    const fetchLeaderboard = async () => {
+      try {
+        const { data: streakData, error: dbError } = await supabase
+          .from('user_streaks')
+          .select('user_id, current_streak, user_name, user_avatar')
+          .order('current_streak', { ascending: false });
+
+        if (dbError) throw dbError;
+
+        const results = (streakData || []).map((row, index) => ({
+           user_id: row.user_id,
+           user_name: row.user_name || 'Pelajar',
+           current_streak: row.current_streak || 0,
+           rank: index + 1
+        }));
+
+        const top3 = results.slice(0, 3);
+        const currentUserIndex = results.findIndex(r => r.user_id === userId);
+        const currentUser = results[currentUserIndex];
+        
+        setCurrentUserRank(currentUser ? currentUser.rank : '-');
+        setCurrentUserStreak(currentUser ? currentUser.current_streak : 0);
+
+        // Show top 3. If current user is not in top 3, append them at the end.
+        const displayList = [...top3];
+        if (currentUser && currentUserIndex >= 3) {
+          displayList.push(currentUser);
+        } else if (!currentUser) {
+          displayList.push({
+            user_id: userId,
+            user_name: userName,
+            current_streak: 0,
+            rank: 0 // Gunakan angka 0 sebagai indikator 'belum ada ranking' agar tidak error type
+          });
+        }
+        setData(displayList);
+      } catch (error) {
+        console.error('Error fetching leaderboard widget data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchLeaderboard();
+  }, [userId, userName]);
+
+  return (
+    <div className="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-slate-100 col-span-2 lg:col-span-1 h-full flex flex-col">
+      <h3 className="text-[20px] font-bold text-[#672cb9] mb-4">Leaderboard Rank</h3>
+      
+      {loading ? (
+        <div className="flex items-center justify-center flex-1">
+          <div className="w-6 h-6 border-2 border-[#672cb9] border-t-transparent rounded-full animate-spin"></div>
+        </div>
+      ) : (
+        <>
+          <div className="mb-6 space-y-1">
+            <p className="text-slate-800 font-medium">Current Rank: <span className="font-bold">#{currentUserRank}</span></p>
+            <p className="text-slate-800 font-medium">Points: <span className="font-bold">{currentUserStreak}</span></p>
+          </div>
+          
+          <div className="space-y-1 flex-1">
+            {data.map((item, index) => {
+              const isCurrentUser = item.user_id === userId;
+              
+              let bg = 'bg-[#1e1e1e]';
+              if (item.rank === 1) bg = 'bg-yellow-400';
+              else if (item.rank === 2) bg = 'bg-slate-300';
+              else if (item.rank === 3) bg = 'bg-orange-600';
+              
+              const initial = item.user_name ? item.user_name.charAt(0).toUpperCase() : 'U';
+
+              return (
+                <div key={item.user_id || index} className={`flex items-center justify-between p-3 rounded-xl ${isCurrentUser ? 'bg-[#f4effa]' : 'hover:bg-slate-50 transition-colors'}`}>
+                  <div className="flex items-center gap-4">
+                    <span className="text-slate-500 font-medium w-4">{item.rank > 0 ? `${item.rank}.` : '-'}</span>
+                    <div className={`w-8 h-8 rounded-full ${bg} flex items-center justify-center text-white text-[13px] font-bold`}>
+                      {initial}
+                    </div>
+                    <span className={`font-medium ${isCurrentUser ? 'text-[#0f172a]' : 'text-slate-700'}`}>{item.user_name}</span>
+                  </div>
+                  <span className={`font-bold ${isCurrentUser ? 'text-[#0f172a]' : 'text-slate-800'}`}>{item.current_streak}</span>
+                </div>
+              );
+            })}
+          </div>
+        </>
+      )}
+    </div>
+  );
+}

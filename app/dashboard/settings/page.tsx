@@ -2,13 +2,14 @@
 
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { User, Save, Mail, Camera, Loader2 } from 'lucide-react';
+import { User, Save, Mail, Camera, Loader2, ArrowLeft } from 'lucide-react';
 import { useAuth } from '@/components/AuthProvider';
 import { supabase } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import Image from 'next/image';
 import Swal from 'sweetalert2';
+import Link from 'next/link';
 
 export default function SettingsPage() {
   const { user, isLoaded } = useAuth();
@@ -96,6 +97,12 @@ export default function SettingsPage() {
             transition={{ duration: 0.5 }}
             className="mb-8"
           >
+            <Link href="/dashboard" className="inline-flex items-center gap-2 text-sm font-semibold text-[#6b7280] hover:text-[#672cb9] transition-colors mb-4 group">
+              <div className="bg-[#f3f4f6] p-1.5 rounded-full group-hover:bg-[#f5f3ff] transition-colors">
+                <ArrowLeft size={16} />
+              </div>
+              Kembali ke Dashboard
+            </Link>
             <h1 className="text-2xl md:text-3xl font-extrabold text-[#111827] tracking-tight mb-2">
               Pengaturan
             </h1>
