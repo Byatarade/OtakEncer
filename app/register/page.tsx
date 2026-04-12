@@ -6,11 +6,9 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '@/components/AuthProvider';
 import { supabase } from '@/lib/supabase';
 import Swal from 'sweetalert2';
-import { useRouter } from 'next/navigation';
 
 export default function RegisterPage() {
   const { loginWithGoogle, user, isLoaded } = useAuth();
-  const router = useRouter();
   
   const [isLoading, setIsLoading] = useState(false);
   const [step, setStep] = useState<'register' | 'otp' | 'success'>('register');

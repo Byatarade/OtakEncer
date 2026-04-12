@@ -6,11 +6,9 @@ import { useAuth } from '@/components/AuthProvider';
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import Swal from 'sweetalert2';
-import { useRouter } from 'next/navigation';
 
 export default function LoginPage() {
   const { loginWithGoogle, user, isLoaded } = useAuth();
-  const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');

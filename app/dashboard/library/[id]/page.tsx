@@ -9,7 +9,6 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { Button } from '@/components/ui/button';
 import { jsPDF } from 'jspdf';
-import html2canvas from 'html2canvas';
 import NeuraSidebar from '@/components/library/NeuraSidebar';
 
 export interface QuizItem {

@@ -40,7 +40,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           setTimeout(() => reject(new Error("Supabase timeout")), 1500)
         );
 
-        const result = await Promise.race([sessionPromise, timeoutPromise]) as any;
+        const result = await Promise.race([sessionPromise, timeoutPromise]) as { data?: { session?: { user?: { id: string; email?: string; user_metadata: { full_name?: string; avatar_url?: string } } } } };
         const session = result?.data?.session;
         
         if (session?.user && mounted) {
