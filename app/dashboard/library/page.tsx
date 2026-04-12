@@ -218,27 +218,43 @@ export default function LibraryPage() {
           <p className="text-gray-500 font-medium">Memuat materi Anda...</p>
         </div>
       ) : (
-        <AnimatePresence mode="popLayout">
+        <AnimatePresence mode="popLayout" initial={false}>
           <motion.div 
+            layout
             variants={containerVariants}
             initial="hidden"
             animate="show"
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 min-h-[50vh]"
           >
             {filteredMaterials.length > 0 ? (
               filteredMaterials.map((material) => (
-                <LibraryCard 
-                  key={material.id} 
-                  material={material} 
-                  onDeleteSuccess={() => {
-                    setMaterials(prev => prev.filter(m => m.id !== material.id));
+                <motion.div
+                  layout
+                  key={material.id}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.9, transition: { duration: 0.2 } }}
+                  transition={{ 
+                    type: "spring", 
+                    stiffness: 300, 
+                    damping: 30,
+                    opacity: { duration: 0.2 }
                   }}
-                />
+                >
+                  <LibraryCard 
+                    material={material} 
+                    onDeleteSuccess={() => {
+                      setMaterials(prev => prev.filter(m => m.id !== material.id));
+                    }}
+                  />
+                </motion.div>
               ))
             ) : (
               <motion.div 
+                layout
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
                 className="col-span-full flex flex-col items-center justify-center py-20 px-4 text-center"
               >
                 <div className="w-24 h-24 mb-6 rounded-full bg-gray-100 flex items-center justify-center text-gray-400">
