@@ -13,13 +13,14 @@ export default function RegisterPage() {
   const router = useRouter();
   
   const [isLoading, setIsLoading] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
+  const [step, setStep] = useState<'register' | 'otp' | 'success'>('register');
   const [errorMsg, setErrorMsg] = useState('');
   
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [otpCode, setOtpCode] = useState('');
 
   useEffect(() => {
     if (isLoaded && user) {
@@ -56,7 +57,7 @@ export default function RegisterPage() {
       if (error) throw error;
       
       if (data.user) {
-        setIsSuccess(true);
+        setStep('otp');
       }
     } catch (err: unknown) {
       console.error("Register Failed:", err);
@@ -67,6 +68,40 @@ export default function RegisterPage() {
         errMsg = 'Terlalu banyak percobaan. Silakan tunggu beberapa saat.';
       }
       setErrorMsg(errMsg);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleVerifyOtp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setErrorMsg('');
+    
+    if (otpCode.length !== 6) {
+      setErrorMsg('Kode OTP harus terdiri dari 6 angka.');
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      const { data, error } = await supabase.auth.verifyOtp({
+        email,
+        token: otpCode,
+        type: 'signup'
+      });
+
+      if (error) throw error;
+      
+      if (data.user) {
+        setStep('success');
+        // Let it redirect automatically using useEffect on user change or force it:
+        setTimeout(() => {
+          window.location.href = '/dashboard';
+        }, 1500);
+      }
+    } catch (err: unknown) {
+      console.error("OTP Verification Failed:", err);
+      setErrorMsg('Kode verifikasi tidak valid atau telah kadaluarsa.');
     } finally {
       setIsLoading(false);
     }
@@ -105,19 +140,61 @@ export default function RegisterPage() {
           </Link>
         </div>
 
-        {isSuccess ? (
+        {step === 'success' ? (
           <div className="flex flex-col items-center justify-center text-center animate-in fade-in zoom-in duration-500 py-2">
             <div className="w-14 h-14 sm:w-16 sm:h-16 bg-green-50 rounded-full flex items-center justify-center mb-4">
                <svg className="w-7 h-7 sm:w-8 sm:h-8 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
             </div>
-            <h1 className="text-[18px] sm:text-[20px] font-bold text-slate-900 mb-2 tracking-tight">Cek Kotak Masuk</h1>
+            <h1 className="text-[18px] sm:text-[20px] font-bold text-slate-900 mb-2 tracking-tight">Pendaftaran Berhasil!</h1>
             <p className="text-[12px] sm:text-[13px] text-slate-500 font-medium mb-5 leading-relaxed">
-              Tautan verifikasi dikirim ke: 
+              Anda sedang dialihkan ke Dashboard...
+            </p>
+          </div>
+        ) : step === 'otp' ? (
+          <div className="flex flex-col items-center justify-center text-center animate-in fade-in slide-in-from-bottom-2 duration-500 py-2">
+            <div className="w-14 h-14 sm:w-16 sm:h-16 bg-[#f5f3ff] rounded-full flex items-center justify-center mb-4">
+               <svg className="w-7 h-7 sm:w-8 sm:h-8 text-[#672cb9]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+            </div>
+            <h1 className="text-[18px] sm:text-[20px] font-bold text-slate-900 mb-2 tracking-tight">Masukkan Kode OTP</h1>
+            <p className="text-[12px] sm:text-[13px] text-slate-500 font-medium mb-5 leading-relaxed">
+              Kode 6 digit telah dikirim ke:
               <br/><span className="text-[#672cb9] font-bold mt-1 inline-block">{email}</span>
             </p>
-            <Link href="/login" className="w-full flex items-center justify-center bg-[#672cb9] text-white hover:bg-[#522199] px-4 py-2.5 rounded-[12px] font-bold text-[13px] sm:text-[14px] transition-colors">
-              Kembali ke Login
-            </Link>
+
+            {errorMsg && (
+              <div className="w-full mb-4 p-2.5 bg-red-50 text-red-600 text-[11px] sm:text-[12px] font-semibold rounded-xl border border-red-100 animate-in fade-in">
+                {errorMsg}
+              </div>
+            )}
+
+            <form onSubmit={handleVerifyOtp} className="w-full flex flex-col gap-4">
+              <input
+                type="text"
+                maxLength={6}
+                placeholder="000000"
+                value={otpCode}
+                onChange={(e) => setOtpCode(e.target.value.replace(/[^0-9]/g, ''))}
+                disabled={isLoading}
+                className="w-full text-center tracking-[0.5em] font-bold text-[24px] px-4 py-3 rounded-xl border border-slate-200 focus:border-[#672cb9] focus:ring-2 focus:ring-[#672cb9]/20 outline-none text-slate-900 transition-all"
+                required
+              />
+              <button 
+                type="submit" 
+                disabled={isLoading || otpCode.length !== 6}
+                className="w-full flex items-center justify-center bg-[#672cb9] disabled:bg-slate-300 disabled:cursor-not-allowed text-white hover:bg-[#522199] px-4 py-3 rounded-xl font-bold text-[13px] sm:text-[14px] transition-colors"
+               >
+                {isLoading ? (
+                  <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                ) : 'Verifikasi Akun'}
+              </button>
+            </form>
+            <button 
+               onClick={() => setStep('register')} 
+               disabled={isLoading}
+               className="mt-4 text-[#672cb9] font-semibold text-[12px] hover:underline"
+            >
+              Ubah Alamat Email
+            </button>
           </div>
         ) : (
           <>

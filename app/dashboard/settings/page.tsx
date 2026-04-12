@@ -168,7 +168,7 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="min-h-full flex flex-col md:flex-row pt-6 md:pt-12 px-6 md:px-12 pb-24 max-w-[1240px] mx-auto w-full font-montserrat gap-8">
+    <div className="min-h-full flex flex-col md:flex-row pt-6 md:pt-12 px-6 md:px-12 pb-24 max-w-[1240px] mx-auto w-full font-montserrat gap-8 overflow-x-hidden">
       
       {/* Sidebar Navigation */}
       <div className="w-full md:w-[280px] shrink-0">
@@ -231,10 +231,11 @@ export default function SettingsPage() {
                         <span className="font-bold text-2xl text-[#9ca3af]">{name.charAt(0).toUpperCase()}</span>
                       )}
                     </div>
-                    <div>
-                      <h2 className="text-[#111827] font-bold text-xl mb-0.5">{name || 'Pengguna'}</h2>
-                      <p className="text-[#6b7280] text-sm flex items-center gap-1.5 font-medium">
-                        <Mail size={14} className="text-[#9ca3af]"/> {user?.email}
+                    <div className="flex-1 min-w-0">
+                      <h2 className="text-[#111827] font-bold text-xl mb-0.5 truncate">{name || 'Pengguna'}</h2>
+                      <p className="text-[#6b7280] text-sm flex items-center gap-1.5 font-medium truncate">
+                        <Mail size={14} className="text-[#9ca3af] shrink-0"/> 
+                        <span className="truncate">{user?.email}</span>
                       </p>
                     </div>
                  </div>
@@ -250,40 +251,40 @@ export default function SettingsPage() {
 
                 <form onSubmit={handleUpdateProfile} className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-3xl">
-                    <div className="space-y-2">
-                      <label className="text-[13px] font-bold text-[#4b5563] uppercase tracking-wide">Nama Lengkap</label>
+                    <div className="space-y-2 min-w-0">
+                      <label className="text-[13px] font-bold text-[#4b5563] uppercase tracking-wide block truncate">Nama Lengkap</label>
                       <Input 
                         icon={<User size={18} />}
                         value={name}
                         onChange={(e) => setName(e.target.value)}
                         placeholder="Cth: John Doe"
                         required
-                        className="bg-[#f9fafb] border-[#e5e7eb] focus:bg-white"
+                        className="bg-[#f9fafb] border-[#e5e7eb] focus:bg-white min-w-0"
                       />
                     </div>
 
-                    <div className="space-y-2">
-                      <label className="text-[13px] font-bold text-[#4b5563] uppercase tracking-wide">Alamat Email <span className="opacity-50 lowercase tracking-normal font-normal">(Read only)</span></label>
+                    <div className="space-y-2 min-w-0">
+                      <label className="text-[13px] font-bold text-[#4b5563] uppercase tracking-wide block truncate">Alamat Email <span className="opacity-50 lowercase tracking-normal font-normal inline-block max-w-full truncate align-bottom">(Read only)</span></label>
                       <Input 
                         icon={<Mail size={18} />}
                         value={user?.email || ''}
                         disabled
-                        className="bg-[#f3f4f6] text-[#9ca3af] border-transparent cursor-not-allowed"
+                        className="bg-[#f3f4f6] text-[#9ca3af] border-transparent cursor-not-allowed min-w-0 truncate"
                       />
                     </div>
                   </div>
 
-                  <div className="space-y-2 max-w-3xl">
-                    <label className="text-[13px] font-bold text-[#4b5563] uppercase tracking-wide">Avatar (URL atau Upload Image)</label>
-                    <div className="flex gap-3">
+                  <div className="space-y-2 max-w-3xl min-w-0">
+                    <label className="text-[13px] font-bold text-[#4b5563] uppercase tracking-wide block truncate">Avatar (URL atau Upload Image)</label>
+                    <div className="flex flex-col sm:flex-row gap-3">
                       <Input 
                         icon={<Camera size={18} />}
                         value={avatar}
                         onChange={(e) => setAvatar(e.target.value)}
                         placeholder="https://... image.jpg"
-                        className="bg-[#f9fafb] border-[#e5e7eb] focus:bg-white flex-1"
+                        className="bg-[#f9fafb] border-[#e5e7eb] focus:bg-white flex-1 min-w-0 truncate"
                       />
-                      <div className="relative overflow-hidden shrink-0">
+                      <div className="relative overflow-hidden shrink-0 h-[48px] sm:h-auto">
                          <input 
                            type="file" 
                            accept="image/png, image/jpeg, image/jpg, image/webp"
@@ -292,7 +293,7 @@ export default function SettingsPage() {
                            disabled={loading}
                            className="absolute inset-0 opacity-0 cursor-pointer z-10 w-full h-full"
                          />
-                         <Button variant="outline" type="button" className="h-full px-4" disabled={loading}>
+                         <Button variant="outline" type="button" className="h-full w-full sm:w-auto px-4" disabled={loading}>
                            Upload Foto
                          </Button>
                       </div>

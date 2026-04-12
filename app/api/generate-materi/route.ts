@@ -4,6 +4,10 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 import { OfficeParser } from 'officeparser';
 import pdfParse from 'pdf-parse';
 import { YoutubeTranscript } from 'youtube-transcript';
+import mammoth from 'mammoth';
+import fs from 'fs';
+import os from 'os';
+import path from 'path';
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
 
@@ -97,11 +101,23 @@ export async function POST(request: Request) {
           };
           // Set extracted text dummy agar bisa lolos validasi teks kosong di baris bawah
           extractedText = '[PDF Processing - Dihandle secara native oleh Gemini AI]';
-        } else if (fileName.endsWith('.docx') || fileName.endsWith('.pptx')) {
-          sourceType = fileName.endsWith('.docx') ? 'docx' : 'ppt';
-          // Menggunakan officeparser untuk mengekstrak teks dari buffer dokumen
-          const ast = await OfficeParser.parseOffice(buffer);
-          extractedText = typeof ast.toText === 'function' ? ast.toText() : JSON.stringify(ast);
+        } else if (fileName.endsWith('.docx')) {
+          sourceType = 'docx';
+          // Menggunakan mammoth untuk DOCX karena lebih stabil tanpa perlu mencocokkan magic bytes (bug file-type node.js)
+          const result = await mammoth.extractRawText({ buffer: buffer });
+          extractedText = result.value;
+        } else if (fileName.endsWith('.pptx')) {
+          sourceType = 'ppt';
+          // Simpan sementara sebagai temp file karena officeparser sering gagal menebak format dari Buffer murni di Vercel/Node
+          const tempPath = path.join(os.tmpdir(), `temp-${Date.now()}-${Math.random().toString(36).substring(7)}.pptx`);
+          fs.writeFileSync(tempPath, buffer);
+          try {
+             // Menggunakan default OfficeParser method untuk parsing file fisik
+             const ast = await OfficeParser.parseOffice(tempPath);
+             extractedText = typeof ast === 'string' ? ast : (ast?.toText ? ast.toText() : JSON.stringify(ast));
+          } finally {
+             fs.unlinkSync(tempPath); // Pastikan selalu dihapus dari /tmp agar tidak memenuhi disk
+          }
         } else if (fileName.match(/\.(mp3|mp4|mpeg|mpga|m4a|wav|webm)$/)) {
           sourceType = 'audio';
           

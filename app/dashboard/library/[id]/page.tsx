@@ -43,6 +43,7 @@ export default function MaterialReader() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'materi' | 'quiz' | 'flashcard'>('materi');
+  const [isDownloadModalOpen, setIsDownloadModalOpen] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
 
@@ -213,47 +214,143 @@ export default function MaterialReader() {
     }
   };
 
-  const handleDownload = async () => {
-    if (!contentRef.current || !material) return;
+  const handleDownloadPDF = async () => {
+    if (!material) return;
     try {
       setIsDownloading(true);
-      const element = contentRef.current;
       
-      // Menambahkan class sementara khusus untuk merapikan hasil render PDF
-      element.classList.add('pdf-mode-active');
-      
-      const canvas = await html2canvas(element, {
-        scale: 2,
-        useCORS: true,
-        logging: false,
-        backgroundColor: '#ffffff'
-      });
-      
-      element.classList.remove('pdf-mode-active');
-
-      const imgWidth = 210; // A4 width in mm
-      const pageHeight = 297; // A4 height in mm
-      const imgHeight = (canvas.height * imgWidth) / canvas.width;
-      let heightLeft = imgHeight;
-      let position = 0;
-
       const doc = new jsPDF('p', 'mm', 'a4');
-      const imgData = canvas.toDataURL('image/png');
+      const pageWidth = doc.internal.pageSize.getWidth();
+      const pageHeight = doc.internal.pageSize.getHeight();
+      const margin = 20;
+      let cursorY = margin;
 
-      doc.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-      heightLeft -= pageHeight;
+      // Titile
+      doc.setFontSize(18);
+      doc.setFont("helvetica", "bold");
+      const titleLines = doc.splitTextToSize(material.title || 'Materi Belajar', pageWidth - 2 * margin);
+      doc.text(titleLines, margin, cursorY);
+      cursorY += (titleLines.length * 8) + 10;
 
-      while (heightLeft >= 0) {
-        position = heightLeft - imgHeight;
-        doc.addPage();
-        doc.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-        heightLeft -= pageHeight;
+      // Content
+      doc.setFontSize(12);
+      doc.setFont("helvetica", "normal");
+      
+      const blocks = (material.ai_summary || '').split('\n').filter(Boolean);
+      
+      for (let i = 0; i < blocks.length; i++) {
+        let text = blocks[i].replace(/[\*\_]+/g, ''); // Simple strip Markdown
+        let isHeading = false;
+        
+        if (text.startsWith('# ')) {
+          isHeading = true;
+          text = text.substring(2);
+          doc.setFontSize(14);
+          doc.setFont("helvetica", "bold");
+          cursorY += 5; // Extra spacing before heading
+        } else if (text.startsWith('## ')) {
+          isHeading = true;
+          text = text.substring(3);
+          doc.setFontSize(14);
+          doc.setFont("helvetica", "bold");
+          cursorY += 5;
+        } else {
+          doc.setFontSize(12);
+          doc.setFont("helvetica", "normal");
+        }
+        
+        const lines = doc.splitTextToSize(text, pageWidth - 2 * margin);
+        
+        // Loop through lines to check page breaks
+        for (let j = 0; j < lines.length; j++) {
+           if (cursorY + 10 > pageHeight - margin) {
+             doc.addPage();
+             cursorY = margin;
+           }
+           doc.text(lines[j], margin, cursorY);
+           cursorY += isHeading ? 8 : 7;
+        }
+        
+        cursorY += 3; // Space between paragraphs
       }
 
-      doc.save(`${material.title || 'Materi_Belajar'}.pdf`);
+      doc.save(`${material.title?.replace(/[^a-zA-Z0-9]/g, '_') || 'Materi_Belajar'}.pdf`);
+      setIsDownloadModalOpen(false);
     } catch (error) {
       console.error('Gagal mendownload PDF:', error);
-      alert('Terjadi kesalahan saat mendownload materi.');
+      alert('Terjadi kesalahan saat mendownload PDF.');
+    } finally {
+      setIsDownloading(false);
+    }
+  };
+
+  const handleDownloadDOCX = async () => {
+    if (!material) return;
+    setIsDownloading(true);
+    try {
+      // Dynamic import docx to prevent excessive bundle size
+      const { Document, Packer, Paragraph, TextRun, HeadingLevel } = await import('docx');
+
+      const blocks = (material.ai_summary || '').split('\n').filter(Boolean);
+      
+      const paragraphs = blocks.map(block => {
+        const text = block.replace(/[\*\_]+/g, ''); // Simple strip markdown
+        let isHeading = false;
+        let pText = text;
+        if (block.startsWith('# ')) {
+          isHeading = true;
+          pText = text.substring(2);
+        } else if (block.startsWith('## ')) {
+          isHeading = true;
+          pText = text.substring(3);
+        }
+
+        return new Paragraph({
+          children: [
+            new TextRun({
+              text: pText,
+              bold: isHeading || block.includes('**'),
+              size: isHeading ? 32 : 24
+            })
+          ],
+          heading: isHeading ? HeadingLevel.HEADING_2 : undefined,
+          spacing: { after: 200 }
+        });
+      });
+
+      const doc = new Document({
+        sections: [{
+          properties: {},
+          children: [
+            new Paragraph({
+              children: [
+                new TextRun({
+                  text: material.title || 'Materi Belajar',
+                  bold: true,
+                  size: 48
+                })
+              ],
+              heading: HeadingLevel.TITLE,
+              spacing: { after: 400 }
+            }),
+            ...paragraphs
+          ]
+        }]
+      });
+
+      const blob = await Packer.toBlob(doc);
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${material.title?.replace(/[^a-zA-Z0-9]/g, '_') || 'Materi_Belajar'}.docx`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+      setIsDownloadModalOpen(false);
+    } catch (error) {
+      console.error('Gagal mendownload DOCX:', error);
+      alert('Terjadi kesalahan saat mendownload DOCX.');
     } finally {
       setIsDownloading(false);
     }
@@ -350,15 +447,15 @@ export default function MaterialReader() {
         {/* Action Bottom */}
         <div className="px-3 mt-auto">
            <button 
-             onClick={handleDownload}
+             onClick={() => setIsDownloadModalOpen(true)}
              disabled={isDownloading || activeTab !== 'materi'}
              className="w-full flex items-center hover:bg-white text-white hover:text-[#672cb9] disabled:opacity-50 disabled:cursor-not-allowed group/btn rounded-2xl p-3 font-bold transition-all overflow-hidden"
-             title="Download PDF"
+             title="Download Materi"
            >
              <span className="w-10 flex items-center justify-center shrink-0">
                {isDownloading ? <Loader2 size={24} className="animate-spin" /> : <Download size={24} />}
              </span>
-             <span className="ml-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">Download PDF</span>
+             <span className="ml-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">Download Materi</span>
            </button>
         </div>
       </aside>
@@ -396,7 +493,7 @@ export default function MaterialReader() {
         </div>
 
         <button 
-          onClick={handleDownload}
+          onClick={() => setIsDownloadModalOpen(true)}
           disabled={isDownloading || activeTab !== 'materi'}
           className="p-3 text-white hover:text-gray-200 disabled:opacity-50 transition-colors mr-1"
         >
@@ -406,7 +503,7 @@ export default function MaterialReader() {
 
       {/* Kolom Kanan: Area Baca Ergonomis */}
       <main 
-        className="flex-1 h-full overflow-y-auto content-area-scroll pb-24 md:pb-0 relative bg-white ml-2 md:scroll-smooth"
+        className="flex-1 min-w-0 h-full overflow-y-auto overflow-x-hidden content-area-scroll pb-24 md:pb-0 relative bg-white md:ml-2 md:scroll-smooth w-full"
         onMouseUp={handleTextSelection}
         onTouchEnd={handleTextSelection}
       >
@@ -438,7 +535,7 @@ export default function MaterialReader() {
                 <div className="flex items-center gap-2 text-[#672cb9] font-bold text-xs uppercase tracking-widest mb-4">
                   <BookOpen size={16} /> Rangkuman Cerdas
                 </div>
-                <h1 className="text-3xl md:text-5xl font-extrabold text-gray-900 tracking-tight leading-tight mb-6">
+                <h1 className="text-3xl md:text-5xl font-extrabold text-gray-900 tracking-tight leading-tight mb-6 break-words hyphens-auto">
                   {material.title}
                 </h1>
                 <div className="flex flex-wrap items-center gap-4 text-gray-500 font-medium text-sm">
@@ -448,16 +545,18 @@ export default function MaterialReader() {
               </div>
 
               {/* Konten Ergonomis, menghilangkan kesan "kertas statis ditengah" */}
-              <article className="prose md:prose-lg prose-gray max-w-none text-gray-800
-                prose-headings:font-bold prose-headings:text-gray-900 prose-headings:tracking-tight
+              <article className="prose md:prose-lg prose-gray max-w-none w-full text-gray-800 break-words overflow-hidden
+                prose-headings:font-bold prose-headings:text-gray-900 prose-headings:tracking-tight prose-headings:break-words
                 prose-h1:text-3xl prose-h2:text-2xl prose-h2:border-b prose-h2:border-gray-100 prose-h2:pb-2 prose-h2:mt-12
                 prose-h3:text-xl
-                prose-p:leading-[1.9] prose-p:mb-6 prose-p:text-[17px]
-                prose-a:text-[#672cb9] prose-a:font-semibold prose-a:underline-offset-4 hover:prose-a:text-[#56219c]
+                prose-p:leading-[1.9] prose-p:mb-6 prose-p:text-[17px] prose-p:break-words
+                prose-a:text-[#672cb9] prose-a:font-semibold prose-a:underline-offset-4 hover:prose-a:text-[#56219c] prose-a:break-all
                 prose-strong:text-gray-900 prose-strong:font-bold
-                prose-ul:list-disc prose-ol:list-decimal prose-li:my-2 prose-li:leading-[1.9]
+                prose-ul:list-disc prose-ol:list-decimal prose-li:my-2 prose-li:leading-[1.9] prose-li:break-words
                 prose-blockquote:border-l-4 prose-blockquote:border-[#672cb9] prose-blockquote:bg-[#672cb9]/5 prose-blockquote:py-3 prose-blockquote:px-6 prose-blockquote:italic prose-blockquote:rounded-r-xl prose-blockquote:text-gray-700
-                prose-img:rounded-3xl prose-img:shadow-sm prose-img:border prose-img:border-gray-100
+                prose-img:rounded-3xl prose-img:shadow-sm prose-img:border prose-img:border-gray-100 prose-img:max-w-full
+                prose-pre:max-w-full prose-pre:overflow-x-auto
+                prose-table:overflow-x-auto prose-table:block prose-table:max-w-full
                 marker:text-[#672cb9]
               ">
                 <ReactMarkdown remarkPlugins={[remarkGfm]}>
@@ -470,7 +569,7 @@ export default function MaterialReader() {
 
         {/* UI untuk Quiz */}
         {activeTab === 'quiz' && (
-          <div className="flex flex-col items-center justify-start h-full text-center py-6 px-12 overflow-y-auto page-scroll">
+          <div className="flex flex-col items-center justify-start h-full text-center pt-6 pb-[140px] px-4 sm:px-12 overflow-y-auto overflow-x-hidden min-w-0 w-full page-scroll">
             {generatingInteractive ? (
               <div className="flex flex-col items-center justify-center mt-32 gap-6">
                  <Loader2 size={48} className="text-[#672cb9] animate-spin mb-4" />
@@ -495,24 +594,24 @@ export default function MaterialReader() {
                      </p>
 
                      {submitMessage && (
-                       <div className="bg-blue-50 text-blue-600 rounded-lg p-3 text-sm font-medium mb-6">
+                       <div className="bg-blue-50 text-blue-600 rounded-lg p-3 text-sm font-medium mb-6 mx-4">
                          {submitMessage}
                        </div>
                      )}
                      
-                     <div className="flex justify-center gap-4">
+                     <div className="flex flex-col sm:flex-row justify-center items-center gap-3 sm:gap-4 px-2">
                        <Button 
                          onClick={() => { setQuizScore(null); setActiveQuizQuestion(0); setQuizAnswers({}); setSubmitMessage(null); }}
-                         className="bg-[#672cb9] hover:bg-[#56219c] text-white font-semibold flex items-center gap-2 rounded-xl py-6 px-8"
+                         className="w-full sm:w-auto bg-[#672cb9] hover:bg-[#56219c] text-white font-semibold flex items-center justify-center gap-2 rounded-xl py-6 px-6 sm:px-8 border shadow-sm"
                        >
-                         <ListTodo size={20} /> Coba Ulang Quiz
+                         <ListTodo size={20} /> Coba Ulang
                        </Button>
                        <Button 
                          variant="outline" 
-                         className="border-gray-200 hover:bg-gray-50 font-semibold rounded-xl py-6 px-8 text-gray-700"
+                         className="w-full sm:w-auto border-gray-200 hover:bg-gray-50 font-semibold flex items-center justify-center rounded-xl py-6 px-6 sm:px-8 text-gray-700 shadow-sm"
                          onClick={() => setActiveTab('materi')}
                        >
-                         Kembali Baca Materi
+                         Kembali Baca
                        </Button>
                      </div>
                    </div>
@@ -568,11 +667,11 @@ export default function MaterialReader() {
                        </div>
                      </div>
 
-                     <div className={`flex items-center mt-6 ${activeQuizQuestion > 0 ? 'justify-between' : 'justify-end'}`}>
+                     <div className={`flex flex-col-reverse sm:flex-row items-center w-full mt-6 gap-3 sm:gap-0 ${activeQuizQuestion > 0 ? 'sm:justify-between' : 'sm:justify-end'}`}>
                        {activeQuizQuestion > 0 && (
                          <Button 
                            variant="ghost" 
-                           className="text-gray-500 hover:bg-gray-100 rounded-xl px-6"
+                           className="w-full sm:w-auto text-gray-500 hover:bg-gray-100 rounded-xl px-6 h-12"
                            onClick={() => setActiveQuizQuestion(i => Math.max(0, i - 1))}
                          >
                            <ChevronLeft size={18} className="mr-2" /> Sebelumnya
@@ -591,7 +690,7 @@ export default function MaterialReader() {
                              setQuizScore(score);
                              submitQuizResult(score);
                            }}
-                           className="bg-green-600 hover:bg-green-700 text-white font-bold rounded-xl px-8 shadow-sm flex items-center justify-center min-w-[200px] h-12"
+                           className="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white font-bold rounded-xl px-8 shadow-sm flex items-center justify-center min-w-[200px] h-12"
                          >
                            Selesai & Lihat Hasil <ChevronRight size={18} className="ml-2" />
                          </Button>
@@ -599,7 +698,7 @@ export default function MaterialReader() {
                          <Button
                            disabled={!quizAnswers[activeQuizQuestion]}
                            onClick={() => setActiveQuizQuestion(i => i + 1)}
-                           className="bg-[#672cb9] hover:bg-[#56219c] font-semibold rounded-xl px-8 shadow-sm flex items-center justify-center min-w-[160px] h-12 text-white"
+                           className="w-full sm:w-auto bg-[#672cb9] hover:bg-[#56219c] font-semibold rounded-xl px-8 shadow-sm flex items-center justify-center min-w-[160px] h-12 text-white"
                          >
                            Selanjutnya <ChevronRight size={18} className="ml-2" />
                          </Button>
@@ -618,7 +717,7 @@ export default function MaterialReader() {
 
         {/* UI untuk Flashcard */}
         {activeTab === 'flashcard' && (
-           <div className="flex flex-col items-center justify-start h-full text-center py-6 px-12 overflow-y-auto page-scroll">
+          <div className="flex flex-col items-center justify-start h-full pt-6 pb-[140px] px-4 md:px-12 overflow-y-auto overflow-x-hidden min-w-0 w-full page-scroll">
              {generatingInteractive ? (
               <div className="flex flex-col items-center justify-center mt-32 gap-6">
                  <Loader2 size={48} className="text-[#672cb9] animate-spin mb-4" />
@@ -657,28 +756,30 @@ export default function MaterialReader() {
                    <div className={`w-full h-full relative [transform-style:preserve-3d] transition-transform duration-700 ease-out border-gray-100/50 ${isFlipped ? '[transform:rotateY(180deg)]' : ''}`}>
                       
                       {/* Kartu Depan (Istilah) */}
-                      <div className={`absolute inset-0 [backface-visibility:hidden] [-webkit-backface-visibility:hidden] bg-white border-2 border-gray-100 shadow-[0_20px_50px_rgb(0,0,0,0.06)] rounded-[32px] flex flex-col items-center justify-center p-12 transition-all group-hover:shadow-[0_20px_50px_rgb(103,44,185,0.08)] group-hover:border-[#672cb9]/10 ${isFlipped ? 'z-0 opacity-0 pointer-events-none delay-300' : 'z-10 opacity-100'}`}>
-                        <span className="absolute top-6 left-8 text-[#672cb9] font-bold text-sm uppercase tracking-wider bg-[#672cb9]/10 px-3 py-1 rounded-full">Sisi Depan</span>
-                        <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-900 leading-tight">
-                          {material.ai_flashcard[activeCardData]?.front}
-                        </h2>
-                        <div className="absolute bottom-6 flex justify-center w-full">
-                           <span className="text-gray-400 font-medium flex items-center gap-2 opacity-60">
+                      <div className={`absolute inset-0 [backface-visibility:hidden] [-webkit-backface-visibility:hidden] bg-white border-2 border-gray-100 shadow-[0_20px_50px_rgb(0,0,0,0.06)] rounded-[32px] flex flex-col items-center justify-center p-8 sm:p-12 transition-all group-hover:shadow-[0_20px_50px_rgb(103,44,185,0.08)] group-hover:border-[#672cb9]/10 ${isFlipped ? 'z-0 opacity-0 pointer-events-none delay-300' : 'z-10 opacity-100'}`}>
+                        <span className="absolute top-4 sm:top-6 left-4 sm:left-8 text-[#672cb9] font-bold text-[10px] sm:text-xs uppercase tracking-wider bg-[#672cb9]/10 px-3 py-1 rounded-full z-10">Sisi Depan</span>
+                        <div className="w-full h-[calc(100%-80px)] overflow-y-auto custom-scrollbar flex flex-col justify-center mt-12 sm:mt-14 mb-4">
+                          <h2 className="text-2xl sm:text-4xl font-extrabold text-gray-900 leading-tight px-1 sm:px-2 py-4">
+                            {material.ai_flashcard[activeCardData]?.front}
+                          </h2>
+                        </div>
+                        <div className="absolute bottom-4 flex justify-center w-full bg-transparent">
+                           <span className="text-gray-400 font-medium flex items-center gap-2 opacity-80 text-sm">
                              Klik kartu untuk membalik <RefreshCcw size={16} />
                            </span>
                         </div>
                       </div>
 
                       {/* Kartu Belakang (Definisi) */}
-                      <div className={`absolute inset-0 [backface-visibility:hidden] [-webkit-backface-visibility:hidden] bg-gradient-to-br from-[#672cb9] to-[#8c4ae1] [transform:rotateY(180deg)] border border-transparent shadow-[0_20px_50px_rgb(103,44,185,0.2)] rounded-[32px] flex items-center justify-center p-10 overflow-y-auto custom-scrollbar transition-all ${isFlipped ? 'z-10 opacity-100 pointer-events-auto' : 'z-0 opacity-0 pointer-events-none delay-300'}`}>
-                        <span className="absolute top-6 left-8 text-white font-bold text-sm uppercase tracking-wider bg-white/20 px-3 py-1 rounded-full">Sisi Belakang</span>
-                        <div className="text-white w-full">
-                          <p className="text-xl sm:text-2xl font-semibold leading-relaxed w-full max-w-lg mb-4 mx-auto text-center px-2">
+                      <div className={`absolute inset-0 [backface-visibility:hidden] [-webkit-backface-visibility:hidden] bg-gradient-to-br from-[#672cb9] to-[#8c4ae1] [transform:rotateY(180deg)] border border-transparent shadow-[0_20px_50px_rgb(103,44,185,0.2)] rounded-[32px] flex flex-col items-center justify-center p-6 sm:p-10 transition-all ${isFlipped ? 'z-10 opacity-100 pointer-events-auto' : 'z-0 opacity-0 pointer-events-none delay-300'}`}>
+                        <span className="absolute top-4 sm:top-6 left-4 sm:left-8 text-white font-bold text-[10px] sm:text-xs uppercase tracking-wider bg-white/20 px-3 py-1 rounded-full z-10">Sisi Belakang</span>
+                        <div className="text-white w-full h-[calc(100%-80px)] overflow-y-auto custom-scrollbar flex flex-col justify-center mt-12 sm:mt-14 mb-4">
+                          <p className="text-lg sm:text-xl font-semibold leading-relaxed w-full max-w-lg mx-auto text-center px-1 sm:px-2 py-4">
                              {material.ai_flashcard[activeCardData]?.back}
                           </p>
                         </div>
-                        <div className="absolute bottom-6 flex justify-center w-full">
-                           <span className="text-white/60 font-medium flex items-center gap-2">
+                        <div className="absolute bottom-4 flex justify-center w-full bg-transparent">
+                           <span className="text-white/60 font-medium flex items-center gap-2 text-sm">
                              Kembali <RefreshCcw size={16} />
                            </span>
                         </div>
@@ -737,6 +838,77 @@ export default function MaterialReader() {
         onClearInitialQuery={() => setInitialNeuraQuery(null)}
         materialContext={material.ai_summary || material.title}
       />
+
+      {/* Download Option Modal */}
+      {isDownloadModalOpen && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm relative animate-in fade-in duration-200">
+          <div className="bg-white rounded-[24px] w-full max-w-sm overflow-hidden shadow-2xl relative z-10 p-6 flex flex-col gap-6 animate-in zoom-in-95 duration-200">
+            
+            <div className="flex justify-between items-start">
+              <div>
+                <h3 className="text-xl font-bold text-gray-900 mb-1">Download Materi</h3>
+                <p className="text-sm text-gray-500 font-medium pb-2 select-none">Pilih format file untuk mengunduh bacaan ini.</p>
+              </div>
+              <button 
+                onClick={() => setIsDownloadModalOpen(false)}
+                className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 transition-colors"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="flex flex-col gap-3">
+              <button 
+                onClick={handleDownloadPDF}
+                disabled={isDownloading}
+                className="flex items-center justify-between p-4 rounded-xl border-2 border-gray-100 hover:border-[#672cb9] hover:bg-[#672cb9]/5 transition-all text-left group"
+              >
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-lg bg-red-100 text-red-600 outline outline-1 outline-red-200 flex items-center justify-center">
+                    <FileText size={24} />
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-gray-900 group-hover:text-[#672cb9] transition-colors">Format PDF</h4>
+                    <p className="text-xs text-gray-500">Standar tinggi & mudah dibaca</p>
+                  </div>
+                </div>
+                {isDownloading ? <Loader2 size={18} className="animate-spin text-[#672cb9]" /> : <Download size={18} className="text-gray-400 group-hover:text-[#672cb9] opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0" />}
+              </button>
+
+              <button 
+                onClick={handleDownloadDOCX}
+                disabled={isDownloading}
+                className="flex items-center justify-between p-4 rounded-xl border-2 border-gray-100 hover:border-[#2b579a] hover:bg-[#2b579a]/5 transition-all text-left group"
+              >
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-lg bg-blue-100 text-blue-600 outline outline-1 outline-blue-200 flex items-center justify-center">
+                    <FileText size={24} />
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-gray-900 group-hover:text-[#2b579a] transition-colors">Format DOCX (Word)</h4>
+                    <p className="text-xs text-gray-500">Bisa diedit kembali (MS Word)</p>
+                  </div>
+                </div>
+                {isDownloading ? <Loader2 size={18} className="animate-spin text-[#2b579a]" /> : <Download size={18} className="text-gray-400 group-hover:text-[#2b579a] opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0" />}
+              </button>
+            </div>
+
+            <div className="pt-2">
+               <Button 
+                variant="outline" 
+                className="w-full h-12 text-gray-600 font-bold hover:bg-gray-100"
+                onClick={() => setIsDownloadModalOpen(false)}
+                disabled={isDownloading}
+              >
+                Batal
+              </Button>
+            </div>
+            
+          </div>
+          {/* Overlay Click-to-close */}
+          <div className="absolute inset-0 z-0 bg-transparent" onClick={() => setIsDownloadModalOpen(false)}></div>
+        </div>
+      )}
 
     </div>
   );
