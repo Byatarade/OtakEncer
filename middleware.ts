@@ -1,7 +1,7 @@
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 
-export default async function proxy(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
     request,
   });
@@ -27,8 +27,11 @@ export default async function proxy(request: NextRequest) {
     }
   );
 
-  // Ambil user auth status langsung dari session HTTP cookies
-  const { data: { user } } = await supabase.auth.getUser();
+  // Kita perbaiki logic getAuth di middleware yg bisa stuck di Vercel Edge Runtime/iOS DNS
+  // Alih-alih await supabase.auth.getUser() (yang murni fetch API network 30 detik timeout jika gagal di ipv6/relay),
+  // kita cukup await supabase.auth.getSession(), yang JAUH LEBIH CEPAT karena hanya membaca JWT cookies langsung (Edge-safe).
+  const { data: { session } } = await supabase.auth.getSession();
+  const user = session?.user;
 
   const isAuthPage = request.nextUrl.pathname.startsWith('/login') || request.nextUrl.pathname.startsWith('/register');
   const isProtectedPage = request.nextUrl.pathname.startsWith('/dashboard') || request.nextUrl.pathname.startsWith('/library') || request.nextUrl.pathname.startsWith('/settings');

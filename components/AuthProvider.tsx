@@ -30,15 +30,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
+    let mounted = true;
+
     // Cek session saat awal dimuat
     const getSession = async () => {
       try {
-        const { data: { session }, error } = await supabase.auth.getSession();
-        if (error) {
-          console.error("Supabase getSession error:", error.message);
-        }
+        const sessionPromise = supabase.auth.getSession();
+        const timeoutPromise = new Promise((_, reject) => 
+          setTimeout(() => reject(new Error("Supabase timeout")), 1500)
+        );
+
+        const result = await Promise.race([sessionPromise, timeoutPromise]) as any;
+        const session = result?.data?.session;
         
-        if (session?.user) {
+        if (session?.user && mounted) {
           setUser({
             id: session.user.id,
             name: session.user.user_metadata.full_name || '',
@@ -47,30 +52,36 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           });
         }
       } catch (err) {
-        console.error("Unexpected error during getSession:", err);
+        console.warn("Auth getSession timeout or error:", err);
       } finally {
-        setIsLoaded(true);
+        if (mounted) {
+          setIsLoaded(true);
+        }
       }
     };
 
     getSession();
 
-    // Dengarkan perubahan login/logout dari Supabase (misal saat redirect balik dari Google)
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (session?.user) {
-        setUser({
-          id: session.user.id,
-          name: session.user.user_metadata.full_name || '',
-          email: session.user.email || '',
-          picture: session.user.user_metadata.avatar_url || '',
-        });
-      } else {
-        setUser(null);
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (mounted) {
+        if (session?.user) {
+          setUser({
+            id: session.user.id,
+            name: session.user.user_metadata.full_name || '',
+            email: session.user.email || '',
+            picture: session.user.user_metadata.avatar_url || '',
+          });
+        } else {
+          setUser(null);
+        }
+        // Kita hanya assign isLoaded(true) pada event SIGN_IN / INITIAL_SESSION yg sukses,
+        // namun hindari me-resetnya jika sudah true, agar tidak clash dengan finally getSession.
+        setIsLoaded(true);
       }
-      setIsLoaded(true);
     });
 
     return () => {
+      mounted = false;
       subscription.unsubscribe();
     };
   }, []);

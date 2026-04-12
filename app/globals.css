@@ -37,15 +37,23 @@ html {
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #ffffff; /* Memaksa warna terang agar sesuai desain meskipun mode gelap iOS aktif */
+    --foreground: #171717;
   }
 }
 
 body {
-  background: var(--background);
+  background-color: var(--background);
   color: var(--foreground);
   overflow-x: hidden;
+  min-height: 100dvh; /* Pastikan min height menggunakan dynamic viewport height */
+}
+
+/* Fix iOS Safari overscroll/bounce effect yang menyebabkan area bawah terlihat blank */
+@supports (-webkit-touch-callout: none) {
+  body {
+    background-color: #ffffff; /* Sinkronisasi overscroll dengan background untuk iOS Safari */
+  }
 }
 
 /* Custom Playful Scrollbar (Native & Lightweight, Zero Plugin) */

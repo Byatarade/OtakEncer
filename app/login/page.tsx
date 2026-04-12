@@ -18,18 +18,9 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (isLoaded && user) {
-      router.replace('/dashboard');
+      window.location.href = '/dashboard';
     }
-  }, [user, isLoaded, router]);
-
-  if (!isLoaded || user) {
-    return (
-      <div className="flex h-screen w-full items-center justify-center bg-[#f8fafc]">
-        {/* Loading state / redirecting state - no UI flicker */}
-        <div className="w-8 h-8 border-4 border-[#672cb9] border-t-transparent rounded-full animate-spin"></div>
-      </div>
-    );
-  }
+  }, [user, isLoaded]);
 
   const handleGoogleLogin = async () => {
     try {
@@ -79,8 +70,9 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-[100dvh] w-full flex flex-col bg-[#f8fafc] font-['Montserrat',sans-serif] relative overflow-y-auto overflow-x-hidden p-4 sm:p-6 lg:p-8">
-      <div className="fixed top-[-10%] right-[-5%] w-[40%] h-[40%] bg-[#672cb9]/10 rounded-full blur-[120px] pointer-events-none z-0"></div>
-      <div className="fixed bottom-[-10%] left-[-5%] w-[30%] h-[40%] bg-[#ffa515]/10 rounded-full blur-[100px] pointer-events-none z-0"></div>
+      {/* Fix iOS Safari GPU Freeze: Mengganti blur ekstrim (penyebab crash 30 detik saat merender input password) dengan Native Radial Gradient */}
+      <div className="fixed top-[-10%] right-[-5%] w-[300px] md:w-[40%] h-[300px] md:h-[40%] rounded-full pointer-events-none z-0" style={{ background: 'radial-gradient(circle, rgba(103,44,185,0.15) 0%, transparent 70%)' }}></div>
+      <div className="fixed bottom-[-10%] left-[-5%] w-[300px] md:w-[30%] h-[300px] md:h-[40%] rounded-full pointer-events-none z-0" style={{ background: 'radial-gradient(circle, rgba(255,165,21,0.15) 0%, transparent 70%)' }}></div>
 
       <div className="w-full max-w-[360px] sm:max-w-[380px] p-6 sm:p-8 bg-white rounded-[24px] sm:rounded-[28px] shadow-[0_8px_30px_rgba(0,0,0,0.06)] border border-slate-100 relative z-10 mx-auto mt-10 mb-10 sm:m-auto">
         <div className="flex flex-col items-center mb-6">
@@ -107,7 +99,10 @@ export default function LoginPage() {
           <div className="flex flex-col gap-1">
             <label className="text-[12px] sm:text-[13px] font-bold text-slate-700 ml-1">Alamat Email</label>
             <input
+              id="email"
+              name="email"
               type="email"
+              autoComplete="username"
               placeholder="nama@email.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -122,7 +117,10 @@ export default function LoginPage() {
               <label className="text-[12px] sm:text-[13px] font-bold text-slate-700">Kata Sandi</label>
             </div>
             <input
+              id="password"
+              name="password"
               type="password"
+              autoComplete="current-password"
               placeholder="********"
               value={password}
               onChange={(e) => setPassword(e.target.value)}

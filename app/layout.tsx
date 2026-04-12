@@ -18,6 +18,15 @@ export const metadata: Metadata = {
   description: "Ubah Dokumenmu Menjadi Materi Siap Jadi",
 };
 
+export const viewport = {
+  themeColor: "#ffffff",
+  colorScheme: "light",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  viewportFit: "cover",
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -26,9 +35,10 @@ export default function RootLayout({
   return (
     <html
       lang="id"
-      className={`${montserrat.variable} ${inter.variable} h-full antialiased`}
+      className={`${montserrat.variable} ${inter.variable} antialiased bg-white text-black min-h-[100dvh]`}
+      style={{ WebkitTapHighlightColor: "transparent" }}
     >
-      <body className={`min-h-full flex flex-col font-montserrat`}>
+      <body className={`min-h-[100dvh] flex flex-col font-montserrat bg-white text-black`}>
         <AuthProvider>
           {children}
         </AuthProvider>
