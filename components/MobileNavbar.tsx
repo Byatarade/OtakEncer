@@ -117,7 +117,7 @@ export default function MobileNavbar() {
           <button
             id="mobile-upload-btn"
             onClick={handleUpload}
-            className="flex items-center gap-1.5 bg-[#672cb9] hover:bg-[#58249c] active:scale-95 text-white px-3.5 py-1.5 rounded-full text-[13px] font-semibold transition-all shrink-0 shadow-sm"
+            className="flex items-center gap-1.5 bg-[#672cb9] hover:bg-[#58249c] active:scale-95 text-white px-3.5 py-1 rounded-full text-[13px] font-semibold transition-all shrink-0 shadow-sm"
           >
             <Plus size={15} strokeWidth={2.5} />
             Upload
@@ -129,7 +129,7 @@ export default function MobileNavbar() {
               id="mobile-profile-btn"
               aria-label="Profile menu"
               onClick={() => setIsProfileOpen((prev) => !prev)}
-              className="flex items-center justify-center w-9 h-9 rounded-full overflow-hidden ring-2 ring-transparent hover:ring-[#672cb9]/30 transition-all active:scale-95"
+              className="flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-full overflow-hidden ring-2 ring-transparent hover:ring-[#672cb9]/30 transition-all active:scale-95"
             >
               {user?.picture ? (
                 <Image
@@ -196,11 +196,7 @@ export default function MobileNavbar() {
             className="flex items-center justify-center w-9 h-9 rounded-xl hover:bg-slate-100 transition-colors shrink-0 group"
           >
             {/* Classic ≡ hamburger icon */}
-            <svg width="20" height="14" viewBox="0 0 20 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <rect y="0" width="20" height="2" rx="1" className="fill-slate-700 group-hover:fill-[#672cb9] transition-colors" />
-              <rect y="6" width="20" height="2" rx="1" className="fill-slate-700 group-hover:fill-[#672cb9] transition-colors" />
-              <rect y="12" width="20" height="2" rx="1" className="fill-slate-700 group-hover:fill-[#672cb9] transition-colors" />
-            </svg>
+            <Image src="/assets/menu-icon.svg" alt="Menu" width={16} height={16} className="sm:w-[18px] sm:h-[18px]" />
           </button>
         </div>
       </header>
@@ -222,7 +218,7 @@ export default function MobileNavbar() {
           >
             {/* Drawer Header */}
             <div className="flex items-center justify-between px-5 pt-5 pb-4 border-b border-slate-100">
-              <span className="text-[15px] font-bold text-slate-700">Menu</span>
+              <span className="text-[15px] font-bold text-slate-700">Menu Utama</span>
               <button
                 aria-label="Close menu"
                 onClick={() => setIsMenuOpen(false)}
@@ -234,9 +230,6 @@ export default function MobileNavbar() {
 
             {/* Navigation Links ONLY */}
             <nav className="flex-1 overflow-y-auto px-4 py-5 space-y-1">
-              <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-widest px-3 mb-3">
-                Menu Utama
-              </p>
               {navItems.map((item) => (
                 <Link
                   key={item.href}
@@ -259,7 +252,7 @@ export default function MobileNavbar() {
                   </span>
                   <span className="flex-1">{item.label}</span>
                   {item.isActive ? (
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#FFA515] shrink-0" />
+                    <span className="w-1.5 h-5 rounded-full bg-[#FFA515] shrink-0 " />
                   ) : (
                     <ChevronRight size={14} className="text-slate-300 group-hover:text-slate-400 shrink-0" />
                   )}
@@ -267,21 +260,6 @@ export default function MobileNavbar() {
               ))}
             </nav>
 
-            {/* Bottom branding */}
-            <div className="px-5 py-4 border-t border-slate-100">
-              <Link
-                href="/?view=landing"
-                onClick={() => setIsMenuOpen(false)}
-                className="flex items-center gap-2 opacity-60 hover:opacity-100 transition-opacity"
-              >
-                <div className="relative w-5 h-5">
-                  <Image src="/assets/logo.svg" alt="Logo" fill className="object-contain" />
-                </div>
-                <span className="text-[13px] font-bold text-slate-600">
-                  Otak<span className="text-[#672cb9]">Encer</span>
-                </span>
-              </Link>
-            </div>
           </div>
         </div>
       )}

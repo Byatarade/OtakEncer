@@ -70,14 +70,8 @@ export function HomeNavbar({
 
           <div className="flex items-center gap-1.5 sm:gap-2 md:gap-4 shrink-0">
             {user ? (
-              <div className="flex items-center gap-1.5 sm:gap-2 md:gap-4">
-                <Button size="sm" variant="secondary" className="hidden md:flex px-5 py-2.5 rounded-full group h-auto items-center shrink-0" onClick={() => router.push("/dashboard")}>
-                  Dashboard
-                  <span className="ml-2 inline-flex items-center transition-transform group-hover:translate-x-1">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-                  </span>
-                </Button>
-                <Button size="sm" variant="secondary" className="md:hidden flex px-2 py-1 sm:px-2.5 sm:py-1.5 text-[10.5px] sm:text-[12px] font-bold tracking-tight rounded-full group items-center shrink-0 h-auto" onClick={() => router.push("/dashboard")}>
+              <div className="flex items-center gap-1.5 md:gap-4">
+                <Button className="flex items-center gap-1.5 bg-[#672cb9] hover:bg-[#58249c] active:scale-95 text-white px-3.5 py-1 sm:py-1.5 rounded-full text-[13px] font-semibold transition-all shrink-0 shadow-sm" onClick={() => router.push("/dashboard")}>
                   Dashboard
                   <span className="ml-0.5 sm:ml-1 inline-flex items-center transition-transform group-hover:translate-x-1">
                     <svg width="11" height="11" className="sm:w-[13px] sm:h-[13px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
