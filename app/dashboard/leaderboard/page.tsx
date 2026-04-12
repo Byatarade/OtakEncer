@@ -53,7 +53,7 @@ export default function LeaderboardPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#f8fafc] text-gray-900 font-sans pb-20 p-8 sm:p-12">
+    <div className="min-h-screen bg-[#f8fafc] text-gray-900 font-montserrat pb-20 p-8 sm:p-12">
        
        <div className="max-w-2xl mx-auto">
           <div className="text-center mb-10">

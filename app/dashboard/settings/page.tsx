@@ -168,7 +168,7 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="min-h-full flex flex-col md:flex-row pt-6 md:pt-12 px-6 md:px-12 pb-24 max-w-[1240px] mx-auto w-full font-['Inter',sans-serif] gap-8">
+    <div className="min-h-full flex flex-col md:flex-row pt-6 md:pt-12 px-6 md:px-12 pb-24 max-w-[1240px] mx-auto w-full font-montserrat gap-8">
       
       {/* Sidebar Navigation */}
       <div className="w-full md:w-[280px] shrink-0">

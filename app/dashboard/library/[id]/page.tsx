@@ -291,7 +291,7 @@ export default function MaterialReader() {
   const readTime = Math.max(1, Math.ceil((material.ai_summary?.length || 0) / 1500));
 
   return (
-    <div className="flex h-full w-full font-['Montserrat',sans-serif] bg-white overflow-hidden relative">
+    <div className="flex h-full w-full font-montserrat bg-white overflow-hidden relative">
       
       {/* Kolom Kiri: Sidebar Khusus Materi (Collapsible, Rounded, Hover to expand) */}
       <aside className="bg-[#672cb9] text-white my-4 mx-4 rounded-[30px] hidden md:flex flex-col relative z-20 shrink-0 py-6 transition-all duration-300 ease-in-out overflow-hidden hover:w-[280px] w-[88px] group shadow-xl hover:shadow-2xl">
@@ -363,20 +363,50 @@ export default function MaterialReader() {
         </div>
       </aside>
 
-      {/* Mobile Top Bar (Tampil hanya di Mobile) */}
-      <div className="md:hidden fixed top-0 w-full bg-white border-b border-gray-100 z-30 px-4 py-3 flex items-center gap-3 shadow-sm">
-         <button onClick={() => router.push('/dashboard/library')} className="p-2 text-gray-600 rounded-full hover:bg-gray-100">
-           <ArrowLeft size={20} />
-         </button>
-         <h1 className="font-bold text-gray-800 text-base truncate flex-1">{material.title}</h1>
-         <button onClick={handleDownload} disabled={isDownloading} className="p-2 text-[#672cb9] hover:bg-[#672cb9]/10 rounded-full disabled:opacity-50">
-           <Download size={20} />
-         </button>
+      {/* Mobile Floating Bottom Navbar */}
+      <div className="md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 w-[calc(100%-2.5rem)] max-w-sm bg-[#672cb9] rounded-[28px] z-40 p-2 flex items-center justify-between shadow-[0_8px_30px_rgb(103,44,185,0.4)]">
+        <button 
+          onClick={() => router.push('/dashboard/library')}
+          className="p-3 text-white hover:text-gray-200 transition-colors ml-1"
+        >
+          <ArrowLeft size={22} />
+        </button>
+        
+        <div className="flex items-center gap-1 px-2">
+          <button
+            onClick={() => setActiveTab('materi')}
+            className={`flex items-center justify-center transition-all duration-300 ${activeTab === 'materi' ? 'bg-white text-[#672cb9] shadow-sm rounded-[20px] w-16 h-12' : 'text-white/70 hover:text-white w-12 h-12 rounded-[20px]'}`}
+          >
+            <BookOpen size={22} />
+          </button>
+
+          <button
+            onClick={() => setActiveTab('quiz')}
+            className={`flex items-center justify-center transition-all duration-300 ${activeTab === 'quiz' ? 'bg-white text-[#672cb9] shadow-sm rounded-[20px] w-16 h-12' : 'text-white/70 hover:text-white w-12 h-12 rounded-[20px]'}`}
+          >
+            <ListTodo size={22} />
+          </button>
+
+          <button
+            onClick={() => setActiveTab('flashcard')}
+            className={`flex items-center justify-center transition-all duration-300 ${activeTab === 'flashcard' ? 'bg-white text-[#672cb9] shadow-sm rounded-[20px] w-16 h-12' : 'text-white/70 hover:text-white w-12 h-12 rounded-[20px]'}`}
+          >
+            <Layers size={22} />
+          </button>
+        </div>
+
+        <button 
+          onClick={handleDownload}
+          disabled={isDownloading || activeTab !== 'materi'}
+          className="p-3 text-white hover:text-gray-200 disabled:opacity-50 transition-colors mr-1"
+        >
+          {isDownloading ? <Loader2 size={22} className="animate-spin" /> : <Download size={22} />}
+        </button>
       </div>
 
       {/* Kolom Kanan: Area Baca Ergonomis */}
       <main 
-        className="flex-1 h-full overflow-y-auto content-area-scroll pt-16 md:pt-0 relative bg-white ml-2 md:scroll-smooth"
+        className="flex-1 h-full overflow-y-auto content-area-scroll pb-24 md:pb-0 relative bg-white ml-2 md:scroll-smooth"
         onMouseUp={handleTextSelection}
         onTouchEnd={handleTextSelection}
       >

@@ -84,14 +84,14 @@ export default function LibraryPage() {
   }, [user, isLoaded, fetchMaterials]);
 
 
-
+  
   const tabs = [
     { id: 'all', label: 'Semua Materi', icon: <Layers size={16} /> },
     { id: 'pdf', label: 'PDF', icon: <FileText size={16} /> },
     { id: 'youtube', label: 'YouTube', icon: <Video size={16} /> },
     { id: 'audio', label: 'Audio', icon: <Music size={16} /> },
   ];
-
+  
   const filteredMaterials = materials.filter(m => {
     const type = m.type.toLowerCase();
     let matchesTab = activeTab === 'all';
@@ -110,7 +110,7 @@ export default function LibraryPage() {
   });
 
   return (
-    <div className="min-h-full flex flex-col pt-6 md:pt-8 px-6 md:px-12 pb-24 w-full font-['Montserrat',sans-serif] overflow-x-hidden">
+    <div className="min-h-full flex flex-col pt-6 md:pt-8 px-6 md:px-12 pb-24 w-full font-montserrat overflow-x-hidden">
       
       {/* Hero Header Selection - Premium Redesign */}
       <motion.div 

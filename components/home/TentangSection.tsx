@@ -167,7 +167,7 @@ export function TentangSection() {
             <div className="w-full lg:w-[85%]">
               <h3 className="text-[18px] font-bold text-white mb-2 tracking-tight">Privasi & Reliabilitas</h3>
               <p className="text-[14px] leading-[1.6] text-white/50 font-medium">
-                Bekerja tanpa henti untuk memastikan data dan proses riset Anda aman, sinkron, dan selalu dapat diakses kapan pun inspirasi datang.
+                Bekerja tanpa henti untuk memastikan data dan proses riset Anda aman, sinkron, dan selalu dapat diakses kapan pun.
               </p>
             </div>
           </div>

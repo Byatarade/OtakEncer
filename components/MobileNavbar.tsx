@@ -196,7 +196,7 @@ export default function MobileNavbar() {
             className="flex items-center justify-center w-9 h-9 rounded-xl hover:bg-slate-100 transition-colors shrink-0 group"
           >
             {/* Classic ≡ hamburger icon */}
-            <Image src="/assets/menu-icon.svg" alt="Menu" width={16} height={16} className="sm:w-[18px] sm:h-[18px]" />
+            <Image src="/assets/menu-icon.svg" alt="Menu" width={16} height={16} />
           </button>
         </div>
       </header>

@@ -102,7 +102,7 @@ export function HomeNavbar({
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className="p-1.5 sm:p-2 md:hidden bg-white/40 rounded-full border border-white/50 backdrop-blur-md transition-colors hover:bg-white/60 shrink-0 flex items-center justify-center ml-0.5"
             >
-              <Image src="/assets/menu-icon.svg" alt="Menu" width={16} height={16} className="sm:w-[18px] sm:h-[18px]" />
+              <Image src="/assets/menu-icon.svg" alt="Menu" width={16} height={16} />
             </button>
           </div>
         </div>

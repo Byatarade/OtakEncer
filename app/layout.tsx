@@ -28,7 +28,7 @@ export default function RootLayout({
       lang="id"
       className={`${montserrat.variable} ${inter.variable} h-full antialiased`}
     >
-      <body className={`min-h-full flex flex-col font-['Montserrat',sans-serif]`}>
+      <body className={`min-h-full flex flex-col font-montserrat`}>
         <AuthProvider>
           {children}
         </AuthProvider>
