@@ -15,9 +15,9 @@ export function TestimonialsSection() {
           whileInView={{ opacity: 1, scale: 1 }}
           className="inline-block px-3 py-1 bg-[#7c3aed]/5 text-[#7c3aed] rounded-full text-[9px] font-bold uppercase tracking-[0.2em] mb-3 border border-[#7c3aed]/10"
         >
-          Testimonials
+          Testimoni
         </motion.div>
-        <h2 className="text-[24px] md:text-[30px] font-bold text-[#1e293b] leading-tight tracking-tight">Trusted by Global Teams</h2>
+        <h2 className="text-[24px] md:text-[30px] font-bold text-[#1e293b] leading-tight tracking-tight">Dipercaya oleh Pelajar di Indonesia</h2>
       </div>
 
       <div className="relative flex w-full max-w-[100vw] overflow-hidden group">

@@ -27,8 +27,13 @@ export function TestimonialCard({ t }: { t: Item }) {
       </div>
 
       <div className="flex items-center gap-3 pt-2">
-        <div className="w-[30px] h-[30px] md:w-[40px] md:h-[40px] rounded-full bg-gray-100 flex items-center justify-center shrink-0 overflow-hidden relative shadow-sm border border-gray-50">
-          <div className="w-full h-full bg-[#0a0a0a] border border-gray-200 rounded-full"></div>
+        <div className="w-[30px] h-[30px] md:w-[40px] md:h-[40px] rounded-full bg-[#7c3aed] flex items-center justify-center shrink-0 overflow-hidden relative shadow-sm text-white font-bold text-[14px] md:text-[18px]">
+          {t.avatar ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={t.avatar} alt={t.name} className="w-full h-full object-cover" />
+          ) : (
+            <span>{t.name.charAt(0).toUpperCase()}</span>
+          )}
         </div>
         <div className="flex flex-col">
           <h4 className="text-[13px] md:text-[15px] font-bold text-gray-900 leading-tight tracking-tight line-clamp-1">{t.name}</h4>
