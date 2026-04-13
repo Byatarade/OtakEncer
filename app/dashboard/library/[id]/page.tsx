@@ -459,44 +459,46 @@ export default function MaterialReader() {
         </div>
       </aside>
 
-      {/* Mobile Floating Bottom Navbar */}
-      <div className="md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 w-[calc(100%-2.5rem)] max-w-sm bg-[#672cb9] rounded-[28px] z-40 p-2 flex items-center justify-between shadow-[0_8px_30px_rgb(103,44,185,0.4)]">
+      {/* Mobile Floating Bottom Navbar - Tidier & More Responsive */}
+      <div className="md:hidden fixed bottom-8 left-1/2 -translate-x-1/2 w-[90%] max-w-[360px] bg-[#672cb9] rounded-[32px] z-[50] p-1.5 flex items-center justify-between shadow-[0_12px_40px_rgba(103,44,185,0.45)] border border-white/10 backdrop-blur-md">
         <button 
           onClick={() => router.push('/dashboard/library')}
-          className="p-3 text-white hover:text-gray-200 transition-colors ml-1"
+          className="w-11 h-11 flex items-center justify-center text-white hover:bg-white/10 rounded-full transition-all ml-0.5"
+          aria-label="Back to Library"
         >
-          <ArrowLeft size={22} />
+          <ArrowLeft size={20} />
         </button>
         
-        <div className="flex items-center gap-1 px-2">
+        <div className="flex items-center gap-1.5 p-1 bg-white/10 rounded-[24px]">
           <button
             onClick={() => setActiveTab('materi')}
-            className={`flex items-center justify-center transition-all duration-300 ${activeTab === 'materi' ? 'bg-white text-[#672cb9] shadow-sm rounded-[20px] w-16 h-12' : 'text-white/70 hover:text-white w-12 h-12 rounded-[20px]'}`}
+            className={`flex items-center justify-center transition-all duration-300 ${activeTab === 'materi' ? 'bg-white text-[#672cb9] shadow-md rounded-[20px] w-14 h-10' : 'text-white/70 hover:text-white w-10 min-w-[40px] h-10'}`}
           >
-            <BookOpen size={22} />
+            <BookOpen size={20} />
           </button>
 
           <button
             onClick={() => setActiveTab('quiz')}
-            className={`flex items-center justify-center transition-all duration-300 ${activeTab === 'quiz' ? 'bg-white text-[#672cb9] shadow-sm rounded-[20px] w-16 h-12' : 'text-white/70 hover:text-white w-12 h-12 rounded-[20px]'}`}
+            className={`flex items-center justify-center transition-all duration-300 ${activeTab === 'quiz' ? 'bg-white text-[#672cb9] shadow-md rounded-[20px] w-14 h-10' : 'text-white/70 hover:text-white w-10 min-w-[40px] h-10'}`}
           >
-            <ListTodo size={22} />
+            <ListTodo size={20} />
           </button>
 
           <button
             onClick={() => setActiveTab('flashcard')}
-            className={`flex items-center justify-center transition-all duration-300 ${activeTab === 'flashcard' ? 'bg-white text-[#672cb9] shadow-sm rounded-[20px] w-16 h-12' : 'text-white/70 hover:text-white w-12 h-12 rounded-[20px]'}`}
+            className={`flex items-center justify-center transition-all duration-300 ${activeTab === 'flashcard' ? 'bg-white text-[#672cb9] shadow-md rounded-[20px] w-14 h-10' : 'text-white/70 hover:text-white w-10 min-w-[40px] h-10'}`}
           >
-            <Layers size={22} />
+            <Layers size={20} />
           </button>
         </div>
 
         <button 
           onClick={() => setIsDownloadModalOpen(true)}
           disabled={isDownloading || activeTab !== 'materi'}
-          className="p-3 text-white hover:text-gray-200 disabled:opacity-50 transition-colors mr-1"
+          className="w-11 h-11 flex items-center justify-center text-white hover:bg-white/10 rounded-full disabled:opacity-30 transition-all mr-0.5"
+          aria-label="Download Material"
         >
-          {isDownloading ? <Loader2 size={22} className="animate-spin" /> : <Download size={22} />}
+          {isDownloading ? <Loader2 size={20} className="animate-spin" /> : <Download size={20} />}
         </button>
       </div>
 
@@ -757,8 +759,8 @@ export default function MaterialReader() {
                       {/* Kartu Depan (Istilah) */}
                       <div className={`absolute inset-0 [backface-visibility:hidden] [-webkit-backface-visibility:hidden] bg-white border-2 border-gray-100 shadow-[0_20px_50px_rgb(0,0,0,0.06)] rounded-[32px] flex flex-col items-center justify-center p-8 sm:p-12 transition-all group-hover:shadow-[0_20px_50px_rgb(103,44,185,0.08)] group-hover:border-[#672cb9]/10 ${isFlipped ? 'z-0 opacity-0 pointer-events-none delay-300' : 'z-10 opacity-100'}`}>
                         <span className="absolute top-4 sm:top-6 left-4 sm:left-8 text-[#672cb9] font-bold text-[10px] sm:text-xs uppercase tracking-wider bg-[#672cb9]/10 px-3 py-1 rounded-full z-10">Sisi Depan</span>
-                        <div className="w-full h-[calc(100%-80px)] overflow-y-auto custom-scrollbar flex flex-col justify-center mt-12 sm:mt-14 mb-4">
-                          <h2 className="text-2xl sm:text-4xl font-extrabold text-gray-900 leading-tight px-1 sm:px-2 py-4">
+                        <div className="w-full h-full overflow-y-auto custom-scrollbar flex flex-col justify-center py-12">
+                          <h2 className="text-2xl sm:text-4xl font-extrabold text-gray-900 leading-tight px-1 sm:px-2 py-4 text-center">
                             {material.ai_flashcard[activeCardData]?.front}
                           </h2>
                         </div>
@@ -772,7 +774,7 @@ export default function MaterialReader() {
                       {/* Kartu Belakang (Definisi) */}
                       <div className={`absolute inset-0 [backface-visibility:hidden] [-webkit-backface-visibility:hidden] bg-gradient-to-br from-[#672cb9] to-[#8c4ae1] [transform:rotateY(180deg)] border border-transparent shadow-[0_20px_50px_rgb(103,44,185,0.2)] rounded-[32px] flex flex-col items-center justify-center p-6 sm:p-10 transition-all ${isFlipped ? 'z-10 opacity-100 pointer-events-auto' : 'z-0 opacity-0 pointer-events-none delay-300'}`}>
                         <span className="absolute top-4 sm:top-6 left-4 sm:left-8 text-white font-bold text-[10px] sm:text-xs uppercase tracking-wider bg-white/20 px-3 py-1 rounded-full z-10">Sisi Belakang</span>
-                        <div className="text-white w-full h-[calc(100%-80px)] overflow-y-auto custom-scrollbar flex flex-col justify-center mt-12 sm:mt-14 mb-4">
+                        <div className="text-white w-full h-full overflow-y-auto custom-scrollbar flex flex-col justify-center py-12">
                           <p className="text-lg sm:text-xl font-semibold leading-relaxed w-full max-w-lg mx-auto text-center px-1 sm:px-2 py-4">
                              {material.ai_flashcard[activeCardData]?.back}
                           </p>
@@ -840,7 +842,10 @@ export default function MaterialReader() {
 
       {/* Download Option Modal */}
       {isDownloadModalOpen && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm relative animate-in fade-in duration-200">
+        <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4 animate-in fade-in duration-200">
+          {/* Overlay Click-to-close */}
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setIsDownloadModalOpen(false)}></div>
+          
           <div className="bg-white rounded-[24px] w-full max-w-sm overflow-hidden shadow-2xl relative z-10 p-6 flex flex-col gap-6 animate-in zoom-in-95 duration-200">
             
             <div className="flex justify-between items-start">
@@ -904,8 +909,6 @@ export default function MaterialReader() {
             </div>
             
           </div>
-          {/* Overlay Click-to-close */}
-          <div className="absolute inset-0 z-0 bg-transparent" onClick={() => setIsDownloadModalOpen(false)}></div>
         </div>
       )}
 
