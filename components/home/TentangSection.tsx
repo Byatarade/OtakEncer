@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-// tes
+// tess
 export function TentangSection() {
   return (
     <section id="tentang" className="relative w-full px-6 md:px-12 lg:px-24 py-24 md:py-32 bg-[#fcfcfc] flex flex-col items-center overflow-hidden">
