@@ -92,7 +92,7 @@ export function HomeNavbar({
                 <Link href="/login" className="hidden md:block text-[13px] font-bold text-gray-800 hover:text-[#672cb9] transition-colors px-2 shrink-0">
                   Log In
                 </Link>
-                <Button size="sm" variant="secondary" className="px-4 py-2 sm:px-5 sm:py-2.5 rounded-full shrink-0 text-[12px] sm:text-[14px]" onClick={() => router.push("/login")}>
+                <Button size="sm" variant="secondary" className="px-4 py-2 sm:px-5 sm:py-2.5 rounded-full shrink-0 text-[12px] sm:text-[14px]" onClick={() => router.push("/register")}>
                   Sign In
                 </Button>
               </div>
