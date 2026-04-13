@@ -30,12 +30,12 @@ export function HomeCtaSection() {
           </motion.div>
 
           <h3 className="text-white font-bold text-[20px] md:text-[30px] lg:text-[36px] tracking-tight mb-3 md:mb-4 leading-[1.2] relative z-10 drop-shadow-md">
-            Siap Revolusi Cara
+            Siap Perbarui Cara
             <br className="md:hidden" /> Belajarmu?
           </h3>
 
           <p className="text-white/90 text-[13px] md:text-[15px] leading-[1.6] mb-5 md:mb-7 font-['Montserrat',sans-serif] px-2 max-w-[480px] relative z-10 font-medium">
-            Bergabung dengan ribuan pelajar dan profesional yang telah merasakan kemudahan memahami dokumen kompleks bersama OtakEncer.
+            Bergabung dengan mereka yang telah merasakan kemudahan memahami dokumen kompleks bersama OtakEncer.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 relative z-10 w-full sm:w-auto px-4">

@@ -49,7 +49,7 @@ export function FiturSection() {
             transition={{ delay: 0.1 }}
             className="text-[34px] md:text-[48px] lg:text-[60px] font-bold leading-[1.2] tracking-tight text-white mb-4 relative font-['Montserrat',sans-serif]"
           >
-            Dari Dokumen Kusut <br className="hidden md:block" />
+            Dari Dokumen Mentah <br className="hidden md:block" />
             Jadi{" "}
             <span className="relative inline-block text-[#ffa515] italic pr-2 font-serif">
               Nilai A+
@@ -65,7 +65,7 @@ export function FiturSection() {
             transition={{ delay: 0.2 }}
             className="text-[15px] md:text-[18px] text-white/70 max-w-[340px] md:max-w-[560px] leading-[1.6]"
           >
-            Tinggalkan cara lama. Gabungkan semua catatan, jurnal, atau video materimu, dan biarkan AI meraciknya menjadi flashcard & ringkasan interaktif.
+            Tinggalkan cara lama. Gabungkan semua catatan, jurnal, atau video materimu, dan biarkan AI mengubahnya menjadi flashcard & ringkasan interaktif.
           </motion.p>
         </div>
 
@@ -80,7 +80,7 @@ export function FiturSection() {
               1
             </div>
             <h3 className="text-white font-bold text-[20px] mb-2 leading-tight">Tumpuk Materimu</h3>
-            <p className="text-white/50 text-[13px] mb-8 leading-[1.5]">Upload PDF, Word, atau Paste Link YouTube dosenmu ke dalam satu folder belajar.</p>
+            <p className="text-white/50 text-[13px] mb-8 leading-[1.5]">Upload PDF, DOCX, atau paste Link YouTube ke dalam satu folder belajar.</p>
             <div className="relative h-[140px] w-full flex justify-center items-center mt-auto">
               {/* Restored Animated Elements */}
               <motion.div
@@ -137,7 +137,7 @@ export function FiturSection() {
             <div className="w-10 h-10 rounded-full bg-[#672cb9] flex items-center justify-center mb-6 font-bold text-lg text-white shadow-lg absolute -top-5 -left-2 border-4 border-[#0d0415]">
               2
             </div>
-            <h3 className="text-white font-bold text-[20px] mb-2 leading-tight">Biar Neura Merangkum</h3>
+            <h3 className="text-white font-bold text-[20px] mb-2 leading-tight">Tunggu Kami Merangkum</h3>
             <p className="text-white/50 text-[13px] mb-8 leading-[1.5]">AI kami akan membaca ribuan kata dan menyaring poin-poin terpenting layaknya spidol ajaib.</p>
             <div className="relative h-[140px] w-full flex justify-center items-center mt-auto">
               <div className="w-[160px] h-[120px] bg-white/5 border border-white/10 rounded-xl p-4 flex flex-col gap-3 relative overflow-hidden">
@@ -174,7 +174,7 @@ export function FiturSection() {
               3
             </div>
             <h3 className="text-white font-bold text-[20px] mb-2 leading-tight z-10">Materi Siap Ujian</h3>
-            <p className="text-white/50 text-[13px] mb-8 leading-[1.5] z-10">Hasil akhirnya berupa Flashcard interaktif dan Rangkuman rapi yang siap kamu pelajari di mana saja.</p>
+            <p className="text-white/50 text-[13px] mb-8 leading-[1.5] z-10">Hasil akhirnya berupa Flashcard interaktif dan Rangkuman rapi yang siap kamu pelajari kapanpun itu.</p>
             <div className="relative h-[140px] w-full flex justify-center items-center mt-auto group">
               <motion.div className="absolute w-[120px] h-[80px] bg-white border border-gray-200 rounded-xl shadow-lg rotate-[-10deg] -translate-x-4 translate-y-4 group-hover:-translate-x-8 transition-transform duration-300 flex items-center justify-center opacity-70"></motion.div>
               <motion.div className="absolute w-[120px] h-[80px] bg-white border border-gray-200 rounded-xl shadow-xl rotate-[5deg] translate-x-4 translate-y-2 group-hover:translate-x-8 transition-transform duration-300 flex items-center justify-center opacity-90"></motion.div>

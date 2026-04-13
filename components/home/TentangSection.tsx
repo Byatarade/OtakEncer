@@ -37,7 +37,7 @@ export function TentangSection() {
           transition={{ delay: 0.2 }}
           className="mt-6 text-[15px] md:text-[17px] leading-[1.6] text-gray-500 font-medium max-w-[620px]"
         >
-          OtakEncer hadir sebagai asisten edukasi digital yang tidak hanya merangkum, tapi membantu Anda menguasai materi tersulit sekalipun dalam hitungan detik.
+          OtakEncer hadir sebagai asisten edukasi yang tidak hanya merangkum, tapi membantu Anda menguasai materi tersulit dalam hitungan detik!
         </motion.p>
       </div>
 
@@ -58,9 +58,9 @@ export function TentangSection() {
           </div>
 
           <div className="relative z-10 w-full lg:w-[85%]">
-            <h3 className="text-[20px] md:text-[22px] font-bold text-gray-900 mb-3 tracking-tight">Evolusi Literasi Digital</h3>
+            <h3 className="text-[20px] md:text-[22px] font-bold text-gray-900 mb-3 tracking-tight">Evolusi Belajar Digital</h3>
             <p className="text-[14px] md:text-[15px] leading-[1.7] text-gray-500 font-medium">
-              OtakEncer memberikan pengalaman belajar yang tak tertandingi dengan memadukan mesin AI terbaru yang mampu memproses Video YouTube dan dokumen PDF secara bersamaan. Kami menghilangkan beban administratif dalam belajar, memungkinkan Anda beralih dari sekadar membaca menjadi benar-benar memahami.
+              OtakEncer memberikan pengalaman belajar yang mudah dipahami dengan memadukan mesin AI terbaru yang mampu memproses rangkuman dan quiz secara bersamaan. Kami memungkinkan Anda beralih dari sekadar membaca menjadi benar-benar memahami.
             </p>
           </div>
         </motion.div>
@@ -83,8 +83,8 @@ export function TentangSection() {
               <span className="text-[44px] font-bold text-gray-900 leading-none tracking-tighter">99.9</span>
               <span className="text-[24px] font-bold text-[#ffa515]">%</span>
             </div>
-            <h4 className="text-[15px] font-bold text-gray-900 mb-1">Akurasi Kontekstual</h4>
-            <p className="text-[13px] text-gray-500 font-medium leading-[1.6]">Algoritma kami memastikan intisari materi tetap akurat dan bebas dari distorsi informasi.</p>
+            <h4 className="text-[15px] font-bold text-gray-900 mb-1">Akurasi Jawaban</h4>
+            <p className="text-[13px] text-gray-500 font-medium leading-[1.6]">Algoritma kami memastikan intisari materi tetap akurat dan bebas dari informasi palsu.</p>
           </div>
         </motion.div>
 
@@ -104,7 +104,7 @@ export function TentangSection() {
 
           <div>
             <div className="w-10 h-[2px] bg-gray-200 mb-4 group-hover:bg-[#672cb9] group-hover:w-16 transition-all duration-300"></div>
-            <h4 className="text-[15px] font-bold text-gray-900 mb-1.5">Efisiensi Tanpa Batas</h4>
+            <h4 className="text-[15px] font-bold text-gray-900 mb-1.5">Efisiensi Waktu</h4>
             <p className="text-[13px] text-gray-500 font-medium leading-[1.6]">Proses ekstraksi ilmu yang jauh lebih cepat dibandingkan metode konvensional manapun.</p>
           </div>
         </motion.div>
@@ -165,9 +165,9 @@ export function TentangSection() {
             </div>
 
             <div className="w-full lg:w-[85%]">
-              <h3 className="text-[18px] font-bold text-white mb-2 tracking-tight">Privasi & Reliabilitas</h3>
+              <h3 className="text-[18px] font-bold text-white mb-2 tracking-tight">Privasi & Mobilitas</h3>
               <p className="text-[14px] leading-[1.6] text-white/50 font-medium">
-                Bekerja tanpa henti untuk memastikan data dan proses riset Anda aman, sinkron, dan selalu dapat diakses kapan pun.
+                Bekerja kapan saja untuk memastikan data dan proses riset Anda aman, sinkron, dan selalu dapat diakses kapan pun.
               </p>
             </div>
           </div>

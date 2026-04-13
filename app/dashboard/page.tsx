@@ -743,8 +743,8 @@ function RecentActivityWidget({ userId }: { userId: string }) {
                   <CheckCircle2 size={20} className="text-white" />
                 </div>
               )}
-              <div className="flex-1">
-                <p className="text-slate-800 font-medium">
+              <div className="flex-1 min-w-0">
+                <p className="text-slate-800 font-medium line-clamp-2 break-all">
                   {act.type === 'upload' ? 'Uploaded' : act.type === 'quiz' ? 'Completed quiz' : 'Viewed'} &quot;{act.title}&quot;
                 </p>
                 <p className="text-slate-400 text-[13px] mt-0.5">
@@ -754,11 +754,6 @@ function RecentActivityWidget({ userId }: { userId: string }) {
             </div>
           ))}
         </div>
-      )}
-      
-      {/* Vertical line indicator */}
-      {activities.length > 0 && (
-        <div className="absolute right-8 top-1/2 -translate-y-1/2 w-1 h-32 bg-slate-200 rounded-full"></div>
       )}
     </div>
   );
