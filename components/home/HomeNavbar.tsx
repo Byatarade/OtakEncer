@@ -107,11 +107,8 @@ export function HomeNavbar({
           </div>
         </div>
 
-        <motion.div
-          initial={false}
-          animate={{ height: isMobileMenuOpen ? "auto" : 0, opacity: isMobileMenuOpen ? 1 : 0 }}
-          transition={{ duration: 0.3 }}
-          className="overflow-hidden md:hidden w-full"
+        <div
+          className={`overflow-hidden md:hidden w-full ${isMobileMenuOpen ? "block" : "hidden"}`}
         >
           <div className="flex flex-col items-center gap-4 px-4 pb-6 pt-2 border-t border-gray-200/50">
             {["beranda", "tentang", "neura", "fitur", "testimoni"].map((section) => (
@@ -127,7 +124,7 @@ export function HomeNavbar({
               </Link>
             ))}
           </div>
-        </motion.div>
+        </div>
       </motion.nav>
     </div>
   );
