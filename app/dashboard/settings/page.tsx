@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { User, Save, Mail, Camera, Loader2, ArrowLeft, X, Crop, Activity, FileText, Layers, ListTodo, Calendar, Clock, BarChart2, PieChart, CheckCircle2 } from 'lucide-react';
+import { User, Save, Mail, Camera, Loader2, ArrowLeft, X, Crop, Activity, FileText, Layers, ListTodo, Calendar, Clock, BarChart2, PieChart, CheckCircle2, GraduationCap } from 'lucide-react';
 import { useAuth } from '@/components/AuthProvider';
 import { supabase } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
@@ -31,7 +31,7 @@ export default function SettingsPage() {
   const [isCropping, setIsCropping] = useState(false);
 
   // Activity & Log states
-  const [stats, setStats] = useState({ materials: 0, quizzes: 0, flashcards: 0, files: 0 });
+  const [stats, setStats] = useState({ materials: 0, quizzes: 0, flashcards: 0, exams: 0, files: 0 });
   const [activities, setActivities] = useState<any[]>([]);
   const [timeFilter, setTimeFilter] = useState('all');
   const [heatmapData, setHeatmapData] = useState<Record<string, number>>({});
@@ -44,7 +44,7 @@ export default function SettingsPage() {
       try {
         const { data: materials } = await supabase
           .from('materials')
-          .select('id, created_at, source_type, ai_quiz, ai_flashcard, title')
+          .select('id, created_at, source_type, ai_quiz, ai_flashcard, ai_exam, title')
           .eq('user_id', user.id);
 
         const { data: quizzes } = await supabase
@@ -55,6 +55,7 @@ export default function SettingsPage() {
         let matCount = 0;
         let quizCount = 0;
         let flashcardCount = 0;
+        let examCount = 0;
         let fileCount = 0;
         const heatMap: Record<string, number> = {};
         const logs: any[] = [];
@@ -64,6 +65,7 @@ export default function SettingsPage() {
           materials.forEach(m => {
             if (m.ai_quiz && Array.isArray(m.ai_quiz) && m.ai_quiz.length > 0) quizCount++;
             if (m.ai_flashcard && Array.isArray(m.ai_flashcard) && m.ai_flashcard.length > 0) flashcardCount++;
+            if (m.ai_exam && typeof m.ai_exam === 'object' && m.ai_exam.mcq && Array.isArray(m.ai_exam.mcq) && m.ai_exam.mcq.length > 0) examCount++;
             if (['document', 'pdf', 'docx'].includes(m.source_type?.toLowerCase() || '')) fileCount++;
 
             const dateObj = new Date(m.created_at);
@@ -86,11 +88,11 @@ export default function SettingsPage() {
             heatMap[dateStr] = (heatMap[dateStr] || 0) + 1;
 
             // @ts-ignore
-            const t = q.materials?.title || 'Quiz';
+            const t = q.materials?.title || 'Quiz/Ujian';
             logs.push({
               id: `quiz-${q.id}`,
               type: 'quiz',
-              title: `Tuntas Evaluasi: ${t}`,
+              title: `Tuntas Quiz/Ujian: ${t}`,
               created_at: new Date(q.created_at)
             });
           });
@@ -98,7 +100,7 @@ export default function SettingsPage() {
 
         logs.sort((a, b) => b.created_at.getTime() - a.created_at.getTime());
 
-        setStats({ materials: matCount, quizzes: quizCount, flashcards: flashcardCount, files: fileCount });
+        setStats({ materials: matCount, quizzes: quizCount, flashcards: flashcardCount, exams: examCount, files: fileCount });
         setHeatmapData(heatMap);
         setActivities(logs);
       } catch (e) {
@@ -339,7 +341,7 @@ export default function SettingsPage() {
           <div className="xl:col-span-8 flex flex-col gap-4 xl:h-full min-h-0 w-full">
 
             {/* 3 Stats Grid */}
-            <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 shrink-0">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 shrink-0">
               <div className="bg-white p-4 rounded-[20px] border border-gray-100 shadow-[0_2px_10px_rgba(0,0,0,0.02)] flex flex-col group">
                 <FileText size={22} strokeWidth={2.5} className='text-blue-500 mb-3 mt-1' />
                 <p className="text-gray-500 text-[11px] font-bold tracking-tight mb-0.5">TOTAL MATERI</p>
@@ -354,6 +356,11 @@ export default function SettingsPage() {
                <Layers size={22} strokeWidth={2.5} className='text-yellow-500 mb-3 mt-1' />
                 <p className="text-gray-500 text-[11px] font-bold tracking-tight mb-0.5">FLASHCARD DIBUAT</p>
                 <h4 className="text-2xl font-extrabold text-gray-900 leading-none">{stats.flashcards}</h4>
+              </div>
+              <div className="bg-white p-4 rounded-[20px] border border-gray-100 shadow-[0_2px_10px_rgba(0,0,0,0.02)] flex flex-col group col-span-2 lg:col-span-1">
+               <GraduationCap size={22} strokeWidth={2.5} className='text-purple-500 mb-3 mt-1' />
+                <p className="text-gray-500 text-[11px] font-bold tracking-tight mb-0.5">SOAL UJIAN DISELESAIKAN</p>
+                <h4 className="text-2xl font-extrabold text-gray-900 leading-none">{stats.exams}</h4>
               </div>
             </div>
 

@@ -852,7 +852,7 @@ function RecentActivityWidget({ userId }: { userId: string }) {
               )}
               <div className="flex-1 min-w-0">
                 <p className="text-slate-800 font-medium line-clamp-2 break-all">
-                  {act.type === 'upload' ? 'Uploaded' : act.type === 'quiz' ? 'Completed quiz' : 'Viewed'} &quot;{act.title}&quot;
+                  {act.type === 'upload' ? 'Berhasil upload' : act.type === 'quiz' ? 'Tuntas Quiz / Ujian' : 'Melihat'} &quot;{act.title}&quot;
                 </p>
                 <p className="text-slate-400 text-[13px] mt-0.5">
                   {formatDistanceToNow(act.date, { addSuffix: true })}
