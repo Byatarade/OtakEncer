@@ -12,7 +12,7 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
-    // Utility scripts (not part of the Next.js app):
+    // Utility scripts (not part of the Next.js ap):
     "fix-modal.js",
     "test.js",
   ]),
