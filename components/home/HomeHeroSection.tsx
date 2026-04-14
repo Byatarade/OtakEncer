@@ -57,7 +57,7 @@ export function HomeHeroSection() {
           </div>
         </div>
 
-        <div className="w-full md:w-[65%] flex justify-center md:justify-end items-center mt-6 md:mt-0 z-20 h-auto perspective-[1000px]">
+        <div className="w-full md:w-[65%] flex justify-center md:justify-end items-center mt-6 md:mt-13 z-20 h-auto perspective-[1000px]">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}

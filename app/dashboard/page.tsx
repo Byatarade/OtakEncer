@@ -397,9 +397,7 @@ function Dashboard() {
                       >
                          <X size={20} />
                       </button>
-                      <div className="w-[42px] h-[42px] rounded-xl bg-gradient-to-br from-[#ef4444] to-[#991b1b] flex items-center justify-center mb-5 shadow-sm">
-                        <MonitorPlay className="text-white" size={22} />
-                      </div>
+                      <PlaySquare className="text-red-500 mb-8 mt-3" size={35} />
                       <h3 className="text-[20px] font-bold text-slate-800 mb-2">Paste Link Youtube</h3>
                       <p className="text-[13px] text-slate-500 mb-4">Pastikan video YouTube publik & punya teks subtitle (CC).</p>
                       
