@@ -8,7 +8,8 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useState, useRef, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import Swal from 'sweetalert2';
-import { formatDistanceToNow } from 'date-fns';
+import { formatDistanceToNow, format } from 'date-fns';
+import { toZonedTime } from 'date-fns-tz';
 import { Play } from 'next/font/google';
 
 function Dashboard() {
@@ -467,7 +468,7 @@ function DailyTokensCard({ userId }: { userId: string }) {
   }, [userId]);
 
   const remaining = Math.max(MAX_LIMIT - usageCount, 0);
-  const percentage = Math.min((usageCount / MAX_LIMIT) * 100, 100);
+  const percentage = Math.min((remaining / MAX_LIMIT) * 100, 100);
 
   return (
     <div className="bg-white rounded-[24px] md:rounded-3xl p-6 md:p-8 shadow-sm md:shadow-sm border border-slate-100 flex flex-col h-full col-span-1">
@@ -490,20 +491,21 @@ function DailyTokensCard({ userId }: { userId: string }) {
             <div>
               <p className="text-[#0f172a] font-medium text-[15px]">Token Tersisa: <span className="font-bold">{remaining}/{MAX_LIMIT}</span></p>
             </div>
-            <p className="text-slate-800 font-bold text-[14px]">{usageCount} token <span className="font-normal text-[#0f172a]">digunakan</span></p>
           </div>
           
-          <div className="w-full h-3 sm:h-3.5 bg-[#f5f3ff] rounded-full overflow-hidden mb-4 md:mb-5">
+          <div className="w-full h-3 sm:h-3.5 bg-slate-100 shadow-inner ring-1 ring-inset ring-slate-200 rounded-full overflow-hidden mb-4 md:mb-5">
             <div 
               className={`h-full rounded-full transition-all duration-700 ${
-                remaining === 0 ? 'bg-red-500' : remaining === 1 ? 'bg-orange-400' : 'bg-[#FFA515]'
+                percentage > 60 ? 'bg-emerald-500' : percentage > 25 ? 'bg-amber-400' : 'bg-red-500'
               }`} 
               style={{ width: `${percentage}%` }}
             ></div>
           </div>
           
-          <p className="text-[#8a8a8e] text-[13px] font-medium leading-[1.4] block decoration-[1.5px] mb-5">
-            Periksa Pengaturan Akun untuk selengkapnya
+          <p className={`text-[13px] font-medium leading-[1.4] block decoration-[1.5px] mb-5 ${remaining === 0 ? 'text-red-500' : 'text-[#8a8a8e]'}`}>
+            {remaining === 0 
+              ? 'Yahh, token harian kamu sudah habis! 😢 Tunggu direset besok ya buat pakai AI lagi.' 
+              : 'Periksa Pengaturan Akun untuk selengkapnya'}
           </p>
           
           <div className="mt-auto">
@@ -537,14 +539,20 @@ function DailyTokensCard({ userId }: { userId: string }) {
 
 function DailyStreakCard({ userId }: { userId: string }) {
   const [streak, setStreak] = useState<number>(0);
+  const [lastQuizDate, setLastQuizDate] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+
+  // States for quiz modal
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [materials, setMaterials] = useState<{ id: string, title: string }[]>([]);
+  const [loadingMaterials, setLoadingMaterials] = useState(false);
 
   useEffect(() => {
     const fetchStreak = async () => {
       try {
         const { data, error } = await supabase
           .from('user_streaks')
-          .select('current_streak')
+          .select('current_streak, last_quiz_date')
           .eq('user_id', userId)
           .single();
 
@@ -554,8 +562,10 @@ function DailyStreakCard({ userId }: { userId: string }) {
 
         if (data) {
           setStreak(data.current_streak);
+          setLastQuizDate(data.last_quiz_date);
         } else {
           setStreak(0);
+          setLastQuizDate(null);
         }
       } catch (err) {
         console.error('Failed to fetch streak', err);
@@ -566,62 +576,102 @@ function DailyStreakCard({ userId }: { userId: string }) {
     fetchStreak();
   }, [userId]);
 
+  const handleOpenModal = async () => {
+    setIsModalOpen(true);
+    // Selalu fetch ulang data terbaru saat modal dibuka untuk mencegah data basi (materi yang sudah dihapus)
+    setLoadingMaterials(true);
+    const { data, error } = await supabase
+      .from('materials')
+      .select('id, title')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false })
+      .limit(10); // Ambil 10 materi terbaru
+      
+    if (data) setMaterials(data);
+    setLoadingMaterials(false);
+  };
+
+  // Tentukan apakah user sudah menyelesaikan quiz hari ini
+  const todayStr = format(toZonedTime(new Date(), 'Asia/Jakarta'), 'yyyy-MM-dd');
+  const hasCompletedToday = lastQuizDate === todayStr;
+  
+  // Deteksi apakah user sama sekali belum pernah mengerjakan quiz (user baru)
+  const isNewUser = lastQuizDate === null && streak === 0;
+
   return (
-    <div className="bg-white md:bg-gradient-to-br md:from-white md:to-orange-50/40 rounded-[24px] md:rounded-3xl p-5 md:p-8 shadow-sm md:shadow-sm shadow-slate-200/50 border-[3px] border-[#FFA515] md:border md:border-orange-100 flex flex-col justify-between col-span-1 relative overflow-hidden group">
+    <>
+    <div className={`rounded-[24px] md:rounded-3xl p-5 md:p-8 shadow-sm md:shadow-sm shadow-slate-200/50 border-[3px] md:border flex flex-col justify-between col-span-1 relative overflow-hidden group transition-all duration-300 ${hasCompletedToday ? 'bg-white md:bg-gradient-to-br md:from-white md:to-orange-50/40 border-[#FFA515] md:border-orange-100' : 'bg-slate-50 md:bg-slate-50 border-slate-200 grayscale-[0.2] opacity-90'}`}>
       {/* Background Decor (Desktop Only) */}
       <div className="hidden md:block absolute -top-12 -right-12 w-40 h-40 bg-orange-200/50 rounded-full blur-3xl opacity-60 pointer-events-none group-hover:bg-orange-300/50 transition-colors duration-500"></div>
       
       {/* MOBILE DESAIN */}
       <div className="flex md:hidden flex-col h-full justify-between relative z-10">
         <div className="flex gap-2.5 mb-5 items-center">
-          <div className="bg-[#feebd6] w-[48px] h-[48px] rounded-[14px] flex items-center justify-center shrink-0">
-            <Flame size={26} className="text-[#fb6f08]" strokeWidth={2.5} />
+          <div className={`${hasCompletedToday ? 'bg-[#feebd6]' : 'bg-slate-200'} w-[48px] h-[48px] rounded-[14px] flex items-center justify-center shrink-0`}>
+            <Flame size={26} className={`${hasCompletedToday ? 'text-[#fb6f08]' : 'text-slate-400'}`} strokeWidth={2.5} />
           </div>
           <div className="flex flex-col">
-            <h3 className="text-[17px] font-semibold text-black leading-[1.1] tracking-tight">Streak</h3>
-            <h3 className="text-[17px] font-semibold text-black leading-[1.1] tracking-tight">Harian</h3>
+            <h3 className={`text-[17px] font-semibold leading-[1.1] tracking-tight ${hasCompletedToday ? 'text-black' : 'text-slate-600'}`}>Streak</h3>
+            <h3 className={`text-[17px] font-semibold leading-[1.1] tracking-tight ${hasCompletedToday ? 'text-black' : 'text-slate-600'}`}>Harian</h3>
           </div>
         </div>
 
         <div className="mb-4">
-          <h2 className="text-[64px] font-extrabold text-black leading-none tracking-tighter">
-            {loading ? '-' : streak}
+          <h2 className={`text-[64px] font-extrabold leading-none tracking-tighter ${hasCompletedToday ? 'text-black' : 'text-slate-400'}`}>
+            {loading || streak === 0 ? '-' : streak}
           </h2>
         </div>
 
         <div className="mt-auto pt-2">
-          <Link href="/dashboard" className="text-[#8a8a8e] text-[13px] font-medium leading-[1.4] block decoration-[1.5px]">
-            {loading ? 'Memuat...' : streak === 0 ? 'Ayo mulai kerjakan quiz hari ini untuk streak pertamamu' : 'Luar biasa! Pertahankan streak belajarmu hari ini'}
-          </Link>
+          {(!hasCompletedToday && !isNewUser) ? (
+             <button onClick={handleOpenModal} className="w-full bg-orange-100 hover:bg-orange-200 text-orange-600 px-4 py-2 rounded-xl text-[13px] font-bold flex items-center justify-center transition-colors text-center leading-snug">
+               Ayo Selesaikan Quiz! 🔥
+             </button>
+          ) : (
+            <Link href="/dashboard" className="text-[#8a8a8e] text-[13px] font-medium leading-[1.4] block decoration-[1.5px]">
+              {loading ? 'Memuat...' : isNewUser ? 'Ayo mulai kerjakan quiz hari ini untuk streak pertamamu' : 'Luar biasa! Pertahankan streak belajarmu hari ini'}
+            </Link>
+          )}
         </div>
       </div>
 
       {/* DESKTOP DESAIN */}
       <div className="hidden md:flex relative z-10 flex-col sm:items-start justify-between gap-4 h-full">
         <div className="flex items-center gap-3 md:gap-4">
-          <div className="bg-gradient-to-br from-orange-100 to-orange-200 w-12 h-12 md:w-14 md:h-14 rounded-2xl flex items-center justify-center shrink-0 shadow-sm border border-orange-50">
-            <Flame size={28} className="text-orange-500 md:w-8 md:h-8" strokeWidth={2.5} />
+          <div className={`w-12 h-12 md:w-14 md:h-14 rounded-2xl flex items-center justify-center shrink-0 shadow-sm border ${hasCompletedToday ? 'bg-gradient-to-br from-orange-100 to-orange-200 border-orange-50' : 'bg-slate-200 border-slate-300'}`}>
+            <Flame size={28} className={`${hasCompletedToday ? 'text-orange-500' : 'text-slate-400'} md:w-8 md:h-8`} strokeWidth={2.5} />
           </div>
           <div className="flex flex-col">
-            <p className="text-slate-500 font-medium text-[14px] md:text-[15px]">Streak Harian</p>
+            <p className={`${hasCompletedToday ? 'text-slate-500' : 'text-slate-400'} font-medium text-[14px] md:text-[15px]`}>Streak Harian</p>
             <div className="flex items-center gap-2 mt-0.5">
-              <h2 className="text-4xl md:text-5xl font-extrabold text-slate-800 tracking-tight leading-none">
-                {loading ? '...' : streak}
+              <h2 className={`text-4xl md:text-5xl font-extrabold tracking-tight leading-none ${hasCompletedToday ? 'text-slate-800' : 'text-slate-600'}`}>
+                {loading || streak === 0 ? '-' : streak}
               </h2>
             </div>
           </div>
         </div>
       
         <div className="mt-6 md:mt-8 w-full">
-          <p className="text-[13px] md:text-[14px] text-slate-500 font-medium mb-4">
-            {loading ? 'Memuat...' : streak === 0 ? 'Ayo mulai kerjakan quiz hari ini untuk streak pertamamu!' : `Luar biasa! Pertahankan streak belajarmu.`}
-          </p>
+          {(!hasCompletedToday && !isNewUser) ? (
+             <div className="mb-5">
+               <p className="text-[13px] md:text-[14px] text-slate-500 font-medium mb-3">
+                 Ayo mulai kerjakan quiz hari ini untuk mempertahankan streak-mu!
+               </p>
+               <button onClick={handleOpenModal} className="inline-flex max-w-fit items-center justify-center bg-orange-500 hover:bg-orange-600 text-white shadow-md shadow-orange-200 ring-2 ring-orange-100 ring-offset-1 px-5 py-2.5 rounded-xl text-[14px] font-bold transition-all">
+                 Ayo Selesaikan Quiz! 🔥
+               </button>
+             </div>
+          ) : (
+            <p className="text-[13px] md:text-[14px] text-slate-500 font-medium mb-4">
+              {loading ? 'Memuat...' : isNewUser ? 'Generate Materi Dan Selesaikan Quiznya!' : `Luar biasa! Pertahankan streak belajarmu.`}
+            </p>
+          )}
           <div className="flex items-center justify-between gap-1.5 sm:gap-2">
             {['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'].map((day, idx) => {
                const currentDayOfWeek = new Date().getDay(); 
                const targetIndex = currentDayOfWeek === 0 ? 6 : currentDayOfWeek - 1; 
-               const isChecked = streak > 0 && targetIndex >= idx && (targetIndex - idx) < streak;
                const isToday = targetIndex === idx;
+               const isChecked = streak > 0 && targetIndex >= idx && (targetIndex - idx) < streak && (!isToday || hasCompletedToday);
 
                return (
                  <div key={idx} className="flex flex-col items-center gap-2 flex-1">
@@ -643,6 +693,72 @@ function DailyStreakCard({ userId }: { userId: string }) {
         </div>
       </div>
     </div>
+
+    {/* MODAL PILIH MATERI QUIZ */}
+    {isModalOpen && (
+      <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+        <div className="bg-white rounded-[24px] max-w-md w-full p-6 shadow-2xl relative transform transition-all scale-100 opacity-100 border border-slate-100">
+          <button 
+            onClick={() => setIsModalOpen(false)}
+            className="absolute top-5 right-5 text-slate-400 hover:text-slate-700 bg-slate-100 hover:bg-slate-200 p-2 rounded-full transition-colors"
+          >
+            <X size={20} />
+          </button>
+          
+          <div className="mb-6 pr-8">
+            <h3 className="text-xl font-bold text-slate-800">Selesaikan Quiz! 🎯</h3>
+            <p className="text-slate-500 text-sm mt-1">Pilih materi yang ingin kamu kerjakan untuk mempertahankan streak belajarmu hari ini.</p>
+          </div>
+
+          {loadingMaterials ? (
+            <div className="flex flex-col items-center justify-center py-10">
+              <div className="w-8 h-8 border-4 border-orange-500 border-t-transparent rounded-full animate-spin"></div>
+              <p className="text-slate-400 text-sm mt-3 font-medium">Memuat materi...</p>
+            </div>
+          ) : materials.length > 0 ? (
+            <div className="flex flex-col gap-3 max-h-[55vh] md:max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar">
+              {materials.map((m) => (
+                <Link
+                  key={m.id}
+                  href={`/dashboard/library/${m.id}?tab=quiz`}
+                  className="flex items-center justify-between p-4 border-2 border-slate-100 rounded-2xl hover:border-orange-400 hover:bg-orange-50/50 transition-all group"
+                  onClick={() => setIsModalOpen(false)}
+                >
+                  <div className="flex items-start gap-4 overflow-hidden">
+                    <div className="bg-orange-100 text-orange-600 p-2.5 rounded-xl shrink-0 group-hover:bg-orange-500 group-hover:text-white transition-colors">
+                      <FileText size={20} />
+                    </div>
+                    <div className="flex flex-col items-start pt-0.5 overflow-hidden">
+                      <span className="font-semibold text-slate-700 group-hover:text-slate-900 line-clamp-2 leading-tight text-left">
+                        {m.title}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="shrink-0 ml-2">
+                    <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center group-hover:bg-orange-500 group-hover:text-white transition-colors">
+                      <ChevronDown size={18} className="-rotate-90" />
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-8 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200">
+              <FileText size={48} className="text-slate-300 mx-auto mb-3" />
+              <p className="text-slate-500 font-medium mb-4">Kamu belum memiliki materi apapun.</p>
+              <Link 
+                href="/dashboard"
+                onClick={() => setIsModalOpen(false)}
+                className="inline-flex items-center justify-center bg-black hover:bg-slate-800 text-white px-5 py-2.5 rounded-xl text-sm font-bold transition-all w-fit"
+              >
+                <Plus size={16} className="mr-1.5" /> Buat Materi Baru
+              </Link>
+            </div>
+          )}
+        </div>
+      </div>
+    )}
+    </>
   );
 }
 

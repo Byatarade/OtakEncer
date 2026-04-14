@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState, useRef, useCallback } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/components/AuthProvider';
 import { ArrowLeft, Loader2, FileText, Calendar, Clock, Download, BookOpen, Layers, ListTodo, ChevronLeft, ChevronRight, RefreshCcw, Sparkles } from 'lucide-react';
@@ -35,13 +35,18 @@ interface Material {
 
 export default function MaterialReader() {
   const params = useParams();
+  const searchParams = useSearchParams();
   const router = useRouter();
   const { user, isLoaded } = useAuth();
   
   const [material, setMaterial] = useState<Material | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<'materi' | 'quiz' | 'flashcard'>('materi');
+  
+  const queryTab = searchParams.get('tab') as 'materi' | 'quiz' | 'flashcard';
+  const initialTab = (['materi', 'quiz', 'flashcard'].includes(queryTab) ? queryTab : 'materi');
+  const [activeTab, setActiveTab] = useState<'materi' | 'quiz' | 'flashcard'>(initialTab);
+
   const [isDownloadModalOpen, setIsDownloadModalOpen] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);

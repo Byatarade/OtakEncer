@@ -28,7 +28,7 @@ export async function POST(request: Request) {
     const nowJakarta = toZonedTime(new Date(), tz);
     const todayStr = format(nowJakarta, 'yyyy-MM-dd'); // e.g., "2024-05-20"
 
-    // 2. Simpan atau Update Quiz Score (opsional, jika masih butuh data quiz)
+    // 2. Simpan atau Update Quiz Score
     const calculatedScore = score * 20;
     const { error: insertError } = await supabase
       .from('quiz_scores')
@@ -37,7 +37,8 @@ export async function POST(request: Request) {
         material_id: material_id,
         score: calculatedScore,
         user_name: user_name || 'Pelajar Pintar',
-        user_avatar: user_avatar || null
+        user_avatar: user_avatar || null,
+        created_at: new Date().toISOString() // Paksa update waktu agar muncul di Recent Activity
       }, { onConflict: 'user_id, material_id' });
 
     if (insertError) {
