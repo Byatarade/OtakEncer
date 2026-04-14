@@ -57,46 +57,46 @@ export function HomeHeroSection() {
           </div>
         </div>
 
-        <div className="w-full md:w-[55%] flex justify-center md:justify-end items-center mt-2 md:mt-0 z-20 h-auto perspective-[1000px]">
+        <div className="w-full md:w-[65%] flex justify-center md:justify-end items-center mt-6 md:mt-0 z-20 h-auto perspective-[1000px]">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="relative w-full max-w-[420px] md:max-w-[550px] aspect-[1.05/1] md:aspect-[1.15/1] shadow-2xl rounded-xl transform-style-3d"
+            className="relative w-full max-w-[500px] md:max-w-[700px] aspect-[1.3/1] md:aspect-[1.5/1] shadow-2xl rounded-xl transform-style-3d mr-0 md:-mr-10"
           >
             <motion.div
               animate={{ y: [0, -8, 0] }}
               transition={{ repeat: Infinity, duration: 6, ease: "easeInOut" }}
-              className="absolute top-[8%] right-[5%] w-[88%] h-[80%] rounded-xl overflow-hidden shadow-[0_10px_40px_rgba(0,0,0,0.3)] bg-white z-10"
+              className="absolute top-[10%] xl:top-[5%] right-[5%] w-[85%] h-[80%] rounded-xl overflow-hidden shadow-[0_10px_40px_rgba(0,0,0,0.3)] bg-white z-10"
             >
-              <Image priority src="/assets/hero-image-main.svg" alt="Dashboard Main" fill className="object-cover object-left-top" />
+              <Image priority src="/assets/herogambar1.avif" alt="Dashboard Main" fill className="object-contain md:object-cover object-left-top" />
             </motion.div>
 
             <motion.div
               animate={{ y: [0, 10, 0] }}
               transition={{ repeat: Infinity, duration: 5, ease: "easeInOut", delay: 1 }}
               whileHover={{ scale: 1.05 }}
-              className="absolute top-[40%] left-[2%] w-[42%] h-[38%] rounded-xl shadow-[0_15px_30px_rgba(0,0,0,0.15)] bg-white overflow-hidden z-20 cursor-pointer"
+              className="absolute top-[45%] left-[-2%] w-[45%] h-[40%] rounded-xl shadow-[0_15px_30px_rgba(0,0,0,0.15)] bg-white overflow-hidden z-20 cursor-pointer"
             >
-              <Image priority src="/assets/hero-image-left.svg" alt="Left Panel" fill className="object-cover" />
+              <Image priority src="/assets/herogambardat.avif" alt="Left Panel" fill className="object-contain md:object-cover" />
             </motion.div>
 
             <motion.div
               animate={{ y: [0, -12, 0] }}
               transition={{ repeat: Infinity, duration: 5.5, ease: "easeInOut", delay: 0.5 }}
               whileHover={{ scale: 1.05 }}
-              className="absolute top-[2%] right-[10%] w-[40%] h-[38%] rounded-xl shadow-[0_15px_30px_rgba(0,0,0,0.2)] bg-white overflow-hidden z-30 cursor-pointer"
+              className="absolute top-[-2%] right-[15%] w-[35%] h-[35%] rounded-xl shadow-[0_15px_30px_rgba(0,0,0,0.2)] bg-white overflow-hidden z-30 cursor-pointer"
             >
-              <Image priority src="/assets/hero-image-top.svg" alt="Top Panel" fill className="object-cover" />
+              <Image priority src="/assets/herogambar4.avif" alt="Top Panel" fill className="object-contain md:object-cover" />
             </motion.div>
 
             <motion.div
               animate={{ y: [0, 8, 0] }}
               transition={{ repeat: Infinity, duration: 4.5, ease: "easeInOut", delay: 1.5 }}
               whileHover={{ scale: 1.05 }}
-              className="absolute bottom-[0%] right-[5%] w-[38%] h-[35%] rounded-xl shadow-[0_15px_30px_rgba(0,0,0,0.2)] bg-white overflow-hidden z-30 cursor-pointer"
+              className="absolute bottom-[-5%] right-[2%] w-[42%] h-[38%] rounded-xl shadow-[0_15px_30px_rgba(0,0,0,0.2)] bg-white overflow-hidden z-30 cursor-pointer"
             >
-              <Image priority src="/assets/hero-image-right.svg" alt="Bottom Right Panel" fill className="object-cover" />
+              <Image priority src="/assets/herogambar3.avif" alt="Bottom Right Panel" fill className="object-contain md:object-cover object-center" />
             </motion.div>
           </motion.div>
         </div>
