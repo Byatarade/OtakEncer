@@ -6,7 +6,7 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
 
 export async function POST(request: Request) {
   try {
-    const { material_id } = await request.json();
+    const { material_id, user_id } = await request.json();
     const authHeader = request.headers.get('Authorization') || '';
 
     const supabase = createClient(
@@ -22,6 +22,33 @@ export async function POST(request: Request) {
         }
       }
     );
+
+    // LIMIT CHECK: Maksimal 2x generate exam per hari
+    if (!user_id) {
+       return NextResponse.json({ error: 'User ID tidak valid.' }, { status: 400 });
+    }
+
+    const { data: streakData, error: streakError } = await supabase
+      .from('user_streaks')
+      .select('exam_gen_count, last_exam_gen_date')
+      .eq('user_id', user_id)
+      .single();
+
+    const todayStr = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Jakarta' }); // YYYY-MM-DD
+    let currentLimitCount = 0;
+
+    if (!streakError && streakData) {
+      if (streakData.last_exam_gen_date === todayStr) {
+        currentLimitCount = streakData.exam_gen_count || 0;
+      }
+    }
+
+    if (currentLimitCount >= 2) {
+      return NextResponse.json({ 
+        error: 'LIMIT_REACHED', 
+        message: 'Batas harian pembuatan ulang prediksi soal ujian (2x sehari) telah tercapai. Harap kembali besok!' 
+      }, { status: 429 });
+    }
 
     // Dapatkan rangkuman material dari Supabase
     const { data: material, error: fetchError } = await supabase
@@ -133,6 +160,14 @@ Format JSON yang HARUS diikuti:
       // Tidak throw - data tetap dikembalikan ke frontend meskipun cache ke DB gagal
       console.error("Gagal menyimpan prediksi ujian ke Supabase:", updateError);
     }
+
+    // UPDATE EXAM LIMIT COUNT
+    const newCount = currentLimitCount + 1;
+    await supabase.from('user_streaks').upsert({
+      user_id: user_id,
+      exam_gen_count: newCount,
+      last_exam_gen_date: todayStr
+    }, { onConflict: 'user_id' });
 
     return NextResponse.json({ success: true, data: parsedData });
 

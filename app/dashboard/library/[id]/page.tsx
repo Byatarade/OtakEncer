@@ -178,11 +178,25 @@ export default function MaterialReader() {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${session?.access_token}`
         },
-        body: JSON.stringify({ material_id: material.id })
+        body: JSON.stringify({ material_id: material.id, user_id: user?.id })
       });
 
       const body = await response.json();
-      if (!response.ok) throw new Error(body.error || 'Server error');
+      if (!response.ok) {
+        if (body.error === 'LIMIT_REACHED') {
+          import('sweetalert2').then(Swal => {
+            Swal.default.fire({
+              title: 'Limit Generator Habis',
+              text: body.message,
+              icon: 'warning',
+              confirmButtonColor: '#672cb9'
+            });
+          });
+          setActiveTab('materi');
+          return;
+        }
+        throw new Error(body.error || 'Server error');
+      }
 
       setMaterial(prev => prev ? { ...prev, ai_exam: body.data } : prev);
       setExamMcqAnswers({});
@@ -198,7 +212,7 @@ export default function MaterialReader() {
     } finally {
       setGeneratingExam(false);
     }
-  }, [material]);
+  }, [material, user]);
 
   const gradeExam = async () => {
     if (!material?.ai_exam) return;

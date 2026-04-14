@@ -504,7 +504,7 @@ function DailyTokensCard({ userId }: { userId: string }) {
           
           <p className={`text-[13px] font-medium leading-[1.4] block decoration-[1.5px] mb-5 ${remaining === 0 ? 'text-red-500' : 'text-[#8a8a8e]'}`}>
             {remaining === 0 
-              ? 'Yahh, token harian kamu sudah habis! 😢 Tunggu direset besok ya buat pakai AI lagi.' 
+              ? 'Yahh, token harian kamu sudah habis! Tunggu direset besok ya buat pakai AI lagi.' 
               : 'Periksa Pengaturan Akun untuk selengkapnya'}
           </p>
           
