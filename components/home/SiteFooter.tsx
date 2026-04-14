@@ -4,7 +4,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { forwardRef } from "react";
 
-export const SiteFooter = forwardRef<HTMLElement>(function SiteFooter(_, ref) {
+
+export type SiteFooterProps = {
+  handleScroll?: (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => void;
+};
+
+export const SiteFooter = forwardRef<HTMLElement, SiteFooterProps>(function SiteFooter({ handleScroll }, ref) {
   return (
     <footer ref={ref} className="w-full bg-[#08020d] rounded-t-[40px] md:rounded-t-[80px] border-t border-white/10 text-white pt-16 md:pt-24 pb-8 md:pb-10 relative z-20 overflow-hidden">
       <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-[radial-gradient(circle,rgba(103,44,185,0.15)_0%,transparent_60%)] rounded-[100%] pointer-events-none"></div>
@@ -14,7 +19,7 @@ export const SiteFooter = forwardRef<HTMLElement>(function SiteFooter(_, ref) {
       <div className="max-w-[1240px] w-full mx-auto px-6 md:px-12 flex flex-col relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 mb-16 lg:mb-20">
           <div className="col-span-1 lg:col-span-5 flex flex-col items-start">
-            <Link href="#beranda" className="flex items-center gap-3 mb-6 group">
+            <Link href="#beranda" onClick={handleScroll} className="flex items-center gap-3 mb-6 group">
               <div className="bg-white/10 border border-white/20 w-12 h-12 flex items-center justify-center rounded-2xl group-hover:bg-white/20 transition-all shadow-lg backdrop-blur-sm">
                 <Image src="/assets/logo.svg" alt="Logo" width={28} height={28} className="object-contain invert brightness-0 group-hover:scale-110 transition-transform" />
               </div>
@@ -48,29 +53,32 @@ export const SiteFooter = forwardRef<HTMLElement>(function SiteFooter(_, ref) {
 
           <div className="col-span-1 lg:col-span-7 grid grid-cols-2 md:grid-cols-3 gap-10 md:gap-8">
             <div className="flex flex-col">
-              <h4 className="font-bold text-[16px] md:text-[18px] mb-6 text-white">Produk</h4>
+              <h4 className="font-bold text-[16px] md:text-[18px] mb-6 text-white">Quick Links</h4>
               <div className="flex flex-col gap-4 font-['Montserrat',sans-serif] text-[14px] md:text-[15px] text-white/60">
-                <Link href="#neura" className="hover:text-[#ffa515] hover:translate-x-1 transition-all w-fit">
+                <Link onClick={handleScroll} href="#beranda" className="hover:text-[#ffa515] hover:translate-x-1 transition-all w-fit">
+                  Beranda
+                </Link>
+                <Link onClick={handleScroll} href="#tentang" className="hover:text-[#ffa515] hover:translate-x-1 transition-all w-fit">
+                  Tentang Kami
+                </Link>
+                <Link onClick={handleScroll} href="#neura" className="hover:text-[#ffa515] hover:translate-x-1 transition-all w-fit">
                   Neura AI
                 </Link>
-                <Link href="#fitur" className="hover:text-[#ffa515] hover:translate-x-1 transition-all w-fit">
-                  Fitur Flashcard
+                <Link onClick={handleScroll} href="#fitur" className="hover:text-[#ffa515] hover:translate-x-1 transition-all w-fit">
+                  Fitur
                 </Link>
-                <Link href="#" className="hover:text-[#ffa515] hover:translate-x-1 transition-all w-fit">
-                  Ringkasan Dokumen
-                </Link>
-                <Link href="#" className="hover:text-[#ffa515] hover:translate-x-1 transition-all w-fit">
-                  Integrasi YouTube
+                <Link onClick={handleScroll} href="#testimoni" className="hover:text-[#ffa515] hover:translate-x-1 transition-all w-fit">
+                  Testimoni
                 </Link>
               </div>
             </div>
             <div className="flex flex-col">
               <h4 className="font-bold text-[16px] md:text-[18px] mb-6 text-white">Eksplorasi</h4>
               <div className="flex flex-col gap-4 font-['Montserrat',sans-serif] text-[14px] md:text-[15px] text-white/60">
-                <Link href="#" className="hover:text-[#ffa515] hover:translate-x-1 transition-all w-fit">
+                <Link href="#tentang" onClick={handleScroll} className="hover:text-[#ffa515] hover:translate-x-1 transition-all w-fit">
                   Tentang OtakEncer
                 </Link>
-                <Link href="#comment" className="hover:text-[#ffa515] hover:translate-x-1 transition-all w-fit">
+                <Link href="#testimoni" onClick={handleScroll} className="hover:text-[#ffa515] hover:translate-x-1 transition-all w-fit">
                   Cerita Pengguna
                 </Link>
                 <Link href="#" className="hover:text-[#ffa515] hover:translate-x-1 transition-all w-fit">
@@ -78,6 +86,9 @@ export const SiteFooter = forwardRef<HTMLElement>(function SiteFooter(_, ref) {
                 </Link>
                 <Link href="#" className="hover:text-[#ffa515] hover:translate-x-1 transition-all w-fit">
                   Komunitas Kita
+                </Link>
+                <Link href="#" className="hover:text-[#ffa515] hover:translate-x-1 transition-all w-fit">
+                  Artikel Edukasi
                 </Link>
               </div>
             </div>
@@ -95,6 +106,9 @@ export const SiteFooter = forwardRef<HTMLElement>(function SiteFooter(_, ref) {
                 </Link>
                 <Link href="#" className="hover:text-[#ffa515] hover:translate-x-1 transition-all w-fit">
                   Kebijakan Privasi
+                </Link>
+                <Link href="#" className="hover:text-[#ffa515] hover:translate-x-1 transition-all w-fit">
+                  Hubungi Kami
                 </Link>
               </div>
             </div>

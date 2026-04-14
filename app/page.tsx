@@ -109,7 +109,7 @@ export default function Home() {
         <QuotesSection />
         <TestimonialsSection />
         <HomeCtaSection />
-        <SiteFooter ref={footerRef} />
+        <SiteFooter ref={footerRef} handleScroll={handleScroll} />
       </main>
 
       <NeuraChatbot showTrigger={showNeuraFab} />
