@@ -105,7 +105,7 @@ export function TentangSection() {
           <div>
             <div className="w-10 h-[2px] bg-gray-200 mb-4 group-hover:bg-[#672cb9] group-hover:w-16 transition-all duration-300"></div>
             <h4 className="text-[15px] font-bold text-gray-900 mb-1.5">Efisiensi Waktu</h4>
-            <p className="text-[13px] text-gray-500 font-medium leading-[1.6]">Proses ekstraksi ilmu yang jauh lebih cepat dibandingkan metode konvensional manapun.</p>
+            <p className="text-[13px] text-gray-500 font-medium leading-[1.6]">Proses ekstraksi yang jauh lebih cepat dibandinkan dengan metode lainnya.</p>
           </div>
         </motion.div>
 
