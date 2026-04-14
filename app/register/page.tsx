@@ -132,7 +132,7 @@ export default function RegisterPage() {
         <div className="flex flex-col items-center justify-center mb-4">
           <Link href="/" className="flex items-center gap-2 mb-2 sm:mb-3 hover:opacity-80 transition-opacity">
             <div className="w-7 h-7 sm:w-8 sm:h-8 relative">
-              <Image src="/assets/logo.svg" alt="Logo" fill className="object-contain" />  
+              <Image priority src="/assets/logo.svg" alt="Logo" fill className="object-contain" />  
             </div>
             <span className="text-[18px] sm:text-[20px] font-extrabold text-slate-900 tracking-tight">OtakEncer</span>
           </Link>

@@ -343,7 +343,7 @@ function Dashboard() {
                      
                      {/* Logo Otak Encer */}
                      <div className="relative w-10 h-10 flex items-center justify-center animate-pulse">
-                       <Image src="/assets/logo.svg" alt="OtakEncer Loading" fill className="object-contain" />
+                       <Image priority src="/assets/logo.svg" alt="OtakEncer Loading" fill className="object-contain" />
                      </div>
                    </div>
                    <h3 className="text-xl font-bold text-[#672cb9] mb-2 animate-pulse">AI Sedang Membaca & Merangkum Materi...</h3>

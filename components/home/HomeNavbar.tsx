@@ -43,7 +43,7 @@ export function HomeNavbar({
         <div className="flex items-center justify-between gap-2 sm:gap-4 md:gap-6 lg:gap-8 px-3 md:px-6 py-2.5 md:py-3 w-full">
           <Link href="#beranda" className="flex items-center gap-2 shrink-0">
             <div className="relative w-7 h-7 md:w-8 md:h-8 shrink-0">
-              <Image src="/assets/logo.svg" alt="Logo" fill className="object-contain" />
+              <Image priority src="/assets/logo.svg" alt="Logo" fill className="object-contain" />
             </div>
             <span className="font-bold text-[18px] md:text-[18px] tracking-tight text-gray-900 whitespace-nowrap">
               Otak<span className="text-[#672cb9]">Encer</span>

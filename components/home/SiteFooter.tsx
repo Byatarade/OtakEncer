@@ -21,7 +21,7 @@ export const SiteFooter = forwardRef<HTMLElement, SiteFooterProps>(function Site
           <div className="col-span-1 lg:col-span-5 flex flex-col items-start">
             <Link href="#beranda" onClick={handleScroll} className="flex items-center gap-3 mb-6 group">
               <div className="bg-white/10 border border-white/20 w-12 h-12 flex items-center justify-center rounded-2xl group-hover:bg-white/20 transition-all shadow-lg backdrop-blur-sm">
-                <Image src="/assets/logo.svg" alt="Logo" width={28} height={28} className="object-contain invert brightness-0 group-hover:scale-110 transition-transform" />
+                <Image priority src="/assets/logo.svg" alt="Logo" width={28} height={28} className="object-contain invert brightness-0 group-hover:scale-110 transition-transform" />
               </div>
               <span className="font-bold text-[24px] md:text-[28px] tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white to-white/80">OtakEncer</span>
             </Link>

@@ -147,7 +147,7 @@ export default function NeuraSidebar({ isOpen, onClose, initialQuery, onClearIni
           {/* Chat Area */}
           <div className="flex-1 overflow-y-auto p-4 bg-[#f8fafc] flex flex-col gap-4 relative">
             <div className="absolute inset-0 pointer-events-none flex items-center justify-center opacity-[0.03]">
-              <Image src="/assets/logo.png" alt="" width={200} height={200} className="filter grayscale" />
+              <Image priority src="/assets/logo.png" alt="" width={200} height={200} className="filter grayscale" />
             </div>
 
             {messages.map((msg) => (

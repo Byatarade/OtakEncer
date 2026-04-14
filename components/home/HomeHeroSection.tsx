@@ -69,7 +69,7 @@ export function HomeHeroSection() {
               transition={{ repeat: Infinity, duration: 6, ease: "easeInOut" }}
               className="absolute top-[8%] right-[5%] w-[88%] h-[80%] rounded-xl overflow-hidden shadow-[0_10px_40px_rgba(0,0,0,0.3)] bg-white z-10"
             >
-              <Image src="/assets/hero-image-main.svg" alt="Dashboard Main" fill className="object-cover object-left-top" />
+              <Image priority src="/assets/hero-image-main.svg" alt="Dashboard Main" fill className="object-cover object-left-top" />
             </motion.div>
 
             <motion.div
@@ -78,7 +78,7 @@ export function HomeHeroSection() {
               whileHover={{ scale: 1.05 }}
               className="absolute top-[40%] left-[2%] w-[42%] h-[38%] rounded-xl shadow-[0_15px_30px_rgba(0,0,0,0.15)] bg-white overflow-hidden z-20 cursor-pointer"
             >
-              <Image src="/assets/hero-image-left.svg" alt="Left Panel" fill className="object-cover" />
+              <Image priority src="/assets/hero-image-left.svg" alt="Left Panel" fill className="object-cover" />
             </motion.div>
 
             <motion.div
@@ -87,7 +87,7 @@ export function HomeHeroSection() {
               whileHover={{ scale: 1.05 }}
               className="absolute top-[2%] right-[10%] w-[40%] h-[38%] rounded-xl shadow-[0_15px_30px_rgba(0,0,0,0.2)] bg-white overflow-hidden z-30 cursor-pointer"
             >
-              <Image src="/assets/hero-image-top.svg" alt="Top Panel" fill className="object-cover" />
+              <Image priority src="/assets/hero-image-top.svg" alt="Top Panel" fill className="object-cover" />
             </motion.div>
 
             <motion.div
@@ -96,7 +96,7 @@ export function HomeHeroSection() {
               whileHover={{ scale: 1.05 }}
               className="absolute bottom-[0%] right-[5%] w-[38%] h-[35%] rounded-xl shadow-[0_15px_30px_rgba(0,0,0,0.2)] bg-white overflow-hidden z-30 cursor-pointer"
             >
-              <Image src="/assets/hero-image-right.svg" alt="Bottom Right Panel" fill className="object-cover" />
+              <Image priority src="/assets/hero-image-right.svg" alt="Bottom Right Panel" fill className="object-cover" />
             </motion.div>
           </motion.div>
         </div>
