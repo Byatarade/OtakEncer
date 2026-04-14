@@ -23,9 +23,6 @@ export const metadata: Metadata = {
   authors: [{ name: "OtakEncer Team" }],
   generator: "Next.js",
   keywords: ["AI untuk Pendidikan", "Ringkasan Dokumen Otomatis", "Materi Interaktif", "Chat AI Dokumen", "Belajar Cerdas", "Ubah PDF ke Materi", "OtakEncer"],
-  referrer: "OtakEncer",
-  themeColor: "#672cb9",
-  colorScheme: "light",
   creator: "OtakEncer",
   publisher: "OtakEncer",
   formatDetection: {
