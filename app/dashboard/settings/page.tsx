@@ -171,21 +171,21 @@ export default function SettingsPage() {
     <div className="min-h-full flex flex-col md:flex-row pt-6 md:pt-12 px-6 md:px-12 pb-24 max-w-[1240px] mx-auto w-full font-montserrat gap-8 overflow-x-hidden">
       
       {/* Sidebar Navigation */}
-      <div className="w-full md:w-[280px] shrink-0">
-        <div className="sticky top-24">
+      <div className="w-full md:w-[180px] shrink-0">
+        <div className="sticky">
           <motion.div 
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5 }}
             className="mb-8"
           >
-            <Link href="/dashboard" className="inline-flex items-center gap-2 text-sm font-semibold text-[#6b7280] hover:text-[#672cb9] transition-colors mb-4 group">
+            <Link href="/dashboard" className="inline-flex md:hidden items-center gap-2 text-sm font-semibold text-[#6b7280] hover:text-[#672cb9] transition-colors mb-4 group">
               <div className="bg-[#f3f4f6] p-1.5 rounded-full group-hover:bg-[#f5f3ff] transition-colors">
                 <ArrowLeft size={16} />
               </div>
               Kembali ke Dashboard
             </Link>
-            <h1 className="text-2xl md:text-3xl font-extrabold text-[#111827] tracking-tight mb-2">
+            <h1 className="text-3xl font-bold text-[#111827] tracking-tight mb-2 md:mt-0">
               Pengaturan
             </h1>
             <p className="text-[#6b7280] text-sm font-medium">Kelola preferensi akun Anda.</p>
@@ -242,47 +242,50 @@ export default function SettingsPage() {
               </div>
 
               {/* Form Box */}
-              <div className="bg-white rounded-[28px] p-6 md:p-8 shadow-[0_2px_20px_rgba(0,0,0,0.03)] border border-[#f3f4f6]">
+              <div className="bg-white rounded-[16px] p-6 md:p-8 shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-gray-100">
                 <div className="mb-6">
-                  <h3 className="text-lg font-bold text-[#111827] mb-1">Informasi Personal</h3>
-                  <p className="text-sm text-[#6b7280]">Perbarui foto dan nama yang akan ditampilkan di platform.</p>
+                  <h3 className="text-2xl font-bold text-[#111827] mb-1.5">Informasi Personal</h3>
+                  <p className="text-[#6b7280] text-sm">Perbarui foto dan nama yang akan ditampilkan di platform.</p>
                 </div>
 
-
-                <form onSubmit={handleUpdateProfile} className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-3xl">
+                <form onSubmit={handleUpdateProfile} className="space-y-1">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
                     <div className="space-y-2 min-w-0">
-                      <label className="text-[13px] font-bold text-[#4b5563] uppercase tracking-wide block truncate">Nama Lengkap</label>
+                      <label className="text-[13px] font-semibold text-[#4b5563] uppercase block truncate">Nama Lengkap</label>
                       <Input 
                         icon={<User size={18} />}
                         value={name}
                         onChange={(e) => setName(e.target.value)}
                         placeholder="Cth: John Doe"
                         required
-                        className="bg-[#f9fafb] border-[#e5e7eb] focus:bg-white min-w-0"
+                        className="bg-white border-[#e5e7eb] focus:ring-2 focus:ring-[#7a5af8]/20 min-w-0 rounded-xl"
                       />
                     </div>
 
                     <div className="space-y-2 min-w-0">
-                      <label className="text-[13px] font-bold text-[#4b5563] uppercase tracking-wide block truncate">Alamat Email <span className="opacity-50 lowercase tracking-normal font-normal inline-block max-w-full truncate align-bottom">(Read only)</span></label>
+                      <label className="text-[13px] font-semibold text-[#4b5563] block truncate">
+                        EMAIL <span className="opacity-60 font-normal">( Logout Untuk Mengganti )</span>
+                      </label>
                       <Input 
                         icon={<Mail size={18} />}
                         value={user?.email || ''}
                         disabled
-                        className="bg-[#f3f4f6] text-[#9ca3af] border-transparent cursor-not-allowed min-w-0 truncate"
+                        className="bg-[#f4f5f7] text-[#6b7280] border-[#e5e7eb] cursor-not-allowed min-w-0 truncate rounded-xl"
                       />
                     </div>
                   </div>
 
-                  <div className="space-y-2 max-w-3xl min-w-0">
-                    <label className="text-[13px] font-bold text-[#4b5563] uppercase tracking-wide block truncate">Avatar (URL atau Upload Image)</label>
+                  <div className="space-y-2 w-full mt-6 min-w-0">
+                    <label className="text-[13px] font-semibold text-[#4b5563] block truncate">
+                        AVATAR <span className="opacity-60 font-normal">( URL atau Upload Foto )</span>
+                      </label>
                     <div className="flex flex-col sm:flex-row gap-3">
                       <Input 
                         icon={<Camera size={18} />}
                         value={avatar}
                         onChange={(e) => setAvatar(e.target.value)}
                         placeholder="https://... image.jpg"
-                        className="bg-[#f9fafb] border-[#e5e7eb] focus:bg-white flex-1 min-w-0 truncate"
+                        className="bg-white border-[#e5e7eb] focus:ring-2 focus:ring-[#7a5af8]/20 flex-1 min-w-0 truncate rounded-xl"
                       />
                       <div className="relative overflow-hidden shrink-0 h-[48px] sm:h-auto">
                          <input 
@@ -293,22 +296,21 @@ export default function SettingsPage() {
                            disabled={loading}
                            className="absolute inset-0 opacity-0 cursor-pointer z-10 w-full h-full"
                          />
-                         <Button variant="outline" type="button" className="h-full w-full sm:w-auto px-4" disabled={loading}>
+                         <Button variant="outline" type="button" className="h-[46px] sm:h-[46px] md:h-full sm:w-auto px-5 font-semibold text-[#374151] rounded-xl border-[#e5e7eb] hover:bg-gray-50" disabled={loading}>
                            Upload Foto
                          </Button>
                       </div>
                     </div>
-                    <p className="text-xs text-[#9ca3af] mt-1 ml-1">Paste link url atau upload photo dari perangkat (Max 2MB, JPG/PNG).</p>
+                    <p className="text-[13px] text-[#6b7280] mt-1.5">Paste link url atau upload photo dari perangkat (Max 2MB, JPG/PNG).</p>
                   </div>
                   
-                  <div className="pt-6 border-t border-[#f3f4f6] flex justify-end">
+                  <div className="flex justify-end pt-3">
                     <Button 
                       type="submit" 
-                      variant="primary" 
-                      className="h-12 px-8 rounded-full font-bold shadow-md shadow-[#672cb9]/20"
+                      className="h-11 px-6 rounded-xl font-semibold bg-[#672cb9] hover:bg-[#58249c] text-white shadow-sm flex items-center justify-center gap-2"
                       disabled={loading}
-                      leftIcon={loading ? <Loader2 size={18} className="animate-spin" /> : <Save size={18} />}
                     >
+                      {loading ? <Loader2 size={18} className="animate-spin" /> : <Save size={18} />}
                       {loading ? 'Menyimpan...' : 'Simpan Profil'}
                     </Button>
                   </div>
