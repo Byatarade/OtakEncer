@@ -62,7 +62,7 @@ export function HomeHeroSection() {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="relative w-full max-w-[500px] md:max-w-[700px] aspect-[1.3/1] md:aspect-[1.5/1] shadow-2xl rounded-xl transform-style-3d mr-0 md:-mr-10"
+            className="relative w-full max-w-[500px] md:max-w-[700px] aspect-[1.3/1] md:aspect-[1.5/1] mr-0 md:-mr-10"
           >
             <motion.div
               animate={{ y: [0, -8, 0] }}

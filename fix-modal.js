@@ -39,7 +39,7 @@ const newModal = `      {/* Modal Upload Popup */}
                       <span className="absolute text-[8px] font-bold text-[#672cb9] bg-white px-1 leading-none rounded-sm mt-3.5">DOC</span>
                     </div>
                     <h3 className="text-[20px] font-bold text-slate-800 mb-2.5">Upload Dokumen</h3>
-                    <p className="text-[15px] text-slate-600 leading-relaxed pr-2 mb-2">Unggah PDF, DOCX, atau PPT (Max 10MB).</p>
+                    <p className="text-[15px] text-slate-600 leading-relaxed pr-2 mb-2">Upload PDF, DOCX, atau PPT (Max 10MB).</p>
                     <input 
                       type="file" 
                       accept=".pdf, .docx, .pptx"

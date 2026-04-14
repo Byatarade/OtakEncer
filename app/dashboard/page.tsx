@@ -1,7 +1,7 @@
 "use client";
 import { supabase } from '@/lib/supabase';
 
-import {Plus, LogOut, Settings, HelpCircle, ChevronDown, FileText, CheckCircle2, Check, X, MonitorPlay, Volume2, Link as LinkIcon, Flame } from 'lucide-react';
+import {Plus, LogOut, Settings, HelpCircle, ChevronDown, FileText, CheckCircle2, Check, X, MonitorPlay, Volume2, Link as LinkIcon, Flame, Volume, Speaker, Mic, Mic2, Voicemail, Monitor, PlaySquareIcon, PlaySquare } from 'lucide-react';
 import Image from 'next/image';
 import { useAuth } from '@/components/AuthProvider';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -9,6 +9,7 @@ import { useState, useRef, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import Swal from 'sweetalert2';
 import { formatDistanceToNow } from 'date-fns';
+import { Play } from 'next/font/google';
 
 function Dashboard() {
   const { user, logout } = useAuth();
@@ -39,7 +40,7 @@ function Dashboard() {
     if (isAudioInput && !isAudioFile) {
        Swal.fire({
          title: 'Format Tidak Valid',
-         text: 'Harap unggah file audio (MP3, WAV, M4A, dll) pada menu Upload Audio.',
+         text: 'Harap upload file audio (MP3, WAV, M4A, dll) pada menu Upload Audio.',
          icon: 'error',
          confirmButtonColor: '#672cb9'
        });
@@ -48,7 +49,7 @@ function Dashboard() {
     if (isDocInput && !isDocFile) {
        Swal.fire({
          title: 'Format Tidak Valid',
-         text: 'Harap unggah file dokumen (PDF, DOCX, PPTX) pada menu Upload Dokumen.',
+         text: 'Harap upload file dokumen (PDF, DOCX, PPTX) pada menu Upload Dokumen.',
          icon: 'error',
          confirmButtonColor: '#672cb9'
        });
@@ -111,7 +112,7 @@ function Dashboard() {
     } catch (err: unknown) {
        Swal.fire({
          title: 'Terjadi Kesalahan',
-         text: 'Gagal mengunggah file. Periksa koneksi internet Anda dan coba lagi.',
+         text: 'Gagal mengupload file. Periksa koneksi internet Anda dan coba lagi.',
          icon: 'error',
          confirmButtonColor: '#672cb9'
        });
@@ -353,12 +354,9 @@ function Dashboard() {
                 <>
                   {/* File PDF / DOCX */}
                   <div className="relative flex flex-col items-start bg-white/70 backdrop-blur hover:bg-white hover:shadow-lg p-7 rounded-[24px] border border-white transition-all text-left group overflow-hidden cursor-pointer">
-                    <div className="w-[52px] h-[52px] rounded-2xl bg-gradient-to-br from-[#ed2d07] to-[#871c07] flex items-center justify-center mb-5 shadow-sm group-hover:scale-105 transition-transform relative">
-                      <FileText className="text-white" size={26} />
-                      <span className="absolute text-[8px] font-bold text-[#672cb9] bg-white px-1 leading-none rounded-sm mt-3.5">DOC</span>
-                    </div>
+                    <FileText className="text-blue-500 mb-8 mt-3" size={35} />
                     <h3 className="text-[20px] font-bold text-slate-800 mb-2.5">Upload Dokumen</h3>
-                    <p className="text-[15px] text-slate-600 leading-relaxed pr-2 mb-2">Unggah PDF, DOCX, atau PPT (Max 10MB).</p>
+                    <p className="text-[15px] text-slate-600 leading-relaxed pr-2 mb-2">Upload PDF, DOCX, atau PPT (Max 10MB).</p>
                     <input 
                       type="file" 
                       accept=".pdf, .docx, .pptx"
@@ -371,12 +369,9 @@ function Dashboard() {
 
                   {/* Audio File */}
                   <div className="relative flex flex-col items-start bg-white/70 backdrop-blur hover:bg-white hover:shadow-lg p-7 rounded-[24px] border border-white transition-all text-left group overflow-hidden cursor-pointer">
-                    <div className="w-[52px] h-[52px] rounded-2xl bg-gradient-to-br from-[#10b981] to-[#047857] flex items-center justify-center mb-5 shadow-sm group-hover:scale-105 transition-transform relative">
-                      <Volume2 className="text-white" size={26} />
-                      <span className="absolute text-[8px] font-bold text-[#672cb9] bg-white px-1 leading-none rounded-sm mt-3.5">MP3</span>
-                    </div>
+                    <Mic className="text-orange-500 mb-8 mt-3" size={35} />
                     <h3 className="text-[20px] font-bold text-slate-800 mb-2.5">Upload Audio</h3>
-                    <p className="text-[15px] text-slate-600 leading-relaxed pr-2 mb-2">Unggah rekaman suara MP3, WAV (Max 10MB/25MB).</p>
+                    <p className="text-[15px] text-slate-600 leading-relaxed pr-2 mb-2">Upload rekaman suara MP3, WAV (Max 25MB).</p>
                     <input 
                       type="file" 
                       accept="audio/*, .mp3, .wav, .m4a, .mp4, .mpeg, .mpga, .webm"
@@ -390,11 +385,9 @@ function Dashboard() {
                   {/* Link YouTube */}
                   {!showLinkInput ? (
                     <button onClick={() => setShowLinkInput(true)} className="flex flex-col items-start bg-white/70 backdrop-blur hover:bg-white hover:shadow-lg p-7 rounded-[24px] border border-white transition-all text-left outline-none">
-                      <div className="w-[52px] h-[52px] rounded-2xl bg-gradient-to-br from-[#ef4444] to-[#991b1b] flex items-center justify-center mb-5 shadow-sm group-hover:scale-105 transition-transform relative">
-                        <MonitorPlay className="text-white" size={26} strokeWidth={2} />
-                      </div>
+                      <PlaySquare className="text-red-500 mb-8 mt-3" size={35} />
                       <h3 className="text-[20px] font-bold text-slate-800 mb-2.5">Link YouTube</h3>
-                      <p className="text-[15px] text-slate-600 leading-relaxed pr-2">Ambil materi dan poin penting dari video YouTube lewat URL.</p>
+                      <p className="text-[15px] text-slate-600 leading-relaxed pr-2">Ambil materi dan poin penting dari URL YouTube.</p>
                     </button>
                   ) : (
                     <div className="flex flex-col items-start bg-white p-7 rounded-[24px] border border-slate-200 shadow-md transition-all text-left w-full h-full relative">

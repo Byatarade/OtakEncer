@@ -19,7 +19,7 @@ const faqs = [
   },
   {
     keywords: ["cara pakai", "mulai", "menggunakan", "langkah pertama", "intinya"],
-    answer: "Intinya, proses ini sangat praktis! Cukup unggah dokumen atau ketik pertanyaan yang ada di kepala Anda, lalu asisten cerdas kami akan menganalisis informasi dan memberikan insight, rangkuman, atau format data sesuai kebutuhan Anda.",
+    answer: "Intinya, proses ini sangat praktis! Cukup upload dokumen atau ketik pertanyaan yang ada di kepala Anda, lalu asisten cerdas kami akan menganalisis informasi dan memberikan insight, rangkuman, atau format data sesuai kebutuhan Anda.",
   },
   {
     keywords: ["fitur", "kemampuan", "bisa apa", "keunggulan"],
