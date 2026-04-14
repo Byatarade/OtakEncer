@@ -67,36 +67,36 @@ export function HomeHeroSection() {
             <motion.div
               animate={{ y: [0, -8, 0] }}
               transition={{ repeat: Infinity, duration: 6, ease: "easeInOut" }}
-              className="absolute top-[10%] xl:top-[5%] right-[5%] w-[85%] h-[80%] rounded-xl overflow-hidden shadow-[0_10px_40px_rgba(0,0,0,0.3)] bg-white z-10"
+              className="absolute top-[10%] xl:top-[5%] right-[5%] w-[85%] rounded-xl overflow-hidden shadow-[0_10px_40px_rgba(0,0,0,0.3)] z-10"
             >
-              <Image priority src="/assets/herogambar1.avif" alt="Dashboard Main" fill className="object-contain md:object-cover object-left-top" />
+              <Image priority src="/assets/dashboard.avif" alt="Dashboard Main" width={1200} height={800} className="w-full h-auto" />
             </motion.div>
 
             <motion.div
               animate={{ y: [0, 10, 0] }}
               transition={{ repeat: Infinity, duration: 5, ease: "easeInOut", delay: 1 }}
               whileHover={{ scale: 1.05 }}
-              className="absolute top-[45%] left-[-2%] w-[45%] h-[40%] rounded-xl shadow-[0_15px_30px_rgba(0,0,0,0.15)] bg-white overflow-hidden z-20 cursor-pointer"
+              className="absolute top-[45%] left-[-2%] w-[45%] rounded-xl shadow-[0_15px_30px_rgba(0,0,0,0.15)] overflow-hidden z-20 cursor-pointer"
             >
-              <Image priority src="/assets/herogambardat.avif" alt="Left Panel" fill className="object-contain md:object-cover" />
+              <Image priority src="/assets/quiz.avif" alt="Left Panel" width={800} height={600} className="w-full h-auto" />
             </motion.div>
 
             <motion.div
               animate={{ y: [0, -12, 0] }}
               transition={{ repeat: Infinity, duration: 5.5, ease: "easeInOut", delay: 0.5 }}
               whileHover={{ scale: 1.05 }}
-              className="absolute top-[-2%] right-[15%] w-[35%] h-[35%] rounded-xl shadow-[0_15px_30px_rgba(0,0,0,0.2)] bg-white overflow-hidden z-30 cursor-pointer"
+              className="absolute top-[-2%] right-[15%] w-[35%] rounded-xl shadow-[0_15px_30px_rgba(0,0,0,0.2)] overflow-hidden z-30 cursor-pointer"
             >
-              <Image priority src="/assets/herogambar4.avif" alt="Top Panel" fill className="object-contain md:object-cover" />
+              <Image priority src="/assets/tipeupload.avif" alt="Top Panel" width={800} height={600} className="w-full h-auto" />
             </motion.div>
 
             <motion.div
               animate={{ y: [0, 8, 0] }}
               transition={{ repeat: Infinity, duration: 4.5, ease: "easeInOut", delay: 1.5 }}
               whileHover={{ scale: 1.05 }}
-              className="absolute bottom-[-5%] right-[2%] w-[42%] h-[38%] rounded-xl shadow-[0_15px_30px_rgba(0,0,0,0.2)] bg-white overflow-hidden z-30 cursor-pointer"
+              className="absolute bottom-[-5%] right-[2%] w-[42%] rounded-xl shadow-[0_15px_30px_rgba(0,0,0,0.2)] overflow-hidden z-30 cursor-pointer"
             >
-              <Image priority src="/assets/herogambar3.avif" alt="Bottom Right Panel" fill className="object-contain md:object-cover object-center" />
+              <Image priority src="/assets/herogambar3.avif" alt="Bottom Right Panel" width={800} height={600} className="w-full h-auto" />
             </motion.div>
           </motion.div>
         </div>
