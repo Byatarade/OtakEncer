@@ -4,7 +4,7 @@ import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/components/AuthProvider';
-import { ArrowLeft, Loader2, FileText, Calendar, Clock, Download, BookOpen, Layers, ListTodo, ChevronLeft, ChevronRight, RefreshCcw, Sparkles } from 'lucide-react';
+import { ArrowLeft, Loader2, FileText, Calendar, Clock, Download, BookOpen, Layers, ListTodo, ChevronLeft, ChevronRight, RefreshCcw, Sparkles, GraduationCap, CheckCircle2, XCircle } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { Button } from '@/components/ui/button';
@@ -22,6 +22,53 @@ export interface FlashcardItem {
   back: string;
 }
 
+export interface ExamMCQ {
+  no: number;
+  question: string;
+  options: string[];
+  answer: string;
+  explanation: string;
+}
+
+export interface ExamEssay {
+  no: number;
+  question: string;
+  key_points: string;
+}
+
+export interface ExamData {
+  mcq: ExamMCQ[];
+  essay: ExamEssay[];
+}
+
+export interface MCQResult {
+  no: number;
+  question: string;
+  options: string[];
+  userAnswer: string;
+  correctAnswer: string;
+  isCorrect: boolean;
+  explanation: string;
+}
+
+export interface EssayGrade {
+  no: number;
+  score: number;
+  maxScore: number;
+  feedback: string;
+}
+
+export interface ExamResult {
+  mcqResults: MCQResult[];
+  mcqCorrect: number;
+  mcqTotal: number;
+  essayGrades: EssayGrade[];
+  mcqScore: number;
+  essayScore: number;
+  totalScore: number;
+  grade: string;
+}
+
 interface Material {
   id: string;
   title: string;
@@ -29,6 +76,7 @@ interface Material {
   ai_summary: string | null;
   ai_quiz: QuizItem[] | null;
   ai_flashcard: FlashcardItem[] | null;
+  ai_exam: ExamData | null;
   created_at: string;
   user_id: string;
 }
@@ -43,9 +91,9 @@ export default function MaterialReader() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   
-  const queryTab = searchParams.get('tab') as 'materi' | 'quiz' | 'flashcard';
-  const initialTab = (['materi', 'quiz', 'flashcard'].includes(queryTab) ? queryTab : 'materi');
-  const [activeTab, setActiveTab] = useState<'materi' | 'quiz' | 'flashcard'>(initialTab);
+  const queryTab = searchParams.get('tab') as 'materi' | 'quiz' | 'flashcard' | 'prediksi';
+  const initialTab = (['materi', 'quiz', 'flashcard', 'prediksi'].includes(queryTab) ? queryTab : 'materi');
+  const [activeTab, setActiveTab] = useState<'materi' | 'quiz' | 'flashcard' | 'prediksi'>(initialTab);
 
   const [isDownloadModalOpen, setIsDownloadModalOpen] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
@@ -65,6 +113,15 @@ export default function MaterialReader() {
   const [initialNeuraQuery, setInitialNeuraQuery] = useState<string | null>(null);
   const [selectedText, setSelectedText] = useState<string | null>(null);
   const [askNeuraPos, setAskNeuraPos] = useState<{ x: number, y: number } | null>(null);
+
+  // States for Prediksi Soal Ujian
+  const [generatingExam, setGeneratingExam] = useState(false);
+  const [examMcqAnswers, setExamMcqAnswers] = useState<Record<number, string>>({});
+  const [examEssayAnswers, setExamEssayAnswers] = useState<Record<number, string>>({});
+  const [examResult, setExamResult] = useState<ExamResult | null>(null);
+  const [examSection, setExamSection] = useState<'mcq' | 'essay'>('mcq');
+  const [isGradingExam, setIsGradingExam] = useState(false);
+  const [showExamReview, setShowExamReview] = useState(false);
 
   const fetchInteractiveMedia = useCallback(async (type: 'quiz' | 'flashcard') => {
     if (!material) return;
@@ -107,6 +164,248 @@ export default function MaterialReader() {
     }
   }, [material]);
 
+  const fetchExam = useCallback(async (force = false) => {
+    if (!material) return;
+    if (!force && material.ai_exam && material.ai_exam.mcq && material.ai_exam.mcq.length > 0) return;
+
+    setGeneratingExam(true);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+
+      const response = await fetch('/api/generate-exam', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session?.access_token}`
+        },
+        body: JSON.stringify({ material_id: material.id })
+      });
+
+      const body = await response.json();
+      if (!response.ok) throw new Error(body.error || 'Server error');
+
+      setMaterial(prev => prev ? { ...prev, ai_exam: body.data } : prev);
+      setExamMcqAnswers({});
+      setExamEssayAnswers({});
+      setExamResult(null);
+      setExamSection('mcq');
+      setShowExamReview(false);
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : String(err);
+      console.warn("Failed to generate exam:", message);
+      alert('Gagal membuat prediksi soal ujian. AI mungkin sedang sibuk, coba lagi nanti.');
+      setActiveTab('materi');
+    } finally {
+      setGeneratingExam(false);
+    }
+  }, [material]);
+
+  const gradeExam = async () => {
+    if (!material?.ai_exam) return;
+
+    setIsGradingExam(true);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+
+      const response = await fetch('/api/grade-exam', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session?.access_token}`
+        },
+        body: JSON.stringify({
+          material_summary: material.ai_summary,
+          exam_data: material.ai_exam,
+          mcq_answers: examMcqAnswers,
+          essay_answers: examEssayAnswers
+        })
+      });
+
+      const body = await response.json();
+      if (!response.ok) throw new Error(body.error || 'Server error');
+
+      setExamResult(body.result);
+    } catch (err: unknown) {
+      console.error('Grading error:', err);
+      alert('Gagal menilai ujian. Silakan coba lagi.');
+    } finally {
+      setIsGradingExam(false);
+    }
+  };
+
+  const handleDownloadExamPDF = async () => {
+    if (!material?.ai_exam) return;
+
+    try {
+      setIsDownloading(true);
+
+      const doc = new jsPDF('p', 'mm', 'a4');
+      const pageWidth = doc.internal.pageSize.getWidth();
+      const pageHeight = doc.internal.pageSize.getHeight();
+      const margin = 15;
+      let cursorY = margin;
+
+      const checkPage = (needed: number) => {
+        if (cursorY + needed > pageHeight - margin) {
+          doc.addPage();
+          cursorY = margin;
+        }
+      };
+
+      // Header
+      doc.setFontSize(20);
+      doc.setFont("helvetica", "bold");
+      doc.text("PREDIKSI SOAL UJIAN", margin, cursorY);
+      cursorY += 10;
+
+      doc.setFontSize(12);
+      doc.setFont("helvetica", "normal");
+      const titleLines = doc.splitTextToSize(material.title || 'Materi', pageWidth - 2 * margin);
+      doc.text(titleLines, margin, cursorY);
+      cursorY += titleLines.length * 6 + 4;
+
+      doc.setFontSize(10);
+      doc.text(`Tanggal: ${new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}`, margin, cursorY);
+      cursorY += 6;
+
+      // Jika ada hasil ujian, tampilkan ringkasan nilai
+      if (examResult) {
+        cursorY += 4;
+        doc.setFontSize(14);
+        doc.setFont("helvetica", "bold");
+        doc.text(`NILAI AKHIR: ${examResult.totalScore}/100 (Grade ${examResult.grade})`, margin, cursorY);
+        cursorY += 7;
+        doc.setFontSize(11);
+        doc.setFont("helvetica", "normal");
+        doc.text(`Pilihan Ganda: ${examResult.mcqCorrect}/${examResult.mcqTotal} benar (${examResult.mcqScore} poin)`, margin, cursorY);
+        cursorY += 6;
+        doc.text(`Essay: ${examResult.essayScore} poin`, margin, cursorY);
+        cursorY += 10;
+      }
+
+      // Garis pemisah
+      doc.setLineWidth(0.5);
+      doc.line(margin, cursorY, pageWidth - margin, cursorY);
+      cursorY += 8;
+
+      // Bagian I: Pilihan Ganda
+      doc.setFontSize(14);
+      doc.setFont("helvetica", "bold");
+      doc.text("I. PILIHAN GANDA", margin, cursorY);
+      cursorY += 8;
+
+      material.ai_exam.mcq.forEach((q: ExamMCQ, i: number) => {
+        checkPage(45);
+
+        doc.setFontSize(11);
+        doc.setFont("helvetica", "bold");
+        const qLines = doc.splitTextToSize(`${i + 1}. ${q.question}`, pageWidth - 2 * margin);
+        doc.text(qLines, margin, cursorY);
+        cursorY += qLines.length * 5 + 3;
+
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(10);
+
+        q.options.forEach((opt: string) => {
+          checkPage(7);
+          const optLines = doc.splitTextToSize(`     ${opt}`, pageWidth - 2 * margin);
+          doc.text(optLines, margin, cursorY);
+          cursorY += optLines.length * 5;
+        });
+
+        if (examResult) {
+          const result = examResult.mcqResults[i];
+          cursorY += 2;
+          doc.setFontSize(10);
+          doc.setFont("helvetica", "bold");
+          const statusText = result?.isCorrect ? '[BENAR]' : '[SALAH]';
+          doc.text(`Jawaban Anda: ${result?.userAnswer || '(Kosong)'} ${statusText}`, margin + 5, cursorY);
+          cursorY += 5;
+          if (result && !result.isCorrect) {
+            doc.setFont("helvetica", "normal");
+            doc.text(`Jawaban Benar: ${result.correctAnswer}`, margin + 5, cursorY);
+            cursorY += 5;
+          }
+          if (result?.explanation) {
+            doc.setFont("helvetica", "italic");
+            const explLines = doc.splitTextToSize(`Penjelasan: ${result.explanation}`, pageWidth - 2 * margin - 10);
+            checkPage(explLines.length * 5);
+            doc.text(explLines, margin + 5, cursorY);
+            cursorY += explLines.length * 5;
+          }
+        }
+
+        cursorY += 6;
+      });
+
+      // Bagian II: Essay
+      checkPage(20);
+      cursorY += 4;
+      doc.setFontSize(14);
+      doc.setFont("helvetica", "bold");
+      doc.text("II. ESSAY", margin, cursorY);
+      cursorY += 8;
+
+      material.ai_exam.essay.forEach((q: ExamEssay, i: number) => {
+        checkPage(25);
+
+        doc.setFontSize(11);
+        doc.setFont("helvetica", "bold");
+        const qLines = doc.splitTextToSize(`${i + 1}. ${q.question}`, pageWidth - 2 * margin);
+        doc.text(qLines, margin, cursorY);
+        cursorY += qLines.length * 5 + 3;
+
+        if (examResult) {
+          doc.setFont("helvetica", "normal");
+          doc.setFontSize(10);
+
+          const answerText = examEssayAnswers[i] || '(Tidak dijawab)';
+          const ansLines = doc.splitTextToSize(`Jawaban: ${answerText}`, pageWidth - 2 * margin - 5);
+          checkPage(ansLines.length * 5 + 15);
+          doc.text(ansLines, margin + 5, cursorY);
+          cursorY += ansLines.length * 5 + 3;
+
+          const grade = examResult.essayGrades[i];
+          if (grade) {
+            doc.setFont("helvetica", "bold");
+            doc.text(`Skor: ${grade.score}/${grade.maxScore}`, margin + 5, cursorY);
+            cursorY += 5;
+
+            doc.setFont("helvetica", "italic");
+            const fbLines = doc.splitTextToSize(`Feedback: ${grade.feedback}`, pageWidth - 2 * margin - 10);
+            checkPage(fbLines.length * 5);
+            doc.text(fbLines, margin + 5, cursorY);
+            cursorY += fbLines.length * 5;
+          }
+        }
+
+        cursorY += 8;
+      });
+
+      // Footer halaman
+      const totalPages = doc.getNumberOfPages();
+      for (let p = 1; p <= totalPages; p++) {
+        doc.setPage(p);
+        doc.setFontSize(9);
+        doc.setFont("helvetica", "normal");
+        doc.setTextColor(150, 150, 150);
+        doc.text(`OtakEncer - Prediksi Soal Ujian | Halaman ${p} dari ${totalPages}`, margin, pageHeight - 8);
+        doc.setTextColor(0, 0, 0);
+      }
+
+      const fileName = examResult
+        ? `Hasil_Ujian_${material.title?.replace(/[^a-zA-Z0-9]/g, '_') || 'Materi'}.pdf`
+        : `Prediksi_Soal_${material.title?.replace(/[^a-zA-Z0-9]/g, '_') || 'Materi'}.pdf`;
+
+      doc.save(fileName);
+    } catch (error) {
+      console.error('Failed to download exam PDF:', error);
+      alert('Gagal mendownload PDF prediksi ujian.');
+    } finally {
+      setIsDownloading(false);
+    }
+  };
+
   const submitQuizResult = async (score: number) => {
     if (!material || !user) return;
     setSubmitMessage(null);
@@ -142,7 +441,8 @@ export default function MaterialReader() {
   useEffect(() => {
      if (activeTab === 'quiz') fetchInteractiveMedia('quiz');
      else if (activeTab === 'flashcard') fetchInteractiveMedia('flashcard');
-  }, [activeTab, fetchInteractiveMedia]);
+     else if (activeTab === 'prediksi') fetchExam();
+  }, [activeTab, fetchInteractiveMedia, fetchExam]);
 
   useEffect(() => {
     const fetchMaterial = async () => {
@@ -446,6 +746,13 @@ export default function MaterialReader() {
           >
             <span className="flex-1">Flashcard</span>
           </TabButton>
+          <TabButton
+            active={activeTab === 'prediksi'}
+            onClick={() => setActiveTab('prediksi')}
+            icon={<GraduationCap size={22} />}
+          >
+            <span className="flex-1">Prediksi Ujian</span>
+          </TabButton>
         </nav>
 
         {/* Action Bottom */}
@@ -465,7 +772,7 @@ export default function MaterialReader() {
       </aside>
 
       {/* Mobile Floating Bottom Navbar - Tidier & More Responsive */}
-      <div className="md:hidden fixed bottom-8 left-1/2 -translate-x-1/2 w-[90%] max-w-[360px] bg-[#672cb9] rounded-[32px] z-[50] p-1.5 flex items-center justify-between shadow-[0_12px_40px_rgba(103,44,185,0.45)] border border-white/10 backdrop-blur-md">
+      <div className="md:hidden fixed bottom-8 left-1/2 -translate-x-1/2 w-[92%] max-w-[420px] bg-[#672cb9] rounded-[32px] z-[50] p-1.5 flex items-center justify-between shadow-[0_12px_40px_rgba(103,44,185,0.45)] border border-white/10 backdrop-blur-md">
         <button 
           onClick={() => router.push('/dashboard/library')}
           className="w-11 h-11 flex items-center justify-center text-white hover:bg-white/10 rounded-full transition-all ml-0.5"
@@ -494,6 +801,13 @@ export default function MaterialReader() {
             className={`flex items-center justify-center transition-all duration-300 ${activeTab === 'flashcard' ? 'bg-white text-[#672cb9] shadow-md rounded-[20px] w-14 h-10' : 'text-white/70 hover:text-white w-10 min-w-[40px] h-10'}`}
           >
             <Layers size={20} />
+          </button>
+
+          <button
+            onClick={() => setActiveTab('prediksi')}
+            className={`flex items-center justify-center transition-all duration-300 ${activeTab === 'prediksi' ? 'bg-white text-[#672cb9] shadow-md rounded-[20px] w-14 h-10' : 'text-white/70 hover:text-white w-10 min-w-[40px] h-10'}`}
+          >
+            <GraduationCap size={18} />
           </button>
         </div>
 
@@ -832,6 +1146,273 @@ export default function MaterialReader() {
                 </div>
              )}
            </div>
+        )}
+
+        {/* UI untuk Prediksi Soal Ujian */}
+        {activeTab === 'prediksi' && (
+          <div className="flex flex-col items-center justify-start h-full pt-6 pb-[140px] px-4 sm:px-12 overflow-y-auto overflow-x-hidden min-w-0 w-full page-scroll">
+            {generatingExam ? (
+              <div className="flex flex-col items-center justify-center mt-32 gap-6">
+                <div className="w-20 h-20 bg-gradient-to-br from-[#672cb9] to-[#8c4ae1] rounded-2xl flex items-center justify-center shadow-lg shadow-[#672cb9]/20 animate-pulse">
+                  <GraduationCap size={40} className="text-white" />
+                </div>
+                <h2 className="text-2xl font-bold text-gray-800 animate-pulse">Menyusun Prediksi Soal Ujian...</h2>
+                <p className="text-gray-500 max-w-md">AI sedang menganalisis materi dan membuat 20 soal pilihan ganda + 10 soal essay dengan tingkat kesulitan bervariasi...</p>
+                <div className="w-64 h-2 bg-gray-100 rounded-full overflow-hidden mt-4">
+                  <div className="h-full bg-gradient-to-r from-[#672cb9] to-[#8c4ae1] animate-pulse rounded-full w-full"></div>
+                </div>
+              </div>
+            ) : isGradingExam ? (
+              <div className="flex flex-col items-center justify-center mt-32 gap-6">
+                <Loader2 size={56} className="text-[#672cb9] animate-spin" />
+                <h2 className="text-2xl font-bold text-gray-800 animate-pulse">AI Sedang Menilai Jawaban...</h2>
+                <p className="text-gray-500 max-w-md">Mengoreksi pilihan ganda dan menganalisis jawaban essay Anda secara mendalam...</p>
+                <div className="w-64 h-2 bg-gray-100 rounded-full overflow-hidden mt-4">
+                  <div className="h-full bg-gradient-to-r from-[#672cb9] to-[#8c4ae1] animate-pulse rounded-full w-full"></div>
+                </div>
+              </div>
+            ) : examResult ? (
+              <div className="w-full max-w-3xl mx-auto mt-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                {/* Score Hero */}
+                <div className="bg-gradient-to-br from-[#672cb9] to-[#8c4ae1] rounded-3xl p-8 text-white text-center mb-6 shadow-xl shadow-[#672cb9]/15">
+                  <p className="text-white/70 text-sm font-semibold uppercase tracking-wider mb-4">Nilai Akhir</p>
+                  <div className="w-28 h-28 bg-white/15 backdrop-blur-sm rounded-full mx-auto flex items-center justify-center mb-4 border-4 border-white/20">
+                    <span className="text-5xl font-extrabold">{examResult.totalScore}</span>
+                  </div>
+                  <p className="text-3xl font-extrabold mb-2">Grade {examResult.grade}</p>
+                  <div className="flex justify-center gap-6 sm:gap-8 mt-6">
+                    <div className="bg-white/10 rounded-2xl px-5 py-3">
+                      <p className="text-white/60 text-xs font-medium mb-1">Pilihan Ganda</p>
+                      <p className="text-xl font-bold">{examResult.mcqCorrect}/{examResult.mcqTotal}</p>
+                      <p className="text-white/50 text-xs">{examResult.mcqScore} poin</p>
+                    </div>
+                    <div className="bg-white/10 rounded-2xl px-5 py-3">
+                      <p className="text-white/60 text-xs font-medium mb-1">Essay</p>
+                      <p className="text-xl font-bold">{examResult.essayScore}/50</p>
+                      <p className="text-white/50 text-xs">{examResult.essayScore} poin</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Action Buttons */}
+                <div className="flex flex-col sm:flex-row gap-3 mb-6">
+                  <button
+                    onClick={() => setShowExamReview(!showExamReview)}
+                    className="flex-1 flex items-center justify-center gap-2 py-3.5 px-6 bg-white border-2 border-gray-100 rounded-2xl font-bold text-gray-700 hover:bg-gray-50 hover:border-gray-200 transition-all shadow-sm"
+                  >
+                    <BookOpen size={18} /> {showExamReview ? 'Sembunyikan' : 'Lihat'} Pembahasan
+                  </button>
+                  <button
+                    onClick={handleDownloadExamPDF}
+                    disabled={isDownloading}
+                    className="flex-1 flex items-center justify-center gap-2 py-3.5 px-6 bg-[#672cb9] text-white rounded-2xl font-bold hover:bg-[#56219c] transition-all shadow-sm disabled:opacity-50"
+                  >
+                    {isDownloading ? <Loader2 size={18} className="animate-spin" /> : <Download size={18} />}
+                    Download Hasil PDF
+                  </button>
+                </div>
+
+                <div className="flex flex-col sm:flex-row gap-3 mb-8">
+                  <button
+                    onClick={() => { setExamResult(null); setExamMcqAnswers({}); setExamEssayAnswers({}); setExamSection('mcq'); setShowExamReview(false); }}
+                    className="flex-1 flex items-center justify-center gap-2 py-3 px-4 border-2 border-gray-100 rounded-2xl font-semibold text-gray-600 hover:bg-gray-50 transition-all text-sm"
+                  >
+                    <RefreshCcw size={16} /> Coba Ulang
+                  </button>
+                  <button
+                    onClick={() => fetchExam(true)}
+                    className="flex-1 flex items-center justify-center gap-2 py-3 px-4 border-2 border-[#672cb9]/20 rounded-2xl font-semibold text-[#672cb9] hover:bg-[#672cb9]/5 transition-all text-sm"
+                  >
+                    <Sparkles size={16} /> Generate Soal Baru
+                  </button>
+                </div>
+
+                {/* Detailed Review */}
+                {showExamReview && (
+                  <div className="space-y-4 animate-in fade-in slide-in-from-top-2 duration-300 text-left">
+                    <h3 className="text-lg font-bold text-gray-800 flex items-center gap-2 mb-4">
+                      <ListTodo size={20} className="text-[#672cb9]" /> Pembahasan Pilihan Ganda
+                    </h3>
+                    {examResult.mcqResults.map((r: MCQResult, i: number) => (
+                      <div key={i} className={`p-4 rounded-2xl border-2 ${r.isCorrect ? 'bg-green-50/50 border-green-100' : 'bg-red-50/50 border-red-100'}`}>
+                        <div className="flex items-start gap-3">
+                          <div className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 mt-0.5 ${r.isCorrect ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'}`}>
+                            {r.isCorrect ? <CheckCircle2 size={16} /> : <XCircle size={16} />}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="font-bold text-gray-800 text-sm mb-2">{i + 1}. {r.question}</p>
+                            <p className="text-sm text-gray-600 mb-1">Jawaban Anda: <span className={`font-semibold ${r.isCorrect ? 'text-green-600' : 'text-red-600'}`}>{r.userAnswer || '(Kosong)'}</span></p>
+                            {!r.isCorrect && <p className="text-sm text-gray-600 mb-1">Jawaban Benar: <span className="font-semibold text-green-600">{r.correctAnswer}</span></p>}
+                            <p className="text-xs text-gray-500 mt-2 italic">{r.explanation}</p>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+
+                    <h3 className="text-lg font-bold text-gray-800 flex items-center gap-2 mt-8 mb-4">
+                      <FileText size={20} className="text-[#672cb9]" /> Pembahasan Essay
+                    </h3>
+                    {examResult.essayGrades.map((g: EssayGrade, i: number) => (
+                      <div key={i} className="p-4 rounded-2xl border-2 border-gray-100 bg-white">
+                        <div className="flex items-start justify-between mb-2">
+                          <p className="font-bold text-gray-800 text-sm flex-1">{i + 1}. {material?.ai_exam?.essay[i]?.question}</p>
+                          <span className={`ml-3 px-3 py-1 rounded-full text-xs font-bold shrink-0 ${g.score >= 8 ? 'bg-green-100 text-green-700' : g.score >= 5 ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700'}`}>
+                            {g.score}/{g.maxScore}
+                          </span>
+                        </div>
+                        <div className="bg-gray-50 rounded-xl p-3 mb-3">
+                          <p className="text-xs text-gray-500 font-medium mb-1">Jawaban Anda:</p>
+                          <p className="text-sm text-gray-700">{examEssayAnswers[i] || '(Tidak dijawab)'}</p>
+                        </div>
+                        <p className="text-sm text-gray-600 italic">{g.feedback}</p>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ) : material?.ai_exam && material.ai_exam.mcq?.length > 0 ? (
+              <div className="w-full max-w-3xl mx-auto mt-4 text-left animate-in fade-in slide-in-from-bottom-4 duration-500">
+                {/* Exam Header */}
+                <div className="bg-gradient-to-r from-[#672cb9] to-[#8c4ae1] rounded-2xl p-5 sm:p-6 mb-6 text-white">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-10 h-10 bg-white/15 rounded-xl flex items-center justify-center">
+                      <GraduationCap size={22} />
+                    </div>
+                    <div>
+                      <h2 className="text-lg font-bold">Prediksi Soal Ujian</h2>
+                      <p className="text-white/70 text-xs font-medium">20 Pilihan Ganda + 10 Essay</p>
+                    </div>
+                  </div>
+                  <div className="bg-white/10 rounded-xl p-3 mt-3">
+                    <div className="flex justify-between text-xs font-medium text-white/80 mb-2">
+                      <span>Progress Pengerjaan</span>
+                      <span>{Object.keys(examMcqAnswers).length + Object.keys(examEssayAnswers).filter(k => examEssayAnswers[Number(k)]?.trim()).length}/{(material.ai_exam?.mcq?.length || 0) + (material.ai_exam?.essay?.length || 0)} soal</span>
+                    </div>
+                    <div className="w-full h-2 bg-white/10 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-white rounded-full transition-all duration-500"
+                        style={{ width: `${((Object.keys(examMcqAnswers).length + Object.keys(examEssayAnswers).filter(k => examEssayAnswers[Number(k)]?.trim()).length) / ((material.ai_exam?.mcq?.length || 1) + (material.ai_exam?.essay?.length || 1))) * 100}%` }}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Section Tabs */}
+                <div className="flex gap-2 mb-6 bg-gray-50 p-1.5 rounded-2xl">
+                  <button
+                    onClick={() => setExamSection('mcq')}
+                    className={`flex-1 py-2.5 rounded-xl text-sm font-bold transition-all ${examSection === 'mcq' ? 'bg-white text-[#672cb9] shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+                  >
+                    Pilihan Ganda ({Object.keys(examMcqAnswers).length}/20)
+                  </button>
+                  <button
+                    onClick={() => setExamSection('essay')}
+                    className={`flex-1 py-2.5 rounded-xl text-sm font-bold transition-all ${examSection === 'essay' ? 'bg-white text-[#672cb9] shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+                  >
+                    Essay ({Object.keys(examEssayAnswers).filter(k => examEssayAnswers[Number(k)]?.trim()).length}/10)
+                  </button>
+                </div>
+
+                {/* MCQ Questions */}
+                {examSection === 'mcq' && (
+                  <div className="space-y-4">
+                    {material.ai_exam.mcq.map((q: ExamMCQ, i: number) => (
+                      <div key={i} className="bg-white p-4 sm:p-5 rounded-2xl border border-gray-100 shadow-[0_2px_12px_rgba(0,0,0,0.03)]">
+                        <p className="font-bold text-gray-800 text-[15px] mb-4 leading-relaxed">
+                          <span className="text-[#672cb9] mr-1">{i + 1}.</span> {q.question}
+                        </p>
+                        <div className="space-y-2">
+                          {q.options.map((opt: string, j: number) => {
+                            const isSelected = examMcqAnswers[i] === opt;
+                            return (
+                              <button
+                                key={j}
+                                onClick={() => setExamMcqAnswers(prev => ({ ...prev, [i]: opt }))}
+                                className={`w-full text-left p-3 rounded-xl border-2 transition-all duration-200 text-sm font-medium flex items-center gap-3 ${
+                                  isSelected
+                                    ? 'border-[#672cb9] bg-[#672cb9]/5 text-[#672cb9]'
+                                    : 'border-gray-100 hover:border-gray-200 hover:bg-gray-50 text-gray-700'
+                                }`}
+                              >
+                                <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center shrink-0 text-xs font-bold transition-colors ${
+                                  isSelected ? 'border-[#672cb9] bg-[#672cb9] text-white' : 'border-gray-200 text-gray-400'
+                                }`}>
+                                  {String.fromCharCode(65 + j)}
+                                </div>
+                                <span className="leading-snug">{opt}</span>
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    ))}
+                    <div className="flex justify-end mt-4">
+                      <button
+                        onClick={() => setExamSection('essay')}
+                        className="flex items-center gap-2 py-3 px-6 bg-[#672cb9] text-white rounded-xl font-bold hover:bg-[#56219c] transition-all shadow-sm"
+                      >
+                        Lanjut ke Essay <ChevronRight size={18} />
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {/* Essay Questions */}
+                {examSection === 'essay' && (
+                  <div className="space-y-4">
+                    {material.ai_exam.essay.map((q: ExamEssay, i: number) => (
+                      <div key={i} className="bg-white p-4 sm:p-5 rounded-2xl border border-gray-100 shadow-[0_2px_12px_rgba(0,0,0,0.03)]">
+                        <p className="font-bold text-gray-800 text-[15px] mb-4 leading-relaxed">
+                          <span className="text-[#672cb9] mr-1">{i + 1}.</span> {q.question}
+                        </p>
+                        <textarea
+                          value={examEssayAnswers[i] || ''}
+                          onChange={(e) => setExamEssayAnswers(prev => ({ ...prev, [i]: e.target.value }))}
+                          placeholder="Tulis jawaban essay Anda di sini..."
+                          className="w-full min-h-[120px] p-4 rounded-xl border-2 border-gray-100 focus:border-[#672cb9] focus:ring-4 focus:ring-[#672cb9]/5 outline-none resize-y text-sm text-gray-700 leading-relaxed transition-all placeholder:text-gray-400"
+                          rows={4}
+                        />
+                      </div>
+                    ))}
+                    <div className="flex flex-col sm:flex-row gap-3 mt-6">
+                      <button
+                        onClick={() => setExamSection('mcq')}
+                        className="flex items-center justify-center gap-2 py-3 px-6 bg-white border-2 border-gray-100 rounded-xl font-bold text-gray-600 hover:bg-gray-50 transition-all sm:w-auto"
+                      >
+                        <ChevronLeft size={18} /> Kembali ke PG
+                      </button>
+                      <button
+                        onClick={gradeExam}
+                        className="flex-1 flex items-center justify-center gap-2 py-3.5 px-6 bg-gradient-to-r from-[#672cb9] to-[#8c4ae1] text-white rounded-xl font-bold hover:shadow-lg hover:shadow-[#672cb9]/20 transition-all"
+                      >
+                        <GraduationCap size={18} /> Kumpulkan &amp; Nilai Ujian
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {/* Download Soal Button */}
+                <div className="mt-6 mb-2">
+                  <button
+                    onClick={handleDownloadExamPDF}
+                    disabled={isDownloading}
+                    className="w-full flex items-center justify-center gap-2 py-3 px-4 border-2 border-dashed border-gray-200 rounded-xl font-semibold text-gray-500 hover:border-[#672cb9]/30 hover:text-[#672cb9] hover:bg-[#672cb9]/5 transition-all text-sm disabled:opacity-50"
+                  >
+                    {isDownloading ? <Loader2 size={16} className="animate-spin" /> : <Download size={16} />}
+                    Download Soal Ujian (PDF)
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="flex flex-col items-center justify-center mt-32 gap-4">
+                <div className="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center">
+                  <GraduationCap size={32} className="text-gray-400" />
+                </div>
+                <p className="text-gray-500 font-medium">Gagal memuat prediksi ujian.</p>
+                <Button onClick={() => fetchExam(true)} className="bg-[#672cb9] hover:bg-[#56219c]">Coba Generate Ulang</Button>
+              </div>
+            )}
+          </div>
         )}
 
       </main>
