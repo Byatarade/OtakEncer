@@ -217,6 +217,25 @@ export default function MaterialReader() {
   const gradeExam = async () => {
     if (!material?.ai_exam) return;
 
+    const totalMcq = material.ai_exam.mcq.length;
+    if (Object.keys(examMcqAnswers).length < totalMcq) {
+      import('sweetalert2').then(Swal => {
+        Swal.default.fire({ title: 'PG Belum Selesai', text: 'Harap jawab semua soal pilihan ganda terlebih dahulu.', icon: 'warning', confirmButtonColor: '#672cb9' });
+      });
+      return;
+    }
+
+    const totalEssay = material.ai_exam.essay.length;
+    for (let i = 0; i < totalEssay; i++) {
+      const ans = examEssayAnswers[i] || '';
+      if (ans.trim().length < 15) {
+        import('sweetalert2').then(Swal => {
+          Swal.default.fire({ title: `Essay No. ${i + 1} Kurang Lengkap`, text: 'Setiap soal essay wajib diisi minimal 15 karakter agar bisa dinilai dengan baik oleh AI.', icon: 'warning', confirmButtonColor: '#672cb9' });
+        });
+        return;
+      }
+    }
+
     setIsGradingExam(true);
     try {
       const { data: { session } } = await supabase.auth.getSession();
@@ -1366,7 +1385,20 @@ export default function MaterialReader() {
                     ))}
                     <div className="flex justify-end mt-4">
                       <button
-                        onClick={() => setExamSection('essay')}
+                        onClick={() => {
+                          if (Object.keys(examMcqAnswers).length < material.ai_exam!.mcq.length) {
+                            import('sweetalert2').then(Swal => {
+                              Swal.default.fire({
+                                title: 'Belum Selesai',
+                                text: 'Harap selesaikan semua soal Pilihan Ganda sebelum lanjut ke Essay.',
+                                icon: 'warning',
+                                confirmButtonColor: '#672cb9'
+                              });
+                            });
+                          } else {
+                            setExamSection('essay');
+                          }
+                        }}
                         className="flex items-center gap-2 py-3 px-6 bg-[#672cb9] text-white rounded-xl font-bold hover:bg-[#56219c] transition-all shadow-sm"
                       >
                         Lanjut ke Essay <ChevronRight size={18} />
