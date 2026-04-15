@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { LibraryCard, Material } from '@/components/library/LibraryCard';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/components/AuthProvider';
+import Image from 'next/image';
 
 const containerVariants: Variants = {
   hidden: { opacity: 0 },

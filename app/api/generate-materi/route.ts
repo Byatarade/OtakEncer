@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import { formatInTimeZone } from 'date-fns-tz';
 import { OfficeParser } from 'officeparser';
 import pdfParse from 'pdf-parse';
 import { YoutubeTranscript } from 'youtube-transcript';
@@ -27,10 +28,7 @@ export async function POST(request: Request) {
     }
 
     // --- CHECK QUOTA LIMIT (MAX 3 PER DAY) ---
-    // PENTING: Menggunakan user_streaks counter — BUKAN COUNT dari materials.
-    // Jika menggunakan COUNT, menghapus materi akan mengembalikan token (bug fatal).
-    const todayStr = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Jakarta' }); // YYYY-MM-DD
-
+    const startOfDay = formatInTimeZone(new Date(), 'Asia/Jakarta', "yyyy-MM-dd'T'00:00:00XXX");
     const authHeader = request.headers.get('Authorization') || '';
     
     // Gunakan fungsi custom fetch untuk menghindari policy RLS
@@ -48,23 +46,20 @@ export async function POST(request: Request) {
       }
     );
 
-    const { data: streakData, error: streakError } = await supabase
-      .from('user_streaks')
-      .select('material_gen_count, last_material_gen_date')
+    const { count: usageCount, error: countError } = await supabase
+      .from('materials')
+      .select('*', { count: 'exact', head: true })
       .eq('user_id', userId)
-      .single();
+      .gte('created_at', startOfDay);
 
-    let currentMatCount = 0;
-    if (!streakError && streakData) {
-      if (streakData.last_material_gen_date === todayStr) {
-        currentMatCount = streakData.material_gen_count || 0;
-      }
-      // Jika beda hari, counter otomatis reset ke 0
+    if (countError) {
+      console.error('Failed to check quota:', countError);
+      return NextResponse.json({ error: 'Gagal mengecek kuota pengguna.' }, { status: 500 });
     }
 
-    if (currentMatCount >= 3) {
-      return NextResponse.json({
-        error: 'Kuota harian Anda telah habis (Maks. 3 kali sehari). Silakan kembali besok.'
+    if ((usageCount || 0) >= 3) {
+      return NextResponse.json({ 
+        error: 'Kuota harian Anda telah habis (Maks. 3 kali sehari). Silakan kembali besok.' 
       }, { status: 429 });
     }
     // --- END CHECK QUOTA ---
@@ -83,9 +78,7 @@ export async function POST(request: Request) {
       const isAudio = file.name.match(/\.(mp3|mp4|mpeg|mpga|m4a|wav|webm)$/i);
       const MAX_SIZE = isAudio ? 25 * 1024 * 1024 : 10 * 1024 * 1024;
       if (file.size > MAX_SIZE) {
-        return NextResponse.json({ 
-          error: `Ukuran file melebihi batas maksimal (${isAudio ? '25MB' : '10MB'}). Silakan upload file dengan ukuran yang lebih kecil.` 
-        }, { status: 400 });
+        return NextResponse.json({ error: `Ukuran dokumen/audio melebihi batas (${isAudio ? '25MB' : '10MB'})!` }, { status: 400 });
       }
 
       fileSizeBytes = file.size;
@@ -158,24 +151,7 @@ export async function POST(request: Request) {
         }
       } catch (err: unknown) {
          console.error("Gagal membaca dokumen:", err);
-         const errMsg = err instanceof Error ? err.message : '';
-         
-         // Berikan pesan error spesifik berdasarkan jenis kegagalan
-         let userMessage = 'File tidak dapat diproses. Pastikan Anda mengupload PDF yang jelas, tidak rusak, dan dapat dibaca dengan baik.';
-         
-         if (errMsg.includes('password') || errMsg.includes('encrypt')) {
-           userMessage = 'File ini dilindungi kata sandi atau terenkripsi. Silakan hapus proteksi terlebih dahulu, lalu upload kembali.';
-         } else if (errMsg.includes('audio') || errMsg.includes('Groq')) {
-           userMessage = 'File audio tidak dapat diproses. Pastikan file audio dalam format yang didukung dan tidak rusak.';
-         } else if (sourceType === 'pdf') {
-           userMessage = 'File PDF tidak dapat dibaca. Pastikan Anda mengupload PDF yang jelas, tidak rusak, dan dapat dibaca dengan baik. File PDF yang berisi hanya gambar atau scan mungkin tidak didukung.';
-         } else if (sourceType === 'docx') {
-           userMessage = 'File DOCX tidak dapat dibaca. Pastikan file tidak rusak dan bukan file terproteksi.';
-         } else if (sourceType === 'ppt') {
-           userMessage = 'File PPTX tidak dapat dibaca. Pastikan file tidak rusak dan coba konversi ke PDF terlebih dahulu.';
-         }
-
-         return NextResponse.json({ error: userMessage }, { status: 400 });
+         return NextResponse.json({ error: 'Gagal membaca dokumen. Pastikan file tidak rusak atau terenkripsi.' }, { status: 400 });
       }
     } else if (link) {
       try {
@@ -395,16 +371,6 @@ ${safePdfText}
       console.error('Supabase Insert Error:', error);
       return NextResponse.json({ error: 'Gagal menyimpan materi ke Database. DB Error: ' + error.message }, { status: 500 });
     }
-
-    // --- INCREMENT MATERIAL QUOTA COUNTER ---
-    // Harus dilakukan SETELAH insert berhasil agar counter akurat
-    const newMatCount = currentMatCount + 1;
-    await supabase.from('user_streaks').upsert({
-      user_id: userId,
-      material_gen_count: newMatCount,
-      last_material_gen_date: todayStr
-    }, { onConflict: 'user_id' });
-    // --- END INCREMENT ---
 
     return NextResponse.json({ success: true, data });
 

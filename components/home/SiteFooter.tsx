@@ -74,6 +74,9 @@ export const SiteFooter = forwardRef<HTMLElement, SiteFooterProps>(function Site
             <div className="flex flex-col col-span-2 md:col-span-1">
               <h4 className="font-bold text-[16px] md:text-[18px] mb-6 text-white">Bantuan & Legal</h4>
               <div className="flex flex-col gap-4 font-['Montserrat',sans-serif] text-[14px] md:text-[15px] text-white/60">
+                <Link href="/documentation" className="hover:text-[#ffa515] hover:translate-x-1 transition-all w-fit">
+                  Dokumentasi
+                </Link>
                 <Link href="#" className="hover:text-[#ffa515] hover:translate-x-1 transition-all w-fit">
                   Panduan Penggunaan
                 </Link>
@@ -86,9 +89,13 @@ export const SiteFooter = forwardRef<HTMLElement, SiteFooterProps>(function Site
                 <Link href="#" className="hover:text-[#ffa515] hover:translate-x-1 transition-all w-fit">
                   Kebijakan Privasi
                 </Link>
-                <a href="mailto:cs@otakencer.me" className="hover:text-[#ffa515] hover:translate-x-1 transition-all w-fit">
-                  Hubungi Kami
-                </a>
+                <div className="mt-4 flex flex-col gap-2">
+                  <span className="text-[13px] text-white/40 italic">Ada kritik dan saran?</span>
+                  <a href="mailto:cs@otakencer.me" className="flex items-center gap-2 hover:text-[#ffa515] transition-colors w-fit group">
+                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="opacity-60 group-hover:opacity-100 transition-opacity"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                     cs@otakencer.me
+                  </a>
+                </div>
               </div>
             </div>
           </div>

@@ -9,7 +9,7 @@ import { useState, useRef, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import { showSuccess, showError } from '@/lib/swal';
 import { formatDistanceToNow, format } from 'date-fns';
-import { toZonedTime } from 'date-fns-tz';
+import { toZonedTime, formatInTimeZone } from 'date-fns-tz';
 import { Play } from 'next/font/google';
 
 function Dashboard() {
@@ -342,7 +342,7 @@ function Dashboard() {
                      className="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-slate-200 bg-white text-slate-600 hover:bg-red-50 hover:border-red-200 hover:text-red-600 font-semibold text-sm transition-all shadow-sm"
                    >
                      <X size={16} />
-                     Batalkan Generate
+                     Batalkan Upload
                    </button>
                 </div>
               ) : (
@@ -440,25 +440,18 @@ function DailyTokensCard({ userId }: { userId: string }) {
   useEffect(() => {
     const fetchUsage = async () => {
       try {
-        const todayStr = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Jakarta' }); // YYYY-MM-DD
+        // Gunakan zona waktu yang sama dengan API (Asia/Jakarta)
+        const startOfDay = formatInTimeZone(new Date(), 'Asia/Jakarta', "yyyy-MM-dd'T'00:00:00XXX");
 
-        const { data, error } = await supabase
-          .from('user_streaks')
-          .select('material_gen_count, last_material_gen_date')
+        // Hitung baris di tabel materials untuk hari ini
+        const { count, error } = await supabase
+          .from('materials')
+          .select('*', { count: 'exact', head: true })
           .eq('user_id', userId)
-          .single();
+          .gte('created_at', startOfDay);
 
-        if (error && error.code !== 'PGRST116') {
-          // Ignore not found error
-          throw error;
-        }
-        
-        let count = 0;
-        if (data && data.last_material_gen_date === todayStr) {
-          count = data.material_gen_count || 0;
-        }
-
-        setUsageCount(count);
+        if (error) throw error;
+        setUsageCount(count || 0);
       } catch (err) {
         console.error('Error fetching usage:', err);
       } finally {
@@ -466,7 +459,7 @@ function DailyTokensCard({ userId }: { userId: string }) {
       }
     };
 
-    fetchUsage();
+    if (userId) fetchUsage();
   }, [userId]);
 
   const remaining = Math.max(MAX_LIMIT - usageCount, 0);
@@ -708,7 +701,7 @@ function DailyStreakCard({ userId }: { userId: string }) {
           </button>
           
           <div className="mb-6 pr-8">
-            <h3 className="text-xl font-bold text-slate-800">Selesaikan Quiz! 🎯</h3>
+            <h3 className="text-xl font-bold text-slate-800">Selesaikan Quiz! </h3>
             <p className="text-slate-500 text-sm mt-1">Pilih materi yang ingin kamu kerjakan untuk mempertahankan streak belajarmu hari ini.</p>
           </div>
 
