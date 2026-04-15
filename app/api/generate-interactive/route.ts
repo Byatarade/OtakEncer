@@ -183,14 +183,20 @@ Struktur HARUS persis seperti ini:
       }
     }
 
-    // Sanitasi ekstra jika AI tetap bandel menyelipkan tag codeblock ```json
-    if (aiOutput.startsWith('```json')) {
-       aiOutput = aiOutput.replace(/^```json/, '').replace(/```$/, '').trim();
-    } else if (aiOutput.startsWith('```')) {
-       aiOutput = aiOutput.replace(/^```/, '').replace(/```$/, '').trim();
+    // Sanitasi ekstra jika AI tetap bandel menyelipkan tag codeblock ```json atau teks awalan
+    aiOutput = aiOutput.trim();
+    const jsonMatch = aiOutput.match(/\[[\s\S]*\]/);
+    if (jsonMatch) {
+       aiOutput = jsonMatch[0];
     }
 
-    const parsedData = JSON.parse(aiOutput);
+    let parsedData;
+    try {
+      parsedData = JSON.parse(aiOutput);
+    } catch (e) {
+      console.error("Gagal parse JSON dari output AI:", aiOutput);
+      throw new Error('Format output AI tidak valid. Silakan coba lagi.');
+    }
 
     // Update kolom bersangkutan di Supabase
     const columnName = type === 'quiz' ? 'ai_quiz' : 'ai_flashcard';

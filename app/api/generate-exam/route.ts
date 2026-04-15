@@ -101,15 +101,12 @@ Format JSON yang HARUS diikuti:
       aiOutput = aiResult.response.text();
     } catch (geminiError: unknown) {
       const errMsg = geminiError instanceof Error ? geminiError.message : String(geminiError);
-      const errStatus = (geminiError as { status?: number })?.status;
-      console.warn("Gemini API Error for exam generation, attempting Groq fallback:", errMsg);
+      console.warn("Gemini API Error for exam generation, attempting fallback:", errMsg);
 
-      const isRecoverable = errStatus === 503 || errMsg.includes('503') || errMsg.includes('demand') || errMsg.includes('overloaded');
+      // Selalu lakukan fallback tanpa memeriksa isRecoverable agar server stabil meski Gemini error model apa pun.
+      console.log("=== FALLBACK OTOMATIS KE GROQ UNTUK GENERATE EXAM ===");
 
-      if (isRecoverable || errMsg.includes('GenerateContent')) {
-        console.log("=== FALLBACK OTOMATIS KE GROQ UNTUK GENERATE EXAM ===");
-
-        let groqSuccess = false;
+      let groqSuccess = false;
         try {
           const groqRes = await fetch('https://api.groq.com/openai/v1/chat/completions', {
             method: 'POST',
@@ -212,20 +209,24 @@ Format JSON yang HARUS diikuti:
                }
             }
         }
-      } else {
-        throw geminiError;
-      }
     }
 
-    // Sanitasi output dari kemungkinan tag markdown
+    // Sanitasi output dari kemungkinan tag markdown atau teks tambahan di awal/akhir
     aiOutput = aiOutput.trim();
-    if (aiOutput.startsWith('```json')) {
-      aiOutput = aiOutput.replace(/^```json/, '').replace(/```$/, '').trim();
-    } else if (aiOutput.startsWith('```')) {
-      aiOutput = aiOutput.replace(/^```/, '').replace(/```$/, '').trim();
+    
+    // Cari blok json dengan menggunakan regex, siapa tau AI menambahkan awalan kata
+    const jsonMatch = aiOutput.match(/\{[\s\S]*\}/);
+    if (jsonMatch) {
+      aiOutput = jsonMatch[0];
     }
 
-    const parsedData = JSON.parse(aiOutput);
+    let parsedData;
+    try {
+      parsedData = JSON.parse(aiOutput);
+    } catch (e) {
+      console.error("Gagal parse JSON dari output AI:", aiOutput);
+      throw new Error('Format output AI tidak valid. Silakan coba lagi.');
+    }
 
     // Validasi struktur JSON
     if (!parsedData.mcq || !Array.isArray(parsedData.mcq) || !parsedData.essay || !Array.isArray(parsedData.essay)) {
