@@ -75,7 +75,7 @@ export default function SettingsPage() {
             logs.push({
               id: `mat-${m.id}`,
               type: 'material',
-              title: `Memuat Materi: ${m.title || 'Materi Belajar'}`,
+              title: `Upload Materi: ${m.title || 'Materi Belajar'}`,
               created_at: new Date(m.created_at)
             });
           });
@@ -92,7 +92,7 @@ export default function SettingsPage() {
             logs.push({
               id: `quiz-${q.id}`,
               type: 'quiz',
-              title: `Tuntas Quiz/Ujian: ${t}`,
+              title: `Menyelesaikan Quiz/Ujian: ${t}`,
               created_at: new Date(q.created_at)
             });
           });
@@ -359,7 +359,7 @@ export default function SettingsPage() {
               </div>
               <div className="bg-white p-4 rounded-[20px] border border-gray-100 shadow-[0_2px_10px_rgba(0,0,0,0.02)] flex flex-col group col-span-2 lg:col-span-1">
                <GraduationCap size={22} strokeWidth={2.5} className='text-purple-500 mb-3 mt-1' />
-                <p className="text-gray-500 text-[11px] font-bold tracking-tight mb-0.5">SOAL UJIAN DISELESAIKAN</p>
+                <p className="text-gray-500 text-[11px] font-bold tracking-tight mb-0.5">UJIAN DISELESAIKAN</p>
                 <h4 className="text-2xl font-extrabold text-gray-900 leading-none">{stats.exams}</h4>
               </div>
             </div>
@@ -484,8 +484,8 @@ export default function SettingsPage() {
                           </div>
                         )}
                         <div className="flex-1 min-w-0">
-                          <p className="text-gray-800 font-bold text-[13px] truncate" title={log.title}>{log.title}</p>
-                          <p className="text-[10px] font-semibold text-gray-400 mt-0.5 truncate">
+                          <p className="text-gray-800 font-medium text-[13px] truncate" title={log.title}>{log.title}</p>
+                          <p className="text-[10px] font-normal text-gray-400 mt-0.5 truncate">
                             {log.created_at.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })} • {log.created_at.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}
                           </p>
                         </div>

@@ -1,7 +1,7 @@
 "use client";
 import { supabase } from '@/lib/supabase';
 
-import {Plus, LogOut, Settings, HelpCircle, ChevronDown, FileText, CheckCircle2, Check, X, MonitorPlay, Volume2, Link as LinkIcon, Flame, Volume, Speaker, Mic, Mic2, Voicemail, Monitor, PlaySquareIcon, PlaySquare } from 'lucide-react';
+import {Plus, LogOut, Settings, HelpCircle, ChevronDown, FileText, CheckCircle2, Check, X, MonitorPlay, Volume2, Link as LinkIcon, Flame, Volume, Speaker, Mic, Mic2, Voicemail, Monitor, PlaySquareIcon, PlaySquare, Music } from 'lucide-react';
 import Image from 'next/image';
 import { useAuth } from '@/components/AuthProvider';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -370,7 +370,7 @@ function Dashboard() {
 
                   {/* Audio File */}
                   <div className="relative flex flex-col items-start bg-white/70 backdrop-blur hover:bg-white hover:shadow-lg p-7 rounded-[24px] border border-white transition-all text-left group overflow-hidden cursor-pointer">
-                    <Mic className="text-orange-500 mb-8 mt-3" size={35} />
+                    <Music className="text-orange-500 mb-8 mt-3" size={35} />
                     <h3 className="text-[20px] font-bold text-slate-800 mb-2.5">Upload Audio</h3>
                     <p className="text-[15px] text-slate-600 leading-relaxed pr-2 mb-2">Upload rekaman suara MP3, WAV (Max 25MB).</p>
                     <input 
@@ -504,7 +504,7 @@ function DailyTokensCard({ userId }: { userId: string }) {
           
           <p className={`text-[13px] font-medium leading-[1.4] block decoration-[1.5px] mb-5 ${remaining === 0 ? 'text-red-500' : 'text-[#8a8a8e]'}`}>
             {remaining === 0 
-              ? 'Yahh, token harian kamu sudah habis! Tunggu direset besok ya buat pakai AI lagi.' 
+              ? 'Token harian anda sudah habis, tunggu hari esok untuk menggunakannya kembali!' 
               : 'Periksa Pengaturan Akun untuk selengkapnya'}
           </p>
           
@@ -527,7 +527,7 @@ function DailyTokensCard({ userId }: { userId: string }) {
                 : 'bg-[#fff4e6] text-[#0f172a]'
             }`}>
               {remaining === 0 
-                ? 'Kuota harian habis, reset tengah malam' 
+                ? 'Token harian habis' 
                 : `${remaining} token tersisa untuk hari ini`}
             </div>
           </div>
@@ -852,7 +852,7 @@ function RecentActivityWidget({ userId }: { userId: string }) {
               )}
               <div className="flex-1 min-w-0">
                 <p className="text-slate-800 font-medium line-clamp-2 break-all">
-                  {act.type === 'upload' ? 'Berhasil upload' : act.type === 'quiz' ? 'Tuntas Quiz / Ujian' : 'Melihat'} &quot;{act.title}&quot;
+                  {act.type === 'upload' ? 'Berhasil upload' : act.type === 'quiz' ? 'Menyelesaikan Quiz / Ujian' : 'Melihat'} &quot;{act.title}&quot;
                 </p>
                 <p className="text-slate-400 text-[13px] mt-0.5">
                   {formatDistanceToNow(act.date, { addSuffix: true })}

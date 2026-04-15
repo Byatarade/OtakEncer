@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { Variants } from 'framer-motion';
-import { Search, FolderPlus, FileText, Video, Music, Layers, Loader2, Library } from 'lucide-react';
+import { Search, FolderPlus, FileText, Video, Music, Layers, Loader2, Library, PlaySquare } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { LibraryCard, Material } from '@/components/library/LibraryCard';
 import { supabase } from '@/lib/supabase';
@@ -86,10 +86,10 @@ export default function LibraryPage() {
 
   
   const tabs = [
-    { id: 'all', label: 'Semua Materi', icon: <Layers size={16} /> },
-    { id: 'pdf', label: 'PDF', icon: <FileText size={16} /> },
-    { id: 'youtube', label: 'YouTube', icon: <Video size={16} /> },
-    { id: 'audio', label: 'Audio', icon: <Music size={16} /> },
+    { id: 'all', label: 'Semua Materi', icon: <Layers className="text-black" size={16} /> },
+    { id: 'pdf', label: 'PDF', icon: <FileText className="text-blue-500" size={16} /> },
+    { id: 'audio', label: 'Audio', icon: <Music className="text-orange-500" size={16} /> },
+    { id: 'youtube', label: 'YouTube', icon: <PlaySquare className="text-red-500" size={16} /> },
   ];
   
   const filteredMaterials = materials.filter(m => {
@@ -135,7 +135,7 @@ export default function LibraryPage() {
               className="flex items-center gap-3 mb-5"
             >
               <div className="bg-white/20 backdrop-blur-md p-2.5 rounded-xl text-white shadow-inner border border-white/10">
-                <Library size={20} className="animate-pulse" />
+                <Library size={20}/>
               </div>
               <span className="text-yellow-500 font-bold tracking-widest text-sm uppercase letter-spacing-2">
                 library
@@ -182,13 +182,13 @@ export default function LibraryPage() {
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
                 className={`relative flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-sm transition-all duration-300 whitespace-nowrap z-10 ${
-                  activeTab === tab.id ? 'text-white' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
+                  activeTab === tab.id ? 'text-black' : 'text-gray-400 hover:text-gray-900'
                 }`}
               >
                 {activeTab === tab.id && (
                   <motion.div
                     layoutId="activeTabIndicator"
-                    className="absolute inset-0 bg-[#672cb9] rounded-xl -z-10 shadow-md shadow-[#672cb9]/30"
+                    className="absolute inset-0 bg-transparent border-2 border-[#FFA515] rounded-xl -z-10 shadow-sm"
                     transition={{ type: "spring", stiffness: 400, damping: 30 }}
                   />
                 )}

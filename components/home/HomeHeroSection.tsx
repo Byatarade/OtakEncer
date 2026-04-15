@@ -57,7 +57,7 @@ export function HomeHeroSection() {
           </div>
         </div>
 
-        <div className="w-full md:w-[65%] flex justify-center md:justify-end items-center mt-6 md:mt-13 z-20 h-auto perspective-[1000px]">
+        <div className="w-full md:w-[65%] flex justify-center md:justify-end items-center mt-6 md:mt-16 z-20 h-auto perspective-[1000px]">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -76,7 +76,7 @@ export function HomeHeroSection() {
               animate={{ y: [0, 10, 0] }}
               transition={{ repeat: Infinity, duration: 5, ease: "easeInOut", delay: 1 }}
               whileHover={{ scale: 1.05 }}
-              className="absolute top-[45%] left-[-2%] w-[45%] rounded-xl shadow-[0_15px_30px_rgba(0,0,0,0.15)] overflow-hidden z-20 cursor-pointer"
+              className="absolute top-[45%] left-[4%] w-[45%] rounded-xl shadow-[0_15px_30px_rgba(0,0,0,0.15)] overflow-hidden z-20"
             >
               <Image priority src="/assets/quiz.avif" alt="Left Panel" width={800} height={600} className="w-full h-auto" />
             </motion.div>
@@ -85,7 +85,7 @@ export function HomeHeroSection() {
               animate={{ y: [0, -12, 0] }}
               transition={{ repeat: Infinity, duration: 5.5, ease: "easeInOut", delay: 0.5 }}
               whileHover={{ scale: 1.05 }}
-              className="absolute top-[-2%] right-[15%] w-[35%] rounded-xl shadow-[0_15px_30px_rgba(0,0,0,0.2)] overflow-hidden z-30 cursor-pointer"
+              className="absolute top-[-2%] right-[15%] w-[35%] rounded-xl shadow-[0_15px_30px_rgba(0,0,0,0.2)] overflow-hidden z-30"
             >
               <Image priority src="/assets/tipeupload.avif" alt="Top Panel" width={800} height={600} className="w-full h-auto" />
             </motion.div>
@@ -94,9 +94,9 @@ export function HomeHeroSection() {
               animate={{ y: [0, 8, 0] }}
               transition={{ repeat: Infinity, duration: 4.5, ease: "easeInOut", delay: 1.5 }}
               whileHover={{ scale: 1.05 }}
-              className="absolute bottom-[-5%] right-[2%] w-[42%] rounded-xl shadow-[0_15px_30px_rgba(0,0,0,0.2)] overflow-hidden z-30 cursor-pointer"
+              className="absolute bottom-[13%]  md:bottom-[8%] right-[2%] w-[42%] rounded-xl shadow-[0_15px_30px_rgba(0,0,0,0.2)] overflow-hidden z-30"
             >
-              <Image priority src="/assets/herogambar3.avif" alt="Bottom Right Panel" width={800} height={600} className="w-full h-auto" />
+              <Image priority src="/assets/leaderboard.avif" alt="Bottom Right Panel" width={800} height={600} className="w-full h-auto" />
             </motion.div>
           </motion.div>
         </div>

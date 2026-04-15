@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
-import { Trophy, Award, Crown, Loader2 } from 'lucide-react';
+import { Award, Loader2 } from 'lucide-react';
 
 interface LeaderboardEntry {
   user_id: string;
@@ -11,6 +11,187 @@ interface LeaderboardEntry {
   total_score: number;
 }
 
+/* ────────────── Avatar ────────────── */
+function Avatar({ user, size, mdSize }: { user: LeaderboardEntry; size: number; mdSize?: number }) {
+  const md = mdSize ?? size;
+  return user.user_avatar ? (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      src={user.user_avatar}
+      alt={user.user_name}
+      className="rounded-full object-cover border-2 border-white/60 shadow-md avatar-img"
+      style={
+        {
+          '--size': `${size}px`,
+          '--md-size': `${md}px`,
+          width: `${size}px`,
+          height: `${size}px`,
+        } as React.CSSProperties
+      }
+    />
+  ) : (
+    <div
+      className="rounded-full bg-gray-800 text-white flex items-center justify-center font-bold border-2 border-white/40 shadow-md font-montserrat avatar-div"
+      style={
+        {
+          '--size': `${size}px`,
+          '--md-size': `${md}px`,
+          width: `${size}px`,
+          height: `${size}px`,
+          fontSize: `${Math.round(size * 0.38)}px`,
+        } as React.CSSProperties
+      }
+    >
+      {user.user_name.charAt(0).toUpperCase()}
+    </div>
+  );
+}
+
+/* ────────────── Podium Card ────────────── */
+function PodiumCard({
+  user,
+  rank,
+  height,
+  mdHeight,
+  avatarSize,
+  mdAvatarSize,
+}: {
+  user: LeaderboardEntry;
+  rank: number;
+  height: number;
+  mdHeight: number;
+  avatarSize: number;
+  mdAvatarSize: number;
+}) {
+  const colorMap: Record<number, { bg: string }> = {
+    1: {
+      bg: 'linear-gradient(to bottom, #c97e00 0%, #e09b14 45%, #f7f7f7 100%)',
+    },
+    2: {
+      bg: 'linear-gradient(to bottom, #8a8a8a 0%, #b0b0b0 45%, #f7f7f7 100%)',
+    },
+    3: {
+      bg: 'linear-gradient(to bottom, #7a3a10 0%, #b06030 45%, #f7f7f7 100%)',
+    },
+  };
+
+  const colors = colorMap[rank];
+  const avatarOffset = Math.round(avatarSize * 0.34);
+
+  return (
+    <div className="flex flex-col items-center podium-col">
+      {/* Avatar floats above card */}
+      <div className="relative z-10 podium-avatar-wrap" style={{ marginBottom: `-${avatarOffset}px` }}>
+        <Avatar user={user} size={avatarSize} mdSize={mdAvatarSize} />
+      </div>
+
+      {/* Card body */}
+      <div
+        className="w-full rounded-t-3xl flex flex-col items-center relative overflow-hidden podium-card"
+        style={{
+          height,
+          background: colors.bg,
+          paddingTop: avatarOffset + 6,
+        }}
+      >
+        {/* Username */}
+        <span className="text-white font-semibold text-xs md:text-base text-center leading-tight drop-shadow px-1 font-montserrat">
+          {user.user_name}
+        </span>
+
+        {/* Rank number */}
+        <span
+          className="absolute bottom-4 md:bottom-6 left-1/2 -translate-x-1/2 text-gray-900 font-extrabold font-montserrat"
+          style={{ fontSize: rank === 1 ? 26 : 20 }}
+        >
+          {rank}
+        </span>
+
+
+      </div>
+
+      {/* Responsive md styles via a style tag trick — handled via Tailwind classes below */}
+    </div>
+  );
+}
+
+/* ────────────── Rank Badge ────────────── */
+function RankBadge({ rank }: { rank: number }) {
+  const style: Record<number, string> = {
+    1: 'bg-[#f5c842] text-yellow-900',
+    2: 'bg-[#d0d0d0] text-gray-700',
+    3: 'bg-[#c97849] text-white',
+  };
+  return (
+    <div
+      className={`w-8 h-8 md:w-10 md:h-10 rounded-lg flex items-center justify-center font-bold text-sm md:text-base flex-shrink-0 font-montserrat ${
+        style[rank] ?? 'bg-gray-100 text-gray-500'
+      }`}
+    >
+      {rank}
+    </div>
+  );
+}
+
+/* ────────────── Score Badge ────────────── */
+function ScoreBadge({ score, rank }: { score: number; rank: number }) {
+  const color =
+    rank === 1
+      ? 'bg-[#fef3c7] text-yellow-800 border border-yellow-200'
+      : rank === 2
+      ? 'bg-gray-100 text-gray-600 border border-gray-200'
+      : rank === 3
+      ? 'bg-[#fde8d4] text-orange-800 border border-orange-200'
+      : 'bg-gray-100 text-gray-500 border border-gray-200';
+
+  return (
+    <span
+      className={`text-xs md:text-sm font-semibold px-3 py-1 md:px-4 md:py-1.5 rounded-full flex-shrink-0 font-montserrat ${color}`}
+    >
+      {score} Hari
+    </span>
+  );
+}
+
+/* ────────────── Row Item ────────────── */
+function LeaderRow({ user, rank }: { user: LeaderboardEntry; rank: number }) {
+  const rowBg =
+    rank === 1
+      ? 'bg-[#fef9ec] border border-yellow-200'
+      : rank === 2
+      ? 'bg-[#f5f5f5] border border-gray-200'
+      : rank === 3
+      ? 'bg-[#fdf1e8] border border-orange-100'
+      : 'bg-white border border-gray-100';
+
+  return (
+    <div
+      className={`flex items-center gap-3 md:gap-4 px-4 md:px-6 py-3 md:py-4 rounded-2xl transition-transform duration-200 hover:scale-[1.015] cursor-default ${rowBg}`}
+    >
+      <RankBadge rank={rank} />
+      <div className="w-9 h-9 md:w-12 md:h-12 rounded-full overflow-hidden flex-shrink-0">
+        {user.user_avatar ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={user.user_avatar}
+            alt={user.user_name}
+            className="w-full h-full object-cover border-2 border-white/60 rounded-full"
+          />
+        ) : (
+          <div className="w-full h-full bg-gray-800 text-white flex items-center justify-center font-bold rounded-full text-sm md:text-base font-montserrat">
+            {user.user_name.charAt(0).toUpperCase()}
+          </div>
+        )}
+      </div>
+      <span className="flex-1 font-semibold text-gray-800 text-sm md:text-base font-montserrat">
+        {user.user_name}
+      </span>
+      <ScoreBadge score={user.total_score} rank={rank} />
+    </div>
+  );
+}
+
+/* ────────────── Main Page ────────────── */
 export default function LeaderboardPage() {
   const [data, setData] = useState<LeaderboardEntry[]>([]);
   const [loading, setLoading] = useState(true);
@@ -19,11 +200,6 @@ export default function LeaderboardPage() {
   useEffect(() => {
     const fetchLeaderboard = async () => {
       try {
-        // Kita butuh custom RPC view / query sum
-        // Karena supabase client biasa gak bisa nge-sum direct tanpa di-group by user
-        // Namun sebagai jalan pintas React, kita bisa select * table poin aja lalu disum di client array
-        
-        // Ambil dari tabel streak
         const { data: streakData, error: dbError } = await supabase
           .from('user_streaks')
           .select('user_id, current_streak, user_name, user_avatar')
@@ -32,19 +208,19 @@ export default function LeaderboardPage() {
 
         if (dbError) throw dbError;
 
-        // Map data agar sesuai dengan interface (kita ganti total_score jadi refer ke current_streak)
-        const results = (streakData || []).map(row => ({
-           user_id: row.user_id,
-           user_name: row.user_name || 'Pelajar Misterius',
-           user_avatar: row.user_avatar,
-           total_score: row.current_streak || 0 // total_score ini sekarang adalah nilai Streak
-        })).filter(user => user.total_score > 0);
+        const results = (streakData || [])
+          .map((row) => ({
+            user_id: row.user_id,
+            user_name: row.user_name || 'Pelajar Misterius',
+            user_avatar: row.user_avatar,
+            total_score: row.current_streak || 0,
+          }))
+          .filter((u) => u.total_score > 0);
 
         setData(results);
-
       } catch (err: unknown) {
         console.error(err);
-        setError("Gagal memuat papan peringkat.");
+        setError('Gagal memuat papan peringkat.');
       } finally {
         setLoading(false);
       }
@@ -52,88 +228,154 @@ export default function LeaderboardPage() {
     fetchLeaderboard();
   }, []);
 
-  return (
-    <div className="min-h-screen bg-[#f8fafc] text-gray-900 font-montserrat pb-20 p-8 sm:p-12">
-       
-       <div className="max-w-2xl mx-auto">
-          <div className="text-center mb-10">
-            <div className="w-20 h-20 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm border border-yellow-200">
-              <Trophy size={40} className="text-yellow-600" />
-            </div>
-            <h1 className="text-4xl font-extrabold text-gray-900 tracking-tight">Papan Peringkat</h1>
-            <p className="text-gray-500 mt-3 text-lg">Top pelajar OtakEncer dengan rekor Streak belajar berturut-turut.</p>
-          </div>
+  const top3 = data.slice(0, 3);
+  const rest = data.slice(3);
 
-          {loading ? (
-             <div className="flex flex-col items-center py-20">
-               <Loader2 size={40} className="animate-spin text-[#672cb9] mb-4" />
-               <span className="font-medium text-gray-500">Mengkalkulasi streak...</span>
-             </div>
-          ) : error ? (
-            <div className="text-center bg-red-50 text-red-500 p-6 rounded-2xl border border-red-100">
-              {error}
+  // Podium order: 2nd (left), 1st (center), 3rd (right)
+  const podiumOrder = [top3[1], top3[0], top3[2]];
+  const podiumRank = [2, 1, 3];
+
+  // Mobile heights
+  const mobileHeights = [150, 190, 130];
+  // Desktop heights (bigger)
+  const desktopHeights = [210, 270, 180];
+
+  // Mobile avatar sizes
+  const mobileAvatarSizes = [52, 64, 48];
+  // Desktop avatar sizes
+  const desktopAvatarSizes = [72, 90, 64];
+
+  return (
+    <>
+      {/* Responsive podium sizes via CSS custom properties */}
+      <style>{`
+        @media (min-width: 936px) {
+          .podium-card { height: var(--md-card-height) !important; padding-top: var(--md-pad-top) !important; }
+          .podium-col { flex: 1; }
+          .podium-avatar-wrap img,
+          .podium-avatar-wrap div {
+            width: var(--md-avatar) !important;
+            height: var(--md-avatar) !important;
+          }
+          .podium-avatar-wrap { margin-bottom: calc(var(--md-avatar) * -0.34) !important; }
+        }
+      `}</style>
+
+      <div className="min-h-screen bg-[#f7f7f7] text-gray-900 font-montserrat pb-28">
+        {/* ── Header ── */}
+        <div className="pt-10 md:pt-14 pb-4 text-center px-6">
+          <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-gray-900 font-montserrat">
+            Leaderboard
+          </h1>
+          <p className="text-gray-400 mt-2 text-sm md:text-base font-medium leading-snug font-montserrat">
+            Top pelajar OtakEncer dengan rekor Streak<br />belajar berturut-turut.
+          </p>
+        </div>
+
+        {/* ── States ── */}
+        {loading ? (
+          <div className="flex flex-col items-center py-24">
+            <Loader2 size={40} className="animate-spin text-[#672cb9] mb-4" />
+            <span className="font-medium text-gray-400 font-montserrat">Mengkalkulasi streak...</span>
+          </div>
+        ) : error ? (
+          <div className="mx-6 mt-6 text-center bg-red-50 text-red-500 p-6 rounded-2xl border border-red-100 font-medium font-montserrat">
+            {error}
+          </div>
+        ) : data.length === 0 ? (
+          <div className="mx-6 mt-6 text-center bg-white p-12 rounded-3xl border border-dashed border-gray-200 shadow-sm">
+            <Award size={48} className="text-gray-300 mx-auto mb-4" />
+            <h3 className="text-xl md:text-2xl font-bold text-gray-800 mb-2 font-montserrat">
+              Belum Ada Juara
+            </h3>
+            <p className="text-gray-400 text-sm md:text-base font-medium font-montserrat">
+              Belum ada pengguna yang mencapai streak. Kerjakan quiz tiap hari dan rebut posisi pertama!
+            </p>
+          </div>
+        ) : (
+          /* max-w: mobile full, desktop wider */
+          <div className="w-full max-w-md md:max-w-2xl mx-auto px-4 md:px-6">
+            {/* ── Podium ── */}
+            {top3.length >= 2 && (
+              <div
+                className="relative z-10 flex items-end gap-2 md:gap-4 mt-6 md:mt-10 -mb-14 md:-mb-20"
+                style={{ minHeight: 240 }}
+              >
+                {podiumOrder.map((user, i) => {
+                  if (!user) return <div key={i} style={{ flex: 1 }} />;
+                  return (
+                    <div
+                      key={user.user_id}
+                      className="flex flex-col items-center podium-col"
+                      style={{ flex: 1 }}
+                    >
+                      {/* Avatar floats above card */}
+                      <div
+                        className="relative z-10 podium-avatar-wrap"
+                        style={{
+                          marginBottom: `-${Math.round(mobileAvatarSizes[i] * 0.34)}px`,
+                          // pass desktop avatar size as CSS var
+                          ['--md-avatar' as string]: `${desktopAvatarSizes[i]}px`,
+                        }}
+                      >
+                        <Avatar
+                          user={user}
+                          size={mobileAvatarSizes[i]}
+                          mdSize={desktopAvatarSizes[i]}
+                        />
+                      </div>
+
+                      {/* Card */}
+                      <div
+                        className="w-full rounded-t-3xl flex flex-col items-center relative overflow-hidden podium-card"
+                        style={
+                          {
+                            height: mobileHeights[i],
+                            '--md-card-height': `${desktopHeights[i]}px`,
+                            '--md-pad-top': `${Math.round(desktopAvatarSizes[i] * 0.34) + 6}px`,
+                            paddingTop: Math.round(mobileAvatarSizes[i] * 0.34) + 6,
+                            background:
+                              podiumRank[i] === 1
+                                ? 'linear-gradient(to bottom, #c97e00 0%, #e09b14 45%, #f7f7f7 100%)'
+                                : podiumRank[i] === 2
+                                ? 'linear-gradient(to bottom, #8a8a8a 0%, #b0b0b0 45%, #f7f7f7 100%)'
+                                : 'linear-gradient(to bottom, #7a3a10 0%, #b06030 45%, #f7f7f7 100%)',
+                          } as React.CSSProperties
+                        }
+                      >
+                        {/* Username */}
+                        <span className="text-white font-semibold text-xs md:text-base text-center leading-tight drop-shadow px-1 font-montserrat">
+                          {user.user_name}
+                        </span>
+
+                        {/* Rank number */}
+                        <span
+                          className="absolute bottom-4 md:bottom-7 left-1/2 -translate-x-1/2 text-gray-900 font-extrabold font-montserrat"
+                          style={{ fontSize: podiumRank[i] === 1 ? 26 : 20 }}
+                        >
+                          {podiumRank[i]}
+                        </span>
+
+
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+
+            {/* ── Ranked List ── */}
+            <div className="relative z-0 flex flex-col gap-3 md:gap-4 pt-16 md:pt-24">
+              {top3.map((user, i) => (
+                <LeaderRow key={user.user_id} user={user} rank={i + 1} />
+              ))}
+              {rest.map((user, i) => (
+                <LeaderRow key={user.user_id} user={user} rank={i + 4} />
+              ))}
             </div>
-          ) : data.length === 0 ? (
-            <div className="text-center bg-white p-12 rounded-3xl border border-gray-200 shadow-sm border-dashed">
-              <Award size={48} className="text-gray-300 mx-auto mb-4" />
-              <h3 className="text-xl font-bold text-gray-800 mb-2">Belum Ada Juara</h3>
-              <p className="text-gray-500">Belum ada pengguna yang mencapai streak. Kerjakan quiz tiap hari dari sekarang dan rebut posisi pertama!</p>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {data.map((user, index) => {
-                const isTop3 = index < 3;
-                return (
-                  <div key={user.user_id} className={`flex items-center justify-between p-5 rounded-2xl transition-all duration-300 border hover:scale-[1.02] cursor-default
-                    ${index === 0 ? 'bg-gradient-to-r from-yellow-50 to-amber-100/50 border-yellow-200 shadow-sm' : 
-                      index === 1 ? 'bg-gradient-to-r from-gray-50 to-slate-100 border-gray-200' :
-                      index === 2 ? 'bg-gradient-to-r from-orange-50/50 to-amber-50 border-orange-100' : 
-                      'bg-white border-gray-100 hover:border-[#672cb9]/30'}
-                  `}>
-                     <div className="flex items-center gap-5">
-                       <span className={`w-10 h-10 flex items-center justify-center rounded-full font-bold text-lg border-2
-                         ${index === 0 ? 'bg-yellow-400 text-yellow-900 border-yellow-500 shadow-sm' : 
-                           index === 1 ? 'bg-gray-300 text-gray-700 border-gray-400':
-                           index === 2 ? 'bg-orange-300 text-orange-900 border-orange-400':
-                           'bg-gray-100 text-gray-500 border-transparent'}
-                       `}>
-                          {index === 0 ? <Crown size={20} /> : index + 1}
-                       </span>
-                       <div className="flex items-center gap-3">
-                         {user.user_avatar ? (
-                           <>
-                             {/* eslint-disable-next-line @next/next/no-img-element */}
-                             <img src={user.user_avatar} alt={user.user_name} className="w-10 h-10 rounded-full border border-gray-200 shadow-sm object-cover" />
-                           </>
-                         ) : (
-                           <div className="w-10 h-10 rounded-full bg-[#672cb9]/10 text-[#672cb9] flex items-center justify-center font-bold border border-[#672cb9]/20">
-                             {user.user_name.charAt(0).toUpperCase()}
-                           </div>
-                         )}
-                         <div>
-                           <h3 className={`font-bold ${isTop3 ? 'text-gray-900 text-lg' : 'text-gray-700 text-base'}`}>
-                             {user.user_name}
-                           </h3>
-                           <span className="text-xs font-medium text-gray-400">Total Hari Beruntun 🔥</span>
-                         </div>
-                       </div>
-                     </div>
-                     <div className="font-extrabold text-2xl px-4 py-1.5 rounded-xl bg-white/50 border border-white/60">
-                        {isTop3 ? (
-                          <span className={`bg-clip-text text-transparent bg-gradient-to-br ${index === 0 ? 'from-yellow-600 to-amber-800' : 'from-[#672cb9] to-indigo-800'}`}>
-                             {user.total_score}
-                          </span>
-                        ) : (
-                          <span className="text-gray-800">{user.total_score}</span>
-                        )}
-                        <span className="text-sm font-semibold text-gray-400 ml-1">hari</span>
-                     </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-       </div>
-    </div>
+          </div>
+        )}
+      </div>
+    </>
   );
 }

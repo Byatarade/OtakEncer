@@ -21,9 +21,6 @@ export default function KolaborasiPage() {
         transition={{ type: "spring", stiffness: 200, damping: 20 }}
         className="relative z-10 w-24 h-24 sm:w-28 sm:h-28 bg-white rounded-[32px] shadow-2xl flex items-center justify-center border border-gray-100 mb-8"
       >
-        <div className="absolute -top-3 -right-3 bg-yellow-400 text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-lg transform rotate-12 flex items-center gap-1 border-2 border-white">
-          <Sparkles size={10} /> Segera
-        </div>
         <Users size={48} className="text-[#672cb9]" strokeWidth={1.5} />
       </motion.div>
 
