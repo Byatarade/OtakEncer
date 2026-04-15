@@ -928,11 +928,11 @@ export default function MaterialReader() {
         {activeTab === 'quiz' && (
           <div className="flex flex-col items-center justify-start h-full text-center pt-6 pb-[140px] px-4 sm:px-12 overflow-y-auto overflow-x-hidden min-w-0 w-full page-scroll">
             {generatingInteractive ? (
-              <div className="flex flex-col items-center justify-center min-h-[60vh] gap-6">
-                 <Loader2 size={48} className="text-[#672cb9] animate-spin mb-4" />
-                 <h2 className="text-2xl font-bold animate-pulse text-gray-800">Menyusun Soal Quiz...</h2>
-                 <p className="text-gray-500">Membaca materi Anda dan mengekstrak pertanyaan pintar...</p>
-                 <div className="w-64 h-2 bg-gray-100 rounded-full overflow-hidden mt-4">
+              <div className="absolute inset-0 flex flex-col items-center justify-center bg-white z-10 gap-5 px-4 animate-in fade-in duration-300">
+                 <Loader2 size={48} className="text-[#672cb9] animate-spin mb-1" />
+                 <h2 className="text-2xl font-bold animate-pulse text-gray-800 text-center">Menyusun Soal Quiz...</h2>
+                 <p className="text-gray-500 text-center max-w-md">Membaca materi Anda dan mengekstrak pertanyaan pintar...</p>
+                 <div className="w-64 h-2 bg-gray-100 rounded-full overflow-hidden mt-1">
                      <div className="h-full bg-gradient-to-r from-[#672cb9] to-[#8c4ae1] animate-pulse rounded-full w-full"></div>
                  </div>
               </div>
@@ -1076,11 +1076,11 @@ export default function MaterialReader() {
         {activeTab === 'flashcard' && (
           <div className="flex flex-col items-center justify-start h-full pt-6 pb-[140px] px-4 md:px-12 overflow-y-auto overflow-x-hidden min-w-0 w-full page-scroll">
              {generatingInteractive ? (
-              <div className="flex flex-col items-center justify-center min-h-[60vh] gap-6">
-                 <Loader2 size={48} className="text-[#672cb9] animate-spin mb-4" />
-                 <h2 className="text-2xl font-bold animate-pulse text-gray-800">Menyusun Flashcard Pintar...</h2>
-                 <p className="text-gray-500 max-w-sm">AI sedang mengurai poin-poin utama materi menjadi kartu hafalan interaktif...</p>
-                 <div className="w-64 h-2 bg-gray-100 rounded-full overflow-hidden mt-4">
+              <div className="absolute inset-0 flex flex-col items-center justify-center bg-white z-10 gap-5 px-4 animate-in fade-in duration-300">
+                 <Loader2 size={48} className="text-[#672cb9] animate-spin mb-1" />
+                 <h2 className="text-2xl font-bold animate-pulse text-gray-800 text-center">Menyusun Flashcard Pintar...</h2>
+                 <p className="text-gray-500 max-w-sm text-center">AI sedang mengurai poin-poin utama materi menjadi kartu hafalan interaktif...</p>
+                 <div className="w-64 h-2 bg-gray-100 rounded-full overflow-hidden mt-1">
                      <div className="h-full bg-gradient-to-r from-[#672cb9] to-[#8c4ae1] animate-pulse rounded-full w-full"></div>
                  </div>
               </div>
@@ -1189,22 +1189,22 @@ export default function MaterialReader() {
         {activeTab === 'prediksi' && (
           <div className="flex flex-col items-center justify-start h-full pt-6 pb-[140px] px-4 sm:px-12 overflow-y-auto overflow-x-hidden min-w-0 w-full page-scroll">
             {generatingExam ? (
-              <div className="flex flex-col items-center justify-center min-h-[60vh] gap-6">
-                <div className="w-20 h-20 bg-gradient-to-br from-[#672cb9] to-[#8c4ae1] rounded-2xl flex items-center justify-center shadow-lg shadow-[#672cb9]/20 animate-pulse">
+              <div className="absolute inset-0 flex flex-col items-center justify-center bg-white z-10 gap-5 px-4 animate-in fade-in duration-300">
+                <div className="w-20 h-20 bg-gradient-to-br from-[#672cb9] to-[#8c4ae1] rounded-2xl flex items-center justify-center shadow-lg shadow-[#672cb9]/20 animate-pulse mb-1">
                   <GraduationCap size={40} className="text-white" />
                 </div>
-                <h2 className="text-2xl font-bold text-gray-800 animate-pulse">Menyusun Prediksi Soal Ujian...</h2>
-                <p className="text-gray-500 max-w-md">AI sedang menganalisis materi dan membuat 20 soal pilihan ganda + 10 soal essay dengan tingkat kesulitan bervariasi...</p>
-                <div className="w-64 h-2 bg-gray-100 rounded-full overflow-hidden mt-4">
+                <h2 className="text-2xl font-bold text-gray-800 animate-pulse text-center">Menyusun Prediksi Soal Ujian...</h2>
+                <p className="text-gray-500 max-w-md text-center">AI sedang menganalisis materi dan membuat 20 soal pilihan ganda + 10 soal essay dengan tingkat kesulitan bervariasi...</p>
+                <div className="w-64 h-2 bg-gray-100 rounded-full overflow-hidden mt-1">
                   <div className="h-full bg-gradient-to-r from-[#672cb9] to-[#8c4ae1] animate-pulse rounded-full w-full"></div>
                 </div>
               </div>
             ) : isGradingExam ? (
-              <div className="flex flex-col items-center justify-center min-h-[60vh] gap-6">
-                <Loader2 size={56} className="text-[#672cb9] animate-spin" />
-                <h2 className="text-2xl font-bold text-gray-800 animate-pulse">AI Sedang Menilai Jawaban...</h2>
-                <p className="text-gray-500 max-w-md">Mengoreksi pilihan ganda dan menganalisis jawaban essay Anda secara mendalam...</p>
-                <div className="w-64 h-2 bg-gray-100 rounded-full overflow-hidden mt-4">
+              <div className="absolute inset-0 flex flex-col items-center justify-center bg-white z-10 gap-5 px-4 animate-in fade-in duration-300">
+                <Loader2 size={56} className="text-[#672cb9] animate-spin mb-1" />
+                <h2 className="text-2xl font-bold text-gray-800 animate-pulse text-center">AI Sedang Menilai Jawaban...</h2>
+                <p className="text-gray-500 max-w-md text-center">Mengoreksi pilihan ganda dan menganalisis jawaban essay Anda secara mendalam...</p>
+                <div className="w-64 h-2 bg-gray-100 rounded-full overflow-hidden mt-1">
                   <div className="h-full bg-gradient-to-r from-[#672cb9] to-[#8c4ae1] animate-pulse rounded-full w-full"></div>
                 </div>
               </div>

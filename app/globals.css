@@ -93,3 +93,23 @@ html {
   width: 800px !important; /* Fix Width agar Canvas stabil sebelum PDF diparsing */
   margin: 0 auto;
 }
+
+/* Custom SweetAlert2 styling */
+div:where(.swal2-container) div:where(.swal2-popup) {
+  border-radius: 1.5rem !important; /* Membuat pop-up lebih rounded */
+}
+
+div:where(.swal2-icon) {
+  transform: scale(0.65) !important; /* Mengecilkan logo checklist dan silang */
+  margin: 0.5em auto -0.5em !important; /* Mengurangi jarak margin bawah logo untuk mendekatkan ke teks */
+}
+
+h2:where(.swal2-title) {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+  text-align: center !important;
+}
+
+div:where(.swal2-html-container) {
+  text-align: center !important;
+}

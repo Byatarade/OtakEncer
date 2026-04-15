@@ -348,7 +348,7 @@ function Dashboard() {
                        <Image priority src="/assets/logo.svg" alt="OtakEncer Loading" fill className="object-contain" />
                      </div>
                    </div>
-                   <h3 className="text-xl font-bold text-[#672cb9] mb-2 animate-pulse">AI Sedang Membaca & Merangkum Materi...</h3>
+                   <h3 className="text-xl font-bold text-[#672cb9] mb-2 animate-pulse text-center">AI Sedang Membaca & Merangkum Materi...</h3>
                    <p className="text-slate-500 font-medium text-center">Proses ini mungkin memakan waktu hingga satu menit. Harap jangan tutup jendela ini.</p>
                 </div>
               ) : (
