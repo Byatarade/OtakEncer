@@ -156,32 +156,65 @@ Format output:
          } catch(e) { console.warn("OpenRouter fetch error:", e); }
 
          if (!orSuccess) {
-            console.log("=== OPENROUTER SIBUK, FALLBACK TERAKHIR KE DEEPSEEK (GRADE EXAM) ===");
-            const dsRes = await fetch('https://api.deepseek.com/chat/completions', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${process.env.DEEPSEEK_API_KEY}`
-              },
-              body: JSON.stringify({
-                model: 'deepseek-chat',
-                messages: [{ role: 'user', content: essayPrompt }],
-                temperature: 0.2
-              })
-            });
-            
-            if (!dsRes.ok) {
-               const failErr = await dsRes.text();
-               throw new Error(`Semua server AI (Gemini, Groq, OpenRouter, DeepSeek) sibuk: ${failErr}`);
+            console.log("=== OPENROUTER SIBUK, FALLBACK KE DEEPSEEK (GRADE EXAM) ===");
+            let dsSuccess = false;
+            try {
+              const dsRes = await fetch('https://api.deepseek.com/chat/completions', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': `Bearer ${process.env.DEEPSEEK_API_KEY}`
+                },
+                body: JSON.stringify({
+                  model: 'deepseek-chat',
+                  messages: [{ role: 'user', content: essayPrompt }],
+                  temperature: 0.2
+                })
+              });
+              
+              if (dsRes.ok) {
+                const dsData = await dsRes.json();
+                let dsOutput = dsData.choices[0].message.content.trim();
+                if (dsOutput.startsWith('```json')) {
+                   dsOutput = dsOutput.replace(/^```json/, '').replace(/```$/, '').trim();
+                } else if (dsOutput.startsWith('```')) {
+                   dsOutput = dsOutput.replace(/^```/, '').replace(/```$/, '').trim();
+                }
+                essayGrades = JSON.parse(dsOutput);
+                dsSuccess = true;
+              } else {
+                console.warn("DeepSeek failed with status:", dsRes.status);
+              }
+            } catch(e) { console.warn("DeepSeek fetch error:", e); }
+
+            if (!dsSuccess) {
+               console.log("=== DEEPSEEK SIBUK, FALLBACK TERAKHIR KE HUGGING FACE (GRADE EXAM) ===");
+               const hfRes = await fetch('https://api-inference.huggingface.co/models/Qwen/Qwen2.5-72B-Instruct/v1/chat/completions', {
+                 method: 'POST',
+                 headers: {
+                   'Content-Type': 'application/json',
+                   'Authorization': `Bearer ${process.env.HUGGINGFACE_API_KEY}`
+                 },
+                 body: JSON.stringify({
+                   model: 'Qwen/Qwen2.5-72B-Instruct',
+                   messages: [{ role: 'user', content: essayPrompt }],
+                   temperature: 0.2
+                 })
+               });
+               
+               if (!hfRes.ok) {
+                  const failErr = await hfRes.text();
+                  throw new Error(`Semua server AI (Gemini, Groq, OpenRouter, DeepSeek, HuggingFace) sibuk: ${failErr}`);
+               }
+               const hfData = await hfRes.json();
+               let hfOutput = hfData.choices[0].message.content.trim();
+               if (hfOutput.startsWith('```json')) {
+                  hfOutput = hfOutput.replace(/^```json/, '').replace(/```$/, '').trim();
+               } else if (hfOutput.startsWith('```')) {
+                  hfOutput = hfOutput.replace(/^```/, '').replace(/```$/, '').trim();
+               }
+               essayGrades = JSON.parse(hfOutput);
             }
-            const dsData = await dsRes.json();
-            let dsOutput = dsData.choices[0].message.content.trim();
-            if (dsOutput.startsWith('```json')) {
-               dsOutput = dsOutput.replace(/^```json/, '').replace(/```$/, '').trim();
-            } else if (dsOutput.startsWith('```')) {
-               dsOutput = dsOutput.replace(/^```/, '').replace(/```$/, '').trim();
-            }
-            essayGrades = JSON.parse(dsOutput);
          }
       }
     }

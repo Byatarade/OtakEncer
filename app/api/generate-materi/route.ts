@@ -299,28 +299,55 @@ ${safePdfText}
              console.warn("OpenRouter fetch error:", e);
            }
 
-           if (!orSuccess) {
-              console.log("=== OPENROUTER SIBUK, FALLBACK TERAKHIR KE DEEPSEEK ===");
-              const dsRes = await fetch('https://api.deepseek.com/chat/completions', {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                  'Authorization': `Bearer ${process.env.DEEPSEEK_API_KEY}`
-                },
-                body: JSON.stringify({
-                  model: 'deepseek-chat',
-                  messages: [{ role: 'user', content: finalPrompt }],
-                  temperature: 0.3
-                })
-              });
-              
-              if (!dsRes.ok) {
-                const failErr = await dsRes.text();
-                throw new Error(`Semua server AI (Gemini, Groq, OpenRouter, DeepSeek) sedang sibuk. Mohon coba beberapa saat lagi.`);
-              }
-              const dsData = await dsRes.json();
-              aiSummary = dsData.choices[0].message.content;
-           }
+            if (!orSuccess) {
+               console.log("=== OPENROUTER SIBUK, FALLBACK KE DEEPSEEK ===");
+               let dsSuccess = false;
+               try {
+                 const dsRes = await fetch('https://api.deepseek.com/chat/completions', {
+                   method: 'POST',
+                   headers: {
+                     'Content-Type': 'application/json',
+                     'Authorization': `Bearer ${process.env.DEEPSEEK_API_KEY}`
+                   },
+                   body: JSON.stringify({
+                     model: 'deepseek-chat',
+                     messages: [{ role: 'user', content: finalPrompt }],
+                     temperature: 0.3
+                   })
+                 });
+                 
+                 if (dsRes.ok) {
+                   const dsData = await dsRes.json();
+                   aiSummary = dsData.choices[0].message.content;
+                   dsSuccess = true;
+                 } else {
+                   console.warn("DeepSeek failed with status:", dsRes.status);
+                 }
+               } catch(e) { console.warn("DeepSeek fetch error:", e); }
+
+               if (!dsSuccess) {
+                  console.log("=== DEEPSEEK SIBUK, FALLBACK TERAKHIR KE HUGGING FACE ===");
+                  const hfRes = await fetch('https://api-inference.huggingface.co/models/Qwen/Qwen2.5-72B-Instruct/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                      'Content-Type': 'application/json',
+                      'Authorization': `Bearer ${process.env.HUGGINGFACE_API_KEY}`
+                    },
+                    body: JSON.stringify({
+                      model: 'Qwen/Qwen2.5-72B-Instruct',
+                      messages: [{ role: 'user', content: finalPrompt }],
+                      temperature: 0.3
+                    })
+                  });
+                  
+                  if (!hfRes.ok) {
+                    const failErr = await hfRes.text();
+                    throw new Error(`Semua server AI (Gemini, Groq, OpenRouter, DeepSeek, HuggingFace) sedang sibuk. Mohon coba beberapa saat lagi.`);
+                  }
+                  const hfData = await hfRes.json();
+                  aiSummary = hfData.choices[0].message.content;
+               }
+            }
         }
       } else {
         // Lempar ke frontend jika bukan masalah 503

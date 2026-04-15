@@ -130,27 +130,55 @@ Struktur HARUS persis seperti ini:
          } catch(e) { console.warn("OpenRouter fetch error:", e); }
 
          if (!orSuccess) {
-            // 4. Fallback Lapis 3 (Terakhir): DeepSeek
-            console.log("=== OPENROUTER SIBUK, FALLBACK TERAKHIR KE DEEPSEEK (INTERACTIVE) ===");
-            const dsRes = await fetch('https://api.deepseek.com/chat/completions', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${process.env.DEEPSEEK_API_KEY}`
-              },
-              body: JSON.stringify({
-                model: 'deepseek-chat',
-                messages: [{ role: 'user', content: prompt }],
-                temperature: 0.2
-              })
-            });
-            
-            if (!dsRes.ok) {
-               const errText = await dsRes.text();
-               throw new Error("Gagal generate dari 4 server AI (Gemini, Groq, OpenRouter, DeepSeek): " + errText);
+            // 4. Fallback Lapis 3: DeepSeek
+            console.log("=== OPENROUTER SIBUK, FALLBACK KE DEEPSEEK (INTERACTIVE) ===");
+            let dsSuccess = false;
+            try {
+              const dsRes = await fetch('https://api.deepseek.com/chat/completions', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': `Bearer ${process.env.DEEPSEEK_API_KEY}`
+                },
+                body: JSON.stringify({
+                  model: 'deepseek-chat',
+                  messages: [{ role: 'user', content: prompt }],
+                  temperature: 0.2
+                })
+              });
+              
+              if (dsRes.ok) {
+                 const dsData = await dsRes.json();
+                 aiOutput = dsData.choices[0].message.content.trim();
+                 dsSuccess = true;
+              } else {
+                 console.warn("DeepSeek failed with status:", dsRes.status);
+              }
+            } catch(e) { console.warn("DeepSeek fetch error:", e); }
+
+            if (!dsSuccess) {
+               // 5. Fallback Lapis 4 (Terakhir): Hugging Face
+               console.log("=== DEEPSEEK SIBUK, FALLBACK TERAKHIR KE HUGGING FACE (INTERACTIVE) ===");
+               const hfRes = await fetch('https://api-inference.huggingface.co/models/Qwen/Qwen2.5-72B-Instruct/v1/chat/completions', {
+                 method: 'POST',
+                 headers: {
+                   'Content-Type': 'application/json',
+                   'Authorization': `Bearer ${process.env.HUGGINGFACE_API_KEY}`
+                 },
+                 body: JSON.stringify({
+                   model: 'Qwen/Qwen2.5-72B-Instruct',
+                   messages: [{ role: 'user', content: prompt }],
+                   temperature: 0.2
+                 })
+               });
+               
+               if (!hfRes.ok) {
+                  const errText = await hfRes.text();
+                  throw new Error("Gagal generate dari 5 server AI (Gemini, Groq, OpenRouter, DeepSeek, HuggingFace): " + errText);
+               }
+               const hfData = await hfRes.json();
+               aiOutput = hfData.choices[0].message.content.trim();
             }
-            const dsData = await dsRes.json();
-            aiOutput = dsData.choices[0].message.content.trim();
          }
       }
     }
