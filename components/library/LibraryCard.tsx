@@ -13,7 +13,7 @@ import { QRCodeSVG } from "qrcode.react";
 import jsPDF from "jspdf";
 import { Document, Packer, Paragraph, TextRun } from "docx";
 import { saveAs } from "file-saver";
-import Swal from "sweetalert2";
+import { showSuccess, showError, showConfirm, showSuccessToast } from '@/lib/swal';
 import { supabase } from "@/lib/supabase";
 
 export interface Material {
@@ -95,16 +95,14 @@ export const LibraryCard = ({ material, onDeleteSuccess }: LibraryCardProps) => 
     e.stopPropagation();
     setIsMenuOpen(false);
 
-    const result = await Swal.fire({
-      title: 'Hapus Materi ini?',
-      text: "Materi dan hasil rangkuman AI Anda akan dihapus permanen.",
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#ef4444',
-      cancelButtonColor: '#9ca3af',
-      confirmButtonText: 'Ya, Hapus',
-      cancelButtonText: 'Batal'
-    });
+    const result = await showConfirm(
+      'Hapus Materi ini?',
+      'Materi dan hasil rangkuman AI Anda akan dihapus permanen.',
+      {
+        confirmButtonText: 'Ya, Hapus',
+        cancelButtonText: 'Batal',
+      }
+    );
 
     if (result.isConfirmed) {
       setIsProcessing(true);
@@ -112,19 +110,13 @@ export const LibraryCard = ({ material, onDeleteSuccess }: LibraryCardProps) => 
         const { error } = await supabase.from('materials').delete().eq('id', material.id);
         if (error) throw error;
         
-        Swal.fire({
-          title: 'Terhapus!',
-          text: 'Materi Anda telah dihapus.',
-          icon: 'success',
-          timer: 1500,
-          showConfirmButton: false
-        });
+        showSuccess('Terhapus!', 'Materi Anda telah dihapus.');
         
         if (onDeleteSuccess) onDeleteSuccess();
       } catch (err: unknown) {
         console.error("Delete error:", err);
         const errMessage = err instanceof Error ? err.message : 'Gagal menghapus materi.';
-        Swal.fire('Error!', errMessage, 'error');
+        showError('Gagal Menghapus', errMessage);
       } finally {
         setIsProcessing(false);
       }
@@ -178,7 +170,7 @@ export const LibraryCard = ({ material, onDeleteSuccess }: LibraryCardProps) => 
       setShowDownloadModal(false);
     } catch (err: unknown) {
       console.error(err);
-      Swal.fire('Gagal', 'Terjadi kesalahan saat memproses Export PDF.', 'error');
+      showError('Gagal', 'Terjadi kesalahan saat memproses Export PDF.');
     } finally {
       setIsProcessing(false);
     }
@@ -218,7 +210,7 @@ export const LibraryCard = ({ material, onDeleteSuccess }: LibraryCardProps) => 
       setShowDownloadModal(false);
     } catch (err: unknown) {
       console.error(err);
-      Swal.fire('Gagal', 'Terjadi kesalahan saat memproses Export DOCX.', 'error');
+      showError('Gagal', 'Terjadi kesalahan saat memproses Export DOCX.');
     } finally {
       setIsProcessing(false);
     }
@@ -341,7 +333,7 @@ export const LibraryCard = ({ material, onDeleteSuccess }: LibraryCardProps) => 
                     <button 
                       onClick={() => {
                         navigator.clipboard.writeText(shareUrl);
-                        Swal.fire({ toast: true, position: 'top-end', showConfirmButton: false, timer: 2000, title: 'Tersalin!', icon: 'success' });
+                        showSuccessToast('Tersalin!');
                       }}
                       className="bg-[#672cb9] hover:bg-[#5a24a3] text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors shrink-0 shadow-sm"
                     >

@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useAuth } from '@/components/AuthProvider';
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
-import Swal from 'sweetalert2';
+import { showError } from '@/lib/swal';
 
 export default function LoginPage() {
   const { loginWithGoogle, user, isLoaded } = useAuth();
@@ -26,12 +26,7 @@ export default function LoginPage() {
       await loginWithGoogle();
     } catch (err) {
       console.error("Google Login Failed:", err);
-      Swal.fire({
-        title: 'Login Gagal',
-        text: 'Terjadi kesalahan saat mencoba masuk dengan Google.',    
-        icon: 'error',
-        confirmButtonColor: '#672cb9'
-      });
+      showError('Login Gagal', 'Terjadi kesalahan saat mencoba masuk dengan Google.');
       setIsLoading(false);
     }
   };

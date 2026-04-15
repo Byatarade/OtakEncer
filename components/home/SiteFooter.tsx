@@ -25,30 +25,9 @@ export const SiteFooter = forwardRef<HTMLElement, SiteFooterProps>(function Site
               </div>
               <span className="font-bold text-[24px] md:text-[28px] tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white to-white/80">OtakEncer</span>
             </Link>
-            <p className="text-white/60 text-[14px] md:text-[15px] leading-[1.7] max-w-[380px] mb-8 font-['Montserrat',sans-serif]">
+            <p className="text-white/60 text-[14px] md:text-[15px] leading-[1.7] max-w-[380px] font-['Montserrat',sans-serif]">
               Platform AI pintar yang mengubah dokumen kompleks menjadi materi interaktif siap pelajari. Belajar lebih cerdas, tingkatkan produktivitasmu.
             </p>
-
-            <div className="flex gap-4">
-              <Link
-                href="#"
-                className="w-11 h-11 flex items-center justify-center hover:-translate-y-1 bg-white/5 hover:bg-[#672cb9] border border-white/10 rounded-full transition-all group shadow-sm hover:shadow-[0_10px_20px_rgba(103,44,185,0.4)]"
-              >
-                <Image src="/assets/twitter-icon.svg" alt="X" width={18} height={18} className="brightness-0 invert group-hover:scale-110 transition-transform" />
-              </Link>
-              <Link
-                href="#"
-                className="w-11 h-11 flex items-center justify-center hover:-translate-y-1 bg-white/5 hover:bg-[#672cb9] border border-white/10 rounded-full transition-all group shadow-sm hover:shadow-[0_10px_20px_rgba(103,44,185,0.4)]"
-              >
-                <Image src="/assets/facebook-icon.svg" alt="FB" width={18} height={18} className="brightness-0 invert group-hover:scale-110 transition-transform" />
-              </Link>
-              <Link
-                href="#"
-                className="w-11 h-11 flex items-center justify-center hover:-translate-y-1 bg-white/5 hover:bg-[#672cb9] border border-white/10 rounded-full transition-all group shadow-sm hover:shadow-[0_10px_20px_rgba(103,44,185,0.4)]"
-              >
-                <Image src="/assets/instagram-social.svg" alt="IG" width={18} height={18} className="brightness-0 invert group-hover:scale-110 transition-transform" />
-              </Link>
-            </div>
           </div>
 
           <div className="col-span-1 lg:col-span-7 grid grid-cols-2 md:grid-cols-3 gap-10 md:gap-8">
@@ -107,9 +86,9 @@ export const SiteFooter = forwardRef<HTMLElement, SiteFooterProps>(function Site
                 <Link href="#" className="hover:text-[#ffa515] hover:translate-x-1 transition-all w-fit">
                   Kebijakan Privasi
                 </Link>
-                <Link href="#" className="hover:text-[#ffa515] hover:translate-x-1 transition-all w-fit">
+                <a href="mailto:cs@otakencer.me" className="hover:text-[#ffa515] hover:translate-x-1 transition-all w-fit">
                   Hubungi Kami
-                </Link>
+                </a>
               </div>
             </div>
           </div>

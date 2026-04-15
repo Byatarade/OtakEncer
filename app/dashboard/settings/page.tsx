@@ -8,7 +8,7 @@ import { supabase } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import Image from 'next/image';
-import Swal from 'sweetalert2';
+import { showSuccess, showError } from '@/lib/swal';
 import Link from 'next/link';
 import Cropper from 'react-easy-crop';
 import getCroppedImg from '@/lib/get-cropped-img';
@@ -123,7 +123,7 @@ export default function SettingsPage() {
     if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0];
       if (file.size > 2 * 1024 * 1024) {
-        Swal.fire({ title: 'Terlalu Besar', text: 'Ukuran foto maksimal 2MB', icon: 'error', confirmButtonColor: '#672cb9' });
+        showError('Ukuran File Terlalu Besar', 'Ukuran foto maksimal 2MB. Silakan upload foto dengan ukuran yang lebih kecil.');
         if (fileInputRef.current) fileInputRef.current.value = '';
         return;
       }
@@ -154,7 +154,7 @@ export default function SettingsPage() {
       if (fileInputRef.current) fileInputRef.current.value = '';
     } catch (e) {
       console.error(e);
-      Swal.fire({ title: 'Gagal', text: 'Gagal mengupload foto', icon: 'error', confirmButtonColor: '#672cb9' });
+      showError('Gagal Upload', 'Gagal mengupload foto. Silakan coba lagi.');
     } finally {
       setLoading(false);
     }
@@ -202,10 +202,10 @@ export default function SettingsPage() {
         }
       }
 
-      Swal.fire({ title: 'Berhasil!', text: 'Profil berhasil diperbarui!', icon: 'success', confirmButtonColor: '#672cb9' });
+      showSuccess('Berhasil!', 'Profil berhasil diperbarui!');
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Gagal memperbarui profil.';
-      Swal.fire({ title: 'Gagal', text: message, icon: 'error', confirmButtonColor: '#672cb9' });
+      showError('Gagal', message);
     } finally {
       setLoading(false);
     }

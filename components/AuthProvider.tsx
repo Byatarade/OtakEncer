@@ -96,7 +96,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const logout = async () => {
-    await supabase.auth.signOut();
+    // Reset user state SEGERA agar tidak ada race condition
+    // di mana AuthGuard masih melihat `user` sebelum signOut selesai
+    setUser(null);
+    try {
+      await supabase.auth.signOut();
+    } catch (err) {
+      console.warn('Logout error (non-fatal):', err);
+    }
+    // Force hard redirect ke landing page agar cookies benar-benar bersih
     window.location.href = '/';
   };
 
@@ -117,7 +125,9 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
   // tapi guard client side tetap kita taruh sebagai safety-net fallback jika token kedaluwarsa dsb.
   useEffect(() => {
     if (isLoaded && !user) {
-      router.replace('/login');
+      // Redirect ke '/' (landing) bukan '/login' agar tidak loop
+      // dengan middleware yang juga redirect unauthenticated → '/login'
+      router.replace('/');
     }
   }, [user, isLoaded, router]);
 

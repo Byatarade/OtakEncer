@@ -53,8 +53,8 @@ export default function MobileNavbar() {
   }, []);
 
   const handleLogout = () => {
+    // Cukup panggil logout() — AuthProvider handle redirect ke '/'
     logout();
-    router.replace("/login");
   };
 
   // Upload button: dispatch custom event (listened by dashboard page)
@@ -166,7 +166,7 @@ export default function MobileNavbar() {
                   </Link>
 
                   <Link
-                    href="mailto:support@otakencer.com"
+                    href="mailto:cs@otakencer.me"
                     onClick={() => setIsProfileOpen(false)}
                     className="flex items-center gap-2.5 px-3 py-2.5 text-[13px] font-medium text-slate-600 hover:text-[#672cb9] hover:bg-indigo-50/60 rounded-xl transition-colors"
                   >

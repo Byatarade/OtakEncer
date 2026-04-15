@@ -1190,11 +1190,9 @@ export default function MaterialReader() {
           <div className="flex flex-col items-center justify-start h-full pt-6 pb-[140px] px-4 sm:px-12 overflow-y-auto overflow-x-hidden min-w-0 w-full page-scroll">
             {generatingExam ? (
               <div className="absolute inset-0 flex flex-col items-center justify-center bg-white z-10 gap-5 px-4 animate-in fade-in duration-300">
-                <div className="w-20 h-20 bg-gradient-to-br from-[#672cb9] to-[#8c4ae1] rounded-2xl flex items-center justify-center shadow-lg shadow-[#672cb9]/20 animate-pulse mb-1">
-                  <GraduationCap size={40} className="text-white" />
-                </div>
-                <h2 className="text-2xl font-bold text-gray-800 animate-pulse text-center">Menyusun Prediksi Soal Ujian...</h2>
-                <p className="text-gray-500 max-w-md text-center">AI sedang menganalisis materi dan membuat 20 soal pilihan ganda + 10 soal essay dengan tingkat kesulitan bervariasi...</p>
+                <Loader2 size={48} className="text-[#672cb9] animate-spin mb-1" />
+                <h2 className="text-2xl font-bold text-gray-800 text-center">Menyusun Prediksi Soal Ujian...</h2>
+                <p className="text-gray-500 max-w-md text-center">AI sedang menganalisis materi dan membuat soal pilihan ganda + essay dengan tingkat kesulitan bervariasi...</p>
                 <div className="w-64 h-2 bg-gray-100 rounded-full overflow-hidden mt-1">
                   <div className="h-full bg-gradient-to-r from-[#672cb9] to-[#8c4ae1] animate-pulse rounded-full w-full"></div>
                 </div>

@@ -7,7 +7,7 @@ import { useAuth } from '@/components/AuthProvider';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useState, useRef, useEffect, Suspense } from 'react';
 import Link from 'next/link';
-import Swal from 'sweetalert2';
+import { showSuccess, showError } from '@/lib/swal';
 import { formatDistanceToNow, format } from 'date-fns';
 import { toZonedTime } from 'date-fns-tz';
 import { Play } from 'next/font/google';
@@ -22,7 +22,19 @@ function Dashboard() {
   const [showLinkInput, setShowLinkInput] = useState(false);
   const [linkUrl, setLinkUrl] = useState('');
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const abortControllerRef = useRef<AbortController | null>(null);
   const searchParams = useSearchParams();
+
+  // Prevent accidental page close/refresh during upload
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (isUploading) {
+        e.preventDefault();
+      }
+    };
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [isUploading]);
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -39,21 +51,11 @@ function Dashboard() {
 
     // Cross-validation
     if (isAudioInput && !isAudioFile) {
-       Swal.fire({
-         title: 'Format Tidak Valid',
-         text: 'Harap upload file audio (MP3, WAV, M4A, dll) pada menu Upload Audio.',
-         icon: 'error',
-         confirmButtonColor: '#672cb9'
-       });
+       showError('Format Tidak Valid', 'Harap upload file audio (MP3, WAV, M4A, dll) pada menu Upload Audio.');
        return;
     }
     if (isDocInput && !isDocFile) {
-       Swal.fire({
-         title: 'Format Tidak Valid',
-         text: 'Harap upload file dokumen (PDF, DOCX, PPTX) pada menu Upload Dokumen.',
-         icon: 'error',
-         confirmButtonColor: '#672cb9'
-       });
+       showError('Format Tidak Valid', 'Harap upload file dokumen (PDF, DOCX, PPTX) pada menu Upload Dokumen.');
        return;
     }
 
@@ -61,12 +63,10 @@ function Dashboard() {
     const maxSize = isAudio ? 25 * 1024 * 1024 : 10 * 1024 * 1024; // 25MB audio, 10MB doc
 
     if (file.size > maxSize) {
-      Swal.fire({
-        title: 'File Terlalu Besar',
-        text: `Ukuran file melebihi batas maksimal (${isAudio ? '25MB' : '10MB'})!`,
-        icon: 'error',
-        confirmButtonColor: '#672cb9'
-      });
+      showError(
+        'Ukuran File Terlalu Besar',
+        `Ukuran file melebihi batas maksimal (${isAudio ? '25MB' : '10MB'}). Silakan upload file dengan ukuran yang lebih kecil.`
+      );
       return;
     }
 
@@ -78,47 +78,40 @@ function Dashboard() {
 
       const { data: { session } } = await supabase.auth.getSession();
 
+      // Create AbortController for cancel support
+      const controller = new AbortController();
+      abortControllerRef.current = controller;
+
       const response = await fetch('/api/generate-materi', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${session?.access_token}`
         },
         body: formData,
+        signal: controller.signal,
       });
 
       const result = await response.json();
 
       if (!response.ok) {
-         Swal.fire({
-           title: 'Gagal Memproses',
-           text: result.error || 'Terjadi kesalahan saat memproses materi.',
-           icon: 'error',
-           confirmButtonColor: '#672cb9'
-         });
+         showError('Gagal Memproses', result.error || 'Terjadi kesalahan saat memproses materi. Silakan coba lagi.');
       } else {
          // Sukses
          setIsUploadPopupOpen(false);
-         Swal.fire({
-           title: 'Berhasil!',
-           text: 'Materi berhasil dibuat.',
-           icon: 'success',
-           timer: 1500,
-           showConfirmButton: false,
-           timerProgressBar: true
-         });
+         showSuccess('Berhasil!', 'Materi berhasil dibuat.');
          setTimeout(() => {
            router.push('/dashboard/library');
          }, 1500);
       }
     } catch (err: unknown) {
-       Swal.fire({
-         title: 'Terjadi Kesalahan',
-         text: 'Gagal mengupload file. Periksa koneksi internet Anda dan coba lagi.',
-         icon: 'error',
-         confirmButtonColor: '#672cb9'
-       });
+       if (err instanceof DOMException && err.name === 'AbortError') {
+         // User cancelled — don't show error
+         return;
+       }
+       showError('Terjadi Kesalahan', 'Gagal mengupload file. Periksa koneksi internet Anda dan coba lagi.');
        console.error("Upload error:", err);
     } finally {
+       abortControllerRef.current = null;
        setIsUploading(false);
     }
   };
@@ -127,12 +120,7 @@ function Dashboard() {
     if (!linkUrl || !user) return;
 
     if (!linkUrl.includes('youtube.com') && !linkUrl.includes('youtu.be')) {
-      Swal.fire({
-         title: 'Link Tidak Valid',
-         text: 'Harap masukkan link URL dari YouTube yang benar (contoh: https://youtu.be/xxx).',
-         icon: 'error',
-         confirmButtonColor: '#672cb9'
-      });
+      showError('Link Tidak Valid', 'Harap masukkan link URL dari YouTube yang benar (contoh: https://youtu.be/xxx).');
       return;
     }
 
@@ -146,54 +134,49 @@ function Dashboard() {
 
       const { data: { session } } = await supabase.auth.getSession();
 
+      // Create AbortController for cancel support
+      const controller = new AbortController();
+      abortControllerRef.current = controller;
+
       const response = await fetch('/api/generate-materi', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${session?.access_token}`
         },
         body: formData,
+        signal: controller.signal,
       });
 
       const result = await response.json();
 
       if (!response.ok) {
-         Swal.fire({
-           title: 'Gagal Memproses Video',
-           text: result.error || 'Terjadi kesalahan saat memproses video YouTube.',
-           icon: 'error',
-           confirmButtonColor: '#672cb9'
-         });
+         showError('Gagal Memproses Video', result.error || 'Terjadi kesalahan saat memproses video YouTube. Silakan coba lagi.');
       } else {
          setLinkUrl('');
          setIsUploadPopupOpen(false);
-         Swal.fire({
-           title: 'Berhasil!',
-           text: 'Materi dari YouTube berhasil dibuat.',
-           icon: 'success',
-           timer: 1500,
-           showConfirmButton: false,
-           timerProgressBar: true
-         });
+         showSuccess('Berhasil!', 'Materi dari YouTube berhasil dibuat.');
          setTimeout(() => {
            router.push('/dashboard/library');
          }, 1500);
       }
     } catch (err: unknown) {
-       Swal.fire({
-         title: 'Terjadi Kesalahan',
-         text: 'Gagal memproses link YouTube. Periksa koneksi internet Anda.',
-         icon: 'error',
-         confirmButtonColor: '#672cb9'
-       });
+       if (err instanceof DOMException && err.name === 'AbortError') {
+         // User cancelled — don't show error
+         return;
+       }
+       showError('Terjadi Kesalahan', 'Gagal memproses link YouTube. Periksa koneksi internet Anda.');
        console.error("Youtube error:", err);
     } finally {
+       abortControllerRef.current = null;
        setIsUploading(false);
     }
   };
 
   const handleLogout = () => {
+    // Cukup panggil logout() saja — AuthProvider akan handle
+    // reset state + redirect ke '/'. Jangan tambahkan router.replace('/login')
+    // karena itu menyebabkan redirect loop.
     logout();
-    router.replace('/login');
   };
 
   useEffect(() => {
@@ -275,7 +258,7 @@ function Dashboard() {
                      Pengaturan Akun
                    </Link>
                    
-                   <Link href="mailto:support@otakencer.com" className="flex items-center gap-3 px-3 py-2.5 text-[14px] font-medium text-slate-600 hover:text-[#672cb9] hover:bg-indigo-50/50 rounded-xl transition-colors">
+                   <Link href="mailto:cs@otakencer.me" className="flex items-center gap-3 px-3 py-2.5 text-[14px] font-medium text-slate-600 hover:text-[#672cb9] hover:bg-indigo-50/50 rounded-xl transition-colors">
                      <HelpCircle size={18} />
                      Bantuan & Support
                    </Link>
@@ -342,14 +325,25 @@ function Dashboard() {
                      {/* Lingkaran Loading Ungu */}
                      <div className="absolute inset-0 rounded-full border-4 border-[#672cb9]/20 border-t-[#672cb9] animate-spin"></div>
                      <div className="absolute inset-[6px] rounded-full border-4 border-[#672cb9]/20 border-b-[#672cb9] animate-[spin_2s_linear_infinite_reverse]"></div>
-                     
-                     {/* Logo Otak Encer */}
+                     {/* Logo OtakEncer — pulse hanya di logo, bukan text */}
                      <div className="relative w-10 h-10 flex items-center justify-center animate-pulse">
                        <Image priority src="/assets/logo.svg" alt="OtakEncer Loading" fill className="object-contain" />
                      </div>
                    </div>
-                   <h3 className="text-xl font-bold text-[#672cb9] mb-2 animate-pulse text-center">AI Sedang Membaca & Merangkum Materi...</h3>
-                   <p className="text-slate-500 font-medium text-center">Proses ini mungkin memakan waktu hingga satu menit. Harap jangan tutup jendela ini.</p>
+                   {/* Teks TANPA animate-pulse agar tidak kedap-kedip */}
+                   <h3 className="text-xl font-bold text-[#672cb9] mb-2 text-center">AI Sedang Membaca &amp; Merangkum Materi...</h3>
+                   <p className="text-slate-500 font-medium text-center mb-6">Proses ini mungkin memakan waktu hingga satu menit.</p>
+                   {/* Tombol Cancel */}
+                   <button
+                     onClick={() => {
+                       abortControllerRef.current?.abort();
+                       setIsUploading(false);
+                     }}
+                     className="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-slate-200 bg-white text-slate-600 hover:bg-red-50 hover:border-red-200 hover:text-red-600 font-semibold text-sm transition-all shadow-sm"
+                   >
+                     <X size={16} />
+                     Batalkan Generate
+                   </button>
                 </div>
               ) : (
                 <>
@@ -446,17 +440,25 @@ function DailyTokensCard({ userId }: { userId: string }) {
   useEffect(() => {
     const fetchUsage = async () => {
       try {
-        const startOfDay = new Date();
-        startOfDay.setHours(0, 0, 0, 0);
+        const todayStr = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Jakarta' }); // YYYY-MM-DD
 
-        const { count, error } = await supabase
-          .from('materials')
-          .select('*', { count: 'exact', head: true })
+        const { data, error } = await supabase
+          .from('user_streaks')
+          .select('material_gen_count, last_material_gen_date')
           .eq('user_id', userId)
-          .gte('created_at', startOfDay.toISOString());
+          .single();
 
-        if (error) throw error;
-        setUsageCount(count || 0);
+        if (error && error.code !== 'PGRST116') {
+          // Ignore not found error
+          throw error;
+        }
+        
+        let count = 0;
+        if (data && data.last_material_gen_date === todayStr) {
+          count = data.material_gen_count || 0;
+        }
+
+        setUsageCount(count);
       } catch (err) {
         console.error('Error fetching usage:', err);
       } finally {
