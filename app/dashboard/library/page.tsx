@@ -41,17 +41,18 @@ export default function LibraryPage() {
         return;
       }
 
-      const colors = [
-        'from-[#ff7e5f] to-[#feb47b]',
-        'from-[#654ea3] to-[#eaafc8]',
-        'from-[#00c6ff] to-[#0072ff]',
-        'from-[#11998e] to-[#38ef7d]',
-        'from-[#8A2387] to-[#E94057]',
-        'from-[#f12711] to-[#f5af19]',
-      ];
+      const mappedMaterials: Material[] = (data || []).map((item) => {
+        const type = (item.source_type || 'other').toLowerCase();
+        let coverColor = 'from-[#654ea3] to-[#eaafc8]'; // Default Purple
+        
+        if (['pdf', 'docx', 'ppt', 'doc', 'pptx'].some(t => type.includes(t))) {
+          coverColor = 'from-[#00c6ff] to-[#0072ff]'; // Blue for Documents
+        } else if (type.includes('audio')) {
+          coverColor = 'from-[#ff7e5f] to-[#feb47b]'; // Orange for Audio
+        } else if (type.includes('youtube') || type.includes('video')) {
+          coverColor = 'from-[#ff0844] to-[#ffb199]'; // Red for YouTube
+        }
 
-      const mappedMaterials: Material[] = (data || []).map((item, index) => {
-        const coverColor = colors[index % colors.length];
         const dateObj = new Date(item.created_at);
         const formattedDate = isNaN(dateObj.getTime()) 
           ? 'Sekarang' 
@@ -88,7 +89,7 @@ export default function LibraryPage() {
   
   const tabs = [
     { id: 'all', label: 'Semua Materi', icon: <Layers className="text-black" size={16} /> },
-    { id: 'pdf', label: 'PDF', icon: <FileText className="text-blue-500" size={16} /> },
+    { id: 'document', label: 'Document', icon: <FileText className="text-blue-500" size={16} /> },
     { id: 'audio', label: 'Audio', icon: <Music className="text-orange-500" size={16} /> },
     { id: 'youtube', label: 'YouTube', icon: <PlaySquare className="text-red-500" size={16} /> },
   ];
@@ -97,7 +98,7 @@ export default function LibraryPage() {
     const type = m.type.toLowerCase();
     let matchesTab = activeTab === 'all';
     
-    if (activeTab === 'pdf') {
+    if (activeTab === 'document') {
       matchesTab = ['pdf', 'docx', 'ppt', 'doc', 'pptx'].some(t => type.includes(t));
     } else if (activeTab === 'youtube') {
       matchesTab = type.includes('youtube') || type.includes('video');

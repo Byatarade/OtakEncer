@@ -580,7 +580,7 @@ function DailyStreakCard({ userId }: { userId: string }) {
       .select('id, title')
       .eq('user_id', userId)
       .order('created_at', { ascending: false })
-      .limit(10); // Ambil 10 materi terbaru
+      .limit(5); // Ambil 5 materi terbaru
       
     if (data) setMaterials(data);
     setLoadingMaterials(false);
@@ -620,7 +620,7 @@ function DailyStreakCard({ userId }: { userId: string }) {
         <div className="mt-auto pt-2">
           {(!hasCompletedToday && !isNewUser) ? (
              <button onClick={handleOpenModal} className="w-full bg-orange-100 hover:bg-orange-200 text-orange-600 px-4 py-2 rounded-xl text-[13px] font-bold flex items-center justify-center transition-colors text-center leading-snug">
-               Ayo Selesaikan Quiz! 🔥
+               Ayo Selesaikan Quiz! 
              </button>
           ) : (
             <Link href="/dashboard" className="text-[#8a8a8e] text-[13px] font-medium leading-[1.4] block decoration-[1.5px]">
@@ -653,7 +653,7 @@ function DailyStreakCard({ userId }: { userId: string }) {
                  Ayo mulai kerjakan quiz hari ini untuk mempertahankan streak-mu!
                </p>
                <button onClick={handleOpenModal} className="inline-flex max-w-fit items-center justify-center bg-orange-500 hover:bg-orange-600 text-white shadow-md shadow-orange-200 ring-2 ring-orange-100 ring-offset-1 px-5 py-2.5 rounded-xl text-[14px] font-bold transition-all">
-                 Ayo Selesaikan Quiz! 🔥
+                 Ayo Selesaikan Quiz! 
                </button>
              </div>
           ) : (
@@ -719,12 +719,12 @@ function DailyStreakCard({ userId }: { userId: string }) {
                   className="flex items-center justify-between p-4 border-2 border-slate-100 rounded-2xl hover:border-orange-400 hover:bg-orange-50/50 transition-all group"
                   onClick={() => setIsModalOpen(false)}
                 >
-                  <div className="flex items-start gap-4 overflow-hidden">
+                  <div className="flex items-center gap-4 overflow-hidden">
                     <div className="bg-orange-100 text-orange-600 p-2.5 rounded-xl shrink-0 group-hover:bg-orange-500 group-hover:text-white transition-colors">
                       <FileText size={20} />
                     </div>
-                    <div className="flex flex-col items-start pt-0.5 overflow-hidden">
-                      <span className="font-semibold text-slate-700 group-hover:text-slate-900 line-clamp-2 leading-tight text-left">
+                    <div className="flex flex-col items-start overflow-hidden">
+                      <span className="font-semibold text-slate-700 group-hover:text-slate-900 line-clamp-2 leading-none text-left">
                         {m.title}
                       </span>
                     </div>
