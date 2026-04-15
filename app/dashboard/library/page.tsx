@@ -213,7 +213,7 @@ export default function LibraryPage() {
         </div>
       </div>
 
-      {/* Dynamic Grid of Materialls */}
+      {/* Dynamic Grid of Materiallls */}
       {loading ? (
         <div className="flex justify-center items-center py-20 flex-col gap-4">
           <Loader2 size={40} className="text-[#672cb9] animate-spin" />
