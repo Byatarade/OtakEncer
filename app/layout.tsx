@@ -43,7 +43,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "/assets/og-image.jpg", // Anda dapat menggantinya nanti di folder public/assets
+        url: "/assets/og-image.jpg",
         width: 1200,
         height: 630,
         alt: "OtakEncer - Platform AI Tercepat",
