@@ -1,5 +1,8 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { GoogleGenerativeAI } from '@google/generative-ai';
+
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
 
 export async function POST(request: Request) {
   try {
@@ -58,27 +61,99 @@ Struktur HARUS persis seperti ini:
 
     const prompt = `${systemPrompt}\n\nMateri acuan:\n${safeText}`;
 
-    // Menggunakan AI Groq (LLama 3.3 Versatile) agar ngebut untuk ekstraksi JSON
-    const groqRes = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${process.env.GROQ_API_KEY}`
-      },
-      body: JSON.stringify({
-        model: 'llama-3.3-70b-versatile',
-        messages: [{ role: 'user', content: prompt }],
-        temperature: 0.2 // Temperature rendah agar JSON lebih konsisten
-      })
-    });
+    let aiOutput = '';
+    let geminiSuccess = false;
 
-    if (!groqRes.ok) {
-       const errText = await groqRes.text();
-       throw new Error("Gagal generate dari Groq: " + errText);
+    // 1. Coba Gemini dulu (Utama)
+    try {
+      const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
+      const aiResult = await model.generateContent(prompt);
+      aiOutput = aiResult.response.text().trim();
+      geminiSuccess = true;
+    } catch (geminiError: unknown) {
+      console.warn("Gemini Error in generate-interactive, fallback to Groq:", geminiError);
     }
 
-    const groqData = await groqRes.json();
-    let aiOutput = groqData.choices[0].message.content.trim();
+    if (!geminiSuccess) {
+      // 2. Fallback Lapis 1: Groq
+      let groqSuccess = false;
+      try {
+        const groqRes = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${process.env.GROQ_API_KEY}`
+          },
+          body: JSON.stringify({
+            model: 'llama-3.3-70b-versatile',
+            messages: [{ role: 'user', content: prompt }],
+            temperature: 0.2
+          })
+        });
+
+        if (groqRes.ok) {
+           const groqData = await groqRes.json();
+           aiOutput = groqData.choices[0].message.content.trim();
+           groqSuccess = true;
+        } else {
+           console.warn("Groq failed with status:", groqRes.status);
+        }
+      } catch (e) {
+        console.warn("Groq fetch error in generate-interactive:", e);
+      }
+
+      if (!groqSuccess) {
+         // 3. Fallback Lapis 2: OpenRouter
+         console.log("=== GROQ SIBUK, FALLBACK KE OPENROUTER (INTERACTIVE) ===");
+         let orSuccess = false;
+         try {
+           const orRes = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+             method: 'POST',
+             headers: {
+               'Content-Type': 'application/json',
+               'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`
+             },
+             body: JSON.stringify({
+               model: 'google/gemini-2.5-flash',
+               messages: [{ role: 'user', content: prompt }],
+               temperature: 0.2
+             })
+           });
+           
+           if (orRes.ok) {
+              const orData = await orRes.json();
+              aiOutput = orData.choices[0].message.content.trim();
+              orSuccess = true;
+           } else {
+              console.warn("OpenRouter failed with status:", orRes.status);
+           }
+         } catch(e) { console.warn("OpenRouter fetch error:", e); }
+
+         if (!orSuccess) {
+            // 4. Fallback Lapis 3 (Terakhir): DeepSeek
+            console.log("=== OPENROUTER SIBUK, FALLBACK TERAKHIR KE DEEPSEEK (INTERACTIVE) ===");
+            const dsRes = await fetch('https://api.deepseek.com/chat/completions', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${process.env.DEEPSEEK_API_KEY}`
+              },
+              body: JSON.stringify({
+                model: 'deepseek-chat',
+                messages: [{ role: 'user', content: prompt }],
+                temperature: 0.2
+              })
+            });
+            
+            if (!dsRes.ok) {
+               const errText = await dsRes.text();
+               throw new Error("Gagal generate dari 4 server AI (Gemini, Groq, OpenRouter, DeepSeek): " + errText);
+            }
+            const dsData = await dsRes.json();
+            aiOutput = dsData.choices[0].message.content.trim();
+         }
+      }
+    }
 
     // Sanitasi ekstra jika AI tetap bandel menyelipkan tag codeblock ```json
     if (aiOutput.startsWith('```json')) {

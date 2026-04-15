@@ -244,26 +244,84 @@ ${safePdfText}
            }
         }
         
-        const groqRes = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${process.env.GROQ_API_KEY}`
-          },
-          body: JSON.stringify({
-            model: 'llama-3.3-70b-versatile',
-            messages: [{ role: 'user', content: finalPrompt }],
-            temperature: 0.7
-          })
-        });
+        let groqSuccess = false;
+        try {
+          const groqRes = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${process.env.GROQ_API_KEY}`
+            },
+            body: JSON.stringify({
+              model: 'llama-3.3-70b-versatile',
+              messages: [{ role: 'user', content: finalPrompt }],
+              temperature: 0.3,
+              max_tokens: 4000
+            })
+          });
 
-        if (!groqRes.ok) {
-          const failErr = await groqRes.text();
-          throw new Error(`Google API sibuk dan Backup Groq gagal: ${failErr}`);
+          if (groqRes.ok) {
+            const groqData = await groqRes.json();
+            aiSummary = groqData.choices[0].message.content;
+            groqSuccess = true;
+          } else {
+             console.warn("Groq failed with status:", groqRes.status);
+          }
+        } catch (e) {
+          console.warn("Groq fetch error:", e);
         }
-        
-        const groqData = await groqRes.json();
-        aiSummary = groqData.choices[0].message.content;
+
+        if (!groqSuccess) {
+           console.log("=== GROQ SIBUK, FALLBACK KE OPENROUTER ===");
+           let orSuccess = false;
+           try {
+             const orRes = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+               method: 'POST',
+               headers: {
+                 'Content-Type': 'application/json',
+                 'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`
+               },
+               body: JSON.stringify({
+                 model: 'google/gemini-2.5-flash',
+                 messages: [{ role: 'user', content: finalPrompt }],
+                 temperature: 0.3
+               })
+             });
+             
+             if (orRes.ok) {
+               const orData = await orRes.json();
+               aiSummary = orData.choices[0].message.content;
+               orSuccess = true;
+             } else {
+               console.warn("OpenRouter failed with status:", orRes.status);
+             }
+           } catch(e) {
+             console.warn("OpenRouter fetch error:", e);
+           }
+
+           if (!orSuccess) {
+              console.log("=== OPENROUTER SIBUK, FALLBACK TERAKHIR KE DEEPSEEK ===");
+              const dsRes = await fetch('https://api.deepseek.com/chat/completions', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': `Bearer ${process.env.DEEPSEEK_API_KEY}`
+                },
+                body: JSON.stringify({
+                  model: 'deepseek-chat',
+                  messages: [{ role: 'user', content: finalPrompt }],
+                  temperature: 0.3
+                })
+              });
+              
+              if (!dsRes.ok) {
+                const failErr = await dsRes.text();
+                throw new Error(`Semua server AI (Gemini, Groq, OpenRouter, DeepSeek) sedang sibuk. Mohon coba beberapa saat lagi.`);
+              }
+              const dsData = await dsRes.json();
+              aiSummary = dsData.choices[0].message.content;
+           }
+        }
       } else {
         // Lempar ke frontend jika bukan masalah 503
         throw aiError;

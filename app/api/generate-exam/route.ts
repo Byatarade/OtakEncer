@@ -109,27 +109,82 @@ Format JSON yang HARUS diikuti:
       if (isRecoverable || errMsg.includes('GenerateContent')) {
         console.log("=== FALLBACK OTOMATIS KE GROQ UNTUK GENERATE EXAM ===");
 
-        const groqRes = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${process.env.GROQ_API_KEY}`
-          },
-          body: JSON.stringify({
-            model: 'llama-3.3-70b-versatile',
-            messages: [{ role: 'user', content: prompt }],
-            temperature: 0.3,
-            max_tokens: 8000
-          })
-        });
+        let groqSuccess = false;
+        try {
+          const groqRes = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${process.env.GROQ_API_KEY}`
+            },
+            body: JSON.stringify({
+              model: 'llama-3.3-70b-versatile',
+              messages: [{ role: 'user', content: prompt }],
+              temperature: 0.3,
+              max_tokens: 8000
+            })
+          });
 
-        if (!groqRes.ok) {
-          const failErr = await groqRes.text();
-          throw new Error(`Gemini sibuk & Groq juga gagal: ${failErr}`);
+          if (groqRes.ok) {
+            const groqData = await groqRes.json();
+            aiOutput = groqData.choices[0].message.content;
+            groqSuccess = true;
+          } else {
+             console.warn("Groq failed with status:", groqRes.status);
+          }
+        } catch (e) {
+          console.warn("Groq fetch error:", e);
         }
 
-        const groqData = await groqRes.json();
-        aiOutput = groqData.choices[0].message.content;
+        if (!groqSuccess) {
+           console.log("=== GROQ SIBUK, FALLBACK KE OPENROUTER (EXAM GENERATOR) ===");
+           let orSuccess = false;
+           try {
+             const orRes = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+               method: 'POST',
+               headers: {
+                 'Content-Type': 'application/json',
+                 'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`
+               },
+               body: JSON.stringify({
+                 model: 'google/gemini-2.5-flash',
+                 messages: [{ role: 'user', content: prompt }],
+                 temperature: 0.3
+               })
+             });
+             
+             if (orRes.ok) {
+                const orData = await orRes.json();
+                aiOutput = orData.choices[0].message.content;
+                orSuccess = true;
+             } else {
+                console.warn("OpenRouter failed with status:", orRes.status);
+             }
+           } catch(e) { console.warn("OpenRouter fetch error:", e); }
+
+           if (!orSuccess) {
+              console.log("=== OPENROUTER SIBUK, FALLBACK TERAKHIR KE DEEPSEEK (EXAM GENERATOR) ===");
+              const dsRes = await fetch('https://api.deepseek.com/chat/completions', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': `Bearer ${process.env.DEEPSEEK_API_KEY}`
+                },
+                body: JSON.stringify({
+                  model: 'deepseek-chat',
+                  messages: [{ role: 'user', content: prompt }],
+                  temperature: 0.3
+                })
+              });
+              
+              if (!dsRes.ok) {
+                const failErr = await dsRes.text();
+                throw new Error(`Semua server AI (Gemini, Groq, OpenRouter, DeepSeek) sedang sibuk merumuskan ujian. Mohon tunggu beberapa menit lagi.`);
+              }
+              const dsData = await dsRes.json();
+              aiOutput = dsData.choices[0].message.content;
+           }
+        }
       } else {
         throw geminiError;
       }

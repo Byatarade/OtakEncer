@@ -90,36 +90,103 @@ Format output:
       console.warn("Gemini grading failed, fallback to Groq:", errMsg);
 
       // Fallback ke Groq
-      const groqRes = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${process.env.GROQ_API_KEY}`
-        },
-        body: JSON.stringify({
-          model: 'llama-3.3-70b-versatile',
-          messages: [{ role: 'user', content: essayPrompt }],
-          temperature: 0.2,
-          max_tokens: 4000
-        })
-      });
+      let groqSuccess = false;
+      try {
+        const groqRes = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${process.env.GROQ_API_KEY}`
+          },
+          body: JSON.stringify({
+            model: 'llama-3.3-70b-versatile',
+            messages: [{ role: 'user', content: essayPrompt }],
+            temperature: 0.2,
+            max_tokens: 4000
+          })
+        });
 
-      if (!groqRes.ok) {
-        const failErr = await groqRes.text();
-        throw new Error(`Gemini & Groq keduanya gagal menilai essay: ${failErr}`);
+        if (groqRes.ok) {
+          const groqData = await groqRes.json();
+          let groqOutput = groqData.choices[0].message.content.trim();
+          if (groqOutput.startsWith('```json')) {
+            groqOutput = groqOutput.replace(/^```json/, '').replace(/```$/, '').trim();
+          } else if (groqOutput.startsWith('```')) {
+            groqOutput = groqOutput.replace(/^```/, '').replace(/```$/, '').trim();
+          }
+          essayGrades = JSON.parse(groqOutput);
+          groqSuccess = true;
+        } else {
+           console.warn("Groq failed with status:", groqRes.status);
+        }
+      } catch (e) {
+        console.warn("Groq fetch error in grade-exam:", e);
       }
 
-      const groqData = await groqRes.json();
-      let aiOutput = groqData.choices[0].message.content.trim();
+      if (!groqSuccess) {
+         console.log("=== GROQ SIBUK, FALLBACK KE OPENROUTER (GRADE EXAM) ===");
+         let orSuccess = false;
+         try {
+           const orRes = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+             method: 'POST',
+             headers: {
+               'Content-Type': 'application/json',
+               'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`
+             },
+             body: JSON.stringify({
+               model: 'google/gemini-2.5-flash',
+               messages: [{ role: 'user', content: essayPrompt }],
+               temperature: 0.2
+             })
+           });
+           
+           if (orRes.ok) {
+             const orData = await orRes.json();
+             let orOutput = orData.choices[0].message.content.trim();
+             if (orOutput.startsWith('```json')) {
+                orOutput = orOutput.replace(/^```json/, '').replace(/```$/, '').trim();
+             } else if (orOutput.startsWith('```')) {
+                orOutput = orOutput.replace(/^```/, '').replace(/```$/, '').trim();
+             }
+             essayGrades = JSON.parse(orOutput);
+             orSuccess = true;
+           } else {
+             console.warn("OpenRouter failed with status:", orRes.status);
+           }
+         } catch(e) { console.warn("OpenRouter fetch error:", e); }
 
-      if (aiOutput.startsWith('```json')) {
-        aiOutput = aiOutput.replace(/^```json/, '').replace(/```$/, '').trim();
-      } else if (aiOutput.startsWith('```')) {
-        aiOutput = aiOutput.replace(/^```/, '').replace(/```$/, '').trim();
+         if (!orSuccess) {
+            console.log("=== OPENROUTER SIBUK, FALLBACK TERAKHIR KE DEEPSEEK (GRADE EXAM) ===");
+            const dsRes = await fetch('https://api.deepseek.com/chat/completions', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${process.env.DEEPSEEK_API_KEY}`
+              },
+              body: JSON.stringify({
+                model: 'deepseek-chat',
+                messages: [{ role: 'user', content: essayPrompt }],
+                temperature: 0.2
+              })
+            });
+            
+            if (!dsRes.ok) {
+               const failErr = await dsRes.text();
+               throw new Error(`Semua server AI (Gemini, Groq, OpenRouter, DeepSeek) sibuk: ${failErr}`);
+            }
+            const dsData = await dsRes.json();
+            let dsOutput = dsData.choices[0].message.content.trim();
+            if (dsOutput.startsWith('```json')) {
+               dsOutput = dsOutput.replace(/^```json/, '').replace(/```$/, '').trim();
+            } else if (dsOutput.startsWith('```')) {
+               dsOutput = dsOutput.replace(/^```/, '').replace(/```$/, '').trim();
+            }
+            essayGrades = JSON.parse(dsOutput);
+         }
       }
-
-      essayGrades = JSON.parse(aiOutput);
     }
+
+
 
     // 3. Hitung skor total
     // MCQ: 50% dari total (2.5 poin per soal benar, maks 50 poin)
