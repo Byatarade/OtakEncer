@@ -18,8 +18,8 @@ const faqs = [
     answer: "Tujuan utama Neura dibuat adalah untuk membantu mendemokratisasi akses ke alat-alat AI cerdas bagi individu dan bisnis skala kecil maupun menengah secara gratis, sehingga mereka lebih mudah mengotomatisasi pekerjaan berulang dan lebih produktif.",
   },
   {
-    keywords: ["cara pakai", "mulai", "menggunakan", "langkah pertama", "intinya"],
-    answer: "Intinya, proses ini sangat praktis! Cukup upload dokumen atau ketik pertanyaan yang ada di kepala Anda, lalu asisten cerdas kami akan menganalisis informasi dan memberikan insight, rangkuman, atau format data sesuai kebutuhan Anda.",
+    keywords: ["cara pakai", "cara pemakaian", "pemakaian", "bagaimana cara pemakaian", "mulai", "menggunakan", "langkah pertama","cara"],
+    answer: "Cara menggunakan OtakEncer sangatlah mudah! Pertama, pilih tombol upload pada dashboard kemudian unggah materi sesuai format yang diterima. Neura AI akan secara otomatis merangkum materi, membuat glosarium, serta menyusun flashcards untuk Anda. Jangan lupa, Anda juga bisa langsung mengikuti simulasi ujian setelah generate materi untuk menguji pemahaman Anda. Jika masih ada yang bingung, silakan berdiskusi langsung dengan saya!",
   },
   {
     keywords: ["fitur", "kemampuan", "bisa apa", "keunggulan"],
@@ -70,7 +70,7 @@ export default function NeuraChatbot({ showTrigger = true }: NeuraChatbotProps) 
     }
     
     // Fallback jika keyword tidak dikenali
-    return "Maaf, saya tidak mengerti pertanyaan tersebut. Coba tanyakan seputar 'tujuan', 'fitur', atau 'kontak'.";
+    return "Maaf, saya tidak mengerti pertanyaan tersebut. Coba tanyakan seputar 'tujuan', 'fitur', 'cara pemakaian', atau 'kontak'.";
   };
 
   const handleSend = (e?: React.FormEvent, textOverride?: string) => {
