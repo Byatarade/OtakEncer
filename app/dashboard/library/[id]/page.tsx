@@ -851,7 +851,7 @@ export default function MaterialReader() {
             onClick={() => setActiveTab('prediksi')}
             className={`flex items-center justify-center transition-all duration-300 ${activeTab === 'prediksi' ? 'bg-white text-[#672cb9] shadow-md rounded-[20px] w-14 h-10' : 'text-white/70 hover:text-white w-10 min-w-[40px] h-10'}`}
           >
-            <GraduationCap size={18} />
+            <GraduationCap size={23} />
           </button>
         </div>
 

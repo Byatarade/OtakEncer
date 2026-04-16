@@ -19,7 +19,7 @@ const faqs = [
   },
   {
     keywords: ["cara pakai", "cara pemakaian", "pemakaian", "bagaimana cara pemakaian", "mulai", "menggunakan", "langkah pertama","cara"],
-    answer: "Cara menggunakan OtakEncer sangatlah mudah! Pertama, pilih tombol upload pada dashboard kemudian unggah materi sesuai format yang diterima. Neura AI akan secara otomatis merangkum materi, membuat glosarium, serta menyusun flashcards untuk Anda. Jangan lupa, Anda juga bisa langsung mengikuti simulasi ujian setelah generate materi untuk menguji pemahaman Anda. Jika masih ada yang bingung, silakan berdiskusi langsung dengan saya!",
+    answer: "Cara menggunakan OtakEncer sangatlah mudah! Pertama, pilih tombol upload pada dashboard kemudian unggah materi sesuai format yang diterima.  AI akan secara otomatis merangkum materi, membuat glosarium, serta menyusun flashcards untuk Anda. Jangan lupa, Anda juga bisa langsung mengikuti simulasi ujian setelah generate materi untuk menguji pemahaman Anda. Jika masih ada yang bingung, silakan berdiskusi langsung dengan saya!",
   },
   {
     keywords: ["fitur", "kemampuan", "bisa apa", "keunggulan"],
