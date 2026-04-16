@@ -19,7 +19,7 @@ export async function POST(req: Request) {
   try {
     const body = await req.json();
     const message = typeof body?.message === 'string' ? body.message.trim() : '';
-    const history = Array.isArray(body?.history) ? body.history : [];
+    const history: Array<{ sender?: unknown; text?: unknown }> = Array.isArray(body?.history) ? body.history : [];
 
     if (!message) {
       return NextResponse.json({ error: 'Message is required' }, { status: 400 });
@@ -37,8 +37,8 @@ export async function POST(req: Request) {
     const chatMessages = [
       { role: 'system', content: systemPrompt },
       ...history
-        .filter((m: unknown) => typeof m === 'object' && m !== null)
-        .map((m) => {
+        .filter((m: { sender?: unknown; text?: unknown }) => typeof m === 'object' && m !== null)
+        .map((m: { sender?: unknown; text?: unknown }) => {
           const sender = (m as { sender?: unknown }).sender;
           const text = (m as { text?: unknown }).text;
           const safeText = typeof text === 'string' ? text.slice(0, 1000) : '';
