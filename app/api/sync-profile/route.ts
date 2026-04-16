@@ -4,9 +4,10 @@ import { createClient } from '@supabase/supabase-js';
 export async function POST(request: Request) {
   try {
     const { name, avatar } = await request.json();
-    const authHeader = request.headers.get('Authorization');
+    const authHeader = request.headers.get('Authorization') || '';
+    const accessToken = authHeader.startsWith('Bearer ') ? authHeader.slice(7).trim() : '';
 
-    if (!authHeader) {
+    if (!accessToken) {
       return NextResponse.json({ error: 'Missing authorization header' }, { status: 401 });
     }
 
@@ -27,7 +28,7 @@ export async function POST(request: Request) {
     );
 
     // Verify user
-    const { data: { user }, error: authError } = await supabaseAnon.auth.getUser();
+    const { data: { user }, error: authError } = await supabaseAnon.auth.getUser(accessToken);
     
     if (authError || !user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });

@@ -8,6 +8,19 @@ export async function POST(request: Request) {
   try {
     const { material_id, type } = await request.json();
     const authHeader = request.headers.get('Authorization') || '';
+    const accessToken = authHeader.startsWith('Bearer ') ? authHeader.slice(7).trim() : '';
+
+    if (!accessToken) {
+      return NextResponse.json({ error: 'Akses ditolak. Token tidak valid.' }, { status: 401 });
+    }
+
+    if (typeof material_id !== 'string' || material_id.trim().length === 0) {
+      return NextResponse.json({ error: 'material_id tidak valid.' }, { status: 400 });
+    }
+
+    if (type !== 'quiz' && type !== 'flashcard') {
+      return NextResponse.json({ error: 'Tipe interaktif tidak valid' }, { status: 400 });
+    }
     
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -23,11 +36,17 @@ export async function POST(request: Request) {
       }
     );
 
+    const { data: { user }, error: authError } = await supabase.auth.getUser(accessToken);
+    if (authError || !user) {
+      return NextResponse.json({ error: 'Akses ditolak. Harap login ulang.' }, { status: 401 });
+    }
+
     // Dapatkan rangkuman material dari Supabase
     const { data: material, error: fetchError } = await supabase
       .from('materials')
       .select('ai_summary')
       .eq('id', material_id)
+      .eq('user_id', user.id)
       .single();
 
     if (fetchError || !material) {
@@ -55,8 +74,6 @@ Berdasarkan materi terlampir, buat 10 pasang istilah kunci dan definisinya berba
 PENTING: Output HARUS eksak murni JSON Array tanpa teks awalan/akhiran apa pun. DILARANG menggunakan tag markdown \`\`\`json.
 Struktur HARUS persis seperti ini:
 [{"front": "Istilah/Judul", "back": "Definisi atau penjelasan"}]`;
-    } else {
-      return NextResponse.json({ error: 'Tipe interaktif tidak valid' }, { status: 400 });
     }
 
     const prompt = `${systemPrompt}\n\nMateri acuan:\n${safeText}`;
@@ -203,7 +220,8 @@ Struktur HARUS persis seperti ini:
     const { error: updateError } = await supabase
       .from('materials')
       .update({ [columnName]: parsedData })
-      .eq('id', material_id);
+      .eq('id', material_id)
+      .eq('user_id', user.id);
 
     if (updateError) {
        console.error("Gagal save JSON hasil AI ke Supabase:", updateError);

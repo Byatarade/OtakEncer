@@ -6,8 +6,13 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
 
 export async function POST(request: Request) {
   try {
-    const { material_id, user_id } = await request.json();
+    const { material_id } = await request.json();
     const authHeader = request.headers.get('Authorization') || '';
+    const accessToken = authHeader.startsWith('Bearer ') ? authHeader.slice(7).trim() : '';
+
+    if (!accessToken) {
+      return NextResponse.json({ error: 'Akses Ditolak. Harap login kembali.' }, { status: 401 });
+    }
 
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -23,10 +28,14 @@ export async function POST(request: Request) {
       }
     );
 
-    // LIMIT CHECK: Maksimal 2x generate exam per hari
-    if (!user_id) {
-       return NextResponse.json({ error: 'User ID tidak valid.' }, { status: 400 });
+    // Amankan pengambilan user_id dengan autentikasi Server-side / JWT murni untuk mencegah Parameter Tampering
+     const { data: { user }, error: authError } = await supabase.auth.getUser(accessToken);
+    if (authError || !user) {
+       return NextResponse.json({ error: 'Akses Ditolak. Harap login kembali.' }, { status: 401 });
     }
+    const user_id = user.id;
+
+    // LIMIT CHECK: Maksimal 2x generate exam per hari
 
     const { data: streakData, error: streakError } = await supabase
       .from('user_streaks')

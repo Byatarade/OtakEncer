@@ -5,8 +5,28 @@ import { toZonedTime } from 'date-fns-tz';
 
 export async function POST(request: Request) {
   try {
-    const { material_id, score, user_id, user_name, user_avatar } = await request.json();
+    const { material_id, score, user_name, user_avatar } = await request.json();
     const authHeader = request.headers.get('Authorization') || '';
+    const accessToken = authHeader.startsWith('Bearer ') ? authHeader.slice(7).trim() : '';
+
+    if (!accessToken) {
+      return NextResponse.json({ error: 'Akses Ditolak. Token tidak valid.' }, { status: 401 });
+    }
+
+    if (typeof material_id !== 'string' || material_id.trim().length === 0) {
+      return NextResponse.json({ error: 'material_id tidak valid.' }, { status: 400 });
+    }
+
+    if (typeof score !== 'number' || !Number.isFinite(score) || score < 0 || score > 5) {
+      return NextResponse.json({ error: 'Score tidak valid.' }, { status: 400 });
+    }
+
+    const safeUserName = typeof user_name === 'string' && user_name.trim().length > 0
+      ? user_name.trim().slice(0, 80)
+      : 'Pelajar Pintar';
+    const safeUserAvatar = typeof user_avatar === 'string' && user_avatar.length <= 500
+      ? user_avatar
+      : null;
     
     // Konfigurasi Supabase
     const supabase = createClient(
@@ -23,6 +43,25 @@ export async function POST(request: Request) {
       }
     );
 
+    // Dapatkan dan Verifikasi identitas user secara aman (Mencegah IDOR Spoofing)
+    const { data: { user }, error: authError } = await supabase.auth.getUser(accessToken);
+    if (authError || !user) {
+      return NextResponse.json({ error: 'Akses Ditolak. Harap login kembali.' }, { status: 401 });
+    }
+    const user_id = user.id;
+
+    // Pastikan materi milik user saat ini, agar skor tidak bisa ditembak ke materi user lain.
+    const { data: ownedMaterial, error: materialError } = await supabase
+      .from('materials')
+      .select('id')
+      .eq('id', material_id)
+      .eq('user_id', user_id)
+      .single();
+
+    if (materialError || !ownedMaterial) {
+      return NextResponse.json({ error: 'Materi tidak ditemukan atau bukan milik Anda.' }, { status: 403 });
+    }
+
     // 1. Dapatkan Waktu Jakarta Saat Ini
     const tz = 'Asia/Jakarta';
     const nowJakarta = toZonedTime(new Date(), tz);
@@ -36,8 +75,8 @@ export async function POST(request: Request) {
         user_id: user_id,
         material_id: material_id,
         score: calculatedScore,
-        user_name: user_name || 'Pelajar Pintar',
-        user_avatar: user_avatar || null,
+        user_name: safeUserName,
+        user_avatar: safeUserAvatar,
         created_at: new Date().toISOString() // Paksa update waktu agar muncul di Recent Activity
       }, { onConflict: 'user_id, material_id' });
 
@@ -91,8 +130,8 @@ export async function POST(request: Request) {
       .from('user_streaks')
       .upsert({
         user_id: user_id,
-        user_name: user_name || 'Pelajar Pintar',
-        user_avatar: user_avatar || null,
+        user_name: safeUserName,
+        user_avatar: safeUserAvatar,
         current_streak: newStreak,
         last_quiz_date: todayStr // Simpan format string YYYY-MM-DD
       }, { onConflict: 'user_id' });

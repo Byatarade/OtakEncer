@@ -134,12 +134,17 @@ export default function MaterialReader() {
     setGeneratingInteractive(true);
     try {
       const { data: { session } } = await supabase.auth.getSession();
+      const accessToken = session?.access_token;
+
+      if (!accessToken) {
+        throw new Error('Token login belum tersedia. Silakan tunggu sesi selesai dimuat lalu coba lagi.');
+      }
       
       const response = await fetch('/api/generate-interactive', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${session?.access_token}`
+          'Authorization': `Bearer ${accessToken}`
         },
         body: JSON.stringify({ material_id: material.id, type })
       });
@@ -172,12 +177,17 @@ export default function MaterialReader() {
     setGeneratingExam(true);
     try {
       const { data: { session } } = await supabase.auth.getSession();
+      const accessToken = session?.access_token;
+
+      if (!accessToken) {
+        throw new Error('Token login belum tersedia. Silakan tunggu sesi selesai dimuat lalu coba lagi.');
+      }
 
       const response = await fetch('/api/generate-exam', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${session?.access_token}`
+          'Authorization': `Bearer ${accessToken}`
         },
         body: JSON.stringify({ material_id: material.id, user_id: user?.id })
       });
@@ -240,12 +250,17 @@ export default function MaterialReader() {
     setIsGradingExam(true);
     try {
       const { data: { session } } = await supabase.auth.getSession();
+      const accessToken = session?.access_token;
+
+      if (!accessToken) {
+        throw new Error('Token login belum tersedia. Silakan tunggu sesi selesai dimuat lalu coba lagi.');
+      }
 
       const response = await fetch('/api/grade-exam', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${session?.access_token}`
+          'Authorization': `Bearer ${accessToken}`
         },
         body: JSON.stringify({
           material_summary: material.ai_summary,
@@ -449,11 +464,17 @@ export default function MaterialReader() {
     setSubmitMessage(null);
     try {
       const { data: { session } } = await supabase.auth.getSession();
+      const accessToken = session?.access_token;
+
+      if (!accessToken) {
+        setSubmitMessage('Sesi login belum siap. Coba lagi dalam beberapa detik.');
+        return;
+      }
       const res = await fetch('/api/submit-quiz', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${session?.access_token}`
+          'Authorization': `Bearer ${accessToken}`
         },
         body: JSON.stringify({
           material_id: material.id,

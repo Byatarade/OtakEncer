@@ -17,19 +17,20 @@ export async function POST(request: Request) {
     const formData = await request.formData();
     const file = formData.get('file') as File | null;
     const link = formData.get('link') as string | null;
-    const userId = formData.get('user_id') as string;
+    // user_id dari formData sengaja di abaikan/override, kita ambil murni dari token sesi demi keamanan.
     
     if (!file && !link) {
       return NextResponse.json({ error: 'File atau Link wajib disertakan.' }, { status: 400 });
     }
     
-    if (!userId) {
-      return NextResponse.json({ error: 'User ID tidak ditemukan. Harap login ulang.' }, { status: 401 });
-    }
-
-    // --- CHECK QUOTA LIMIT (MAX 3 PER DAY) ---
+    // --- AUTHORIZATION & CHECK QUOTA LIMIT (MAX 3 PER DAY) ---
     const startOfDay = formatInTimeZone(new Date(), 'Asia/Jakarta', "yyyy-MM-dd'T'00:00:00XXX");
     const authHeader = request.headers.get('Authorization') || '';
+    const accessToken = authHeader.startsWith('Bearer ') ? authHeader.slice(7).trim() : '';
+
+    if (!accessToken) {
+      return NextResponse.json({ error: 'User tidak tertentikasi. Akses Ditolak.' }, { status: 401 });
+    }
     
     // Gunakan fungsi custom fetch untuk menghindari policy RLS
     const supabase = createClient(
@@ -45,6 +46,13 @@ export async function POST(request: Request) {
         }
       }
     );
+
+    // Amankan pengambilan user_id dengan getUser() Supabase untuk mencegah IDOR / parameter tampering
+    const { data: { user }, error: authError } = await supabase.auth.getUser(accessToken);
+    if (authError || !user) {
+      return NextResponse.json({ error: 'User tidak tertentikasi. Akses Ditolak.' }, { status: 401 });
+    }
+    const userId = user.id;
 
     const { count: usageCount, error: countError } = await supabase
       .from('materials')

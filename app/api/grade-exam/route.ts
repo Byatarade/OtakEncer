@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import { createClient } from '@supabase/supabase-js';
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
 
@@ -20,6 +21,51 @@ interface ExamEssay {
 export async function POST(request: Request) {
   try {
     const { material_summary, exam_data, mcq_answers, essay_answers } = await request.json();
+    const authHeader = request.headers.get('Authorization') || '';
+    const accessToken = authHeader.startsWith('Bearer ') ? authHeader.slice(7).trim() : '';
+
+    if (!accessToken) {
+      return NextResponse.json({ error: 'Akses ditolak. Token tidak valid.' }, { status: 401 });
+    }
+
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        global: {
+          fetch: async (url, options) => {
+            const headers = new Headers(options?.headers);
+            headers.set('Authorization', authHeader);
+            return fetch(url, { ...options, headers });
+          }
+        }
+      }
+    );
+
+    const { data: { user }, error: authError } = await supabase.auth.getUser(accessToken);
+    if (authError || !user) {
+      return NextResponse.json({ error: 'Akses ditolak. Harap login ulang.' }, { status: 401 });
+    }
+
+    if (typeof material_summary !== 'string' || material_summary.trim().length === 0) {
+      return NextResponse.json({ error: 'Ringkasan materi tidak valid.' }, { status: 400 });
+    }
+
+    if (material_summary.length > 50000) {
+      return NextResponse.json({ error: 'Ringkasan materi terlalu panjang.' }, { status: 400 });
+    }
+
+    if (!exam_data || !Array.isArray(exam_data.mcq) || !Array.isArray(exam_data.essay)) {
+      return NextResponse.json({ error: 'Data ujian tidak valid.' }, { status: 400 });
+    }
+
+    if (!mcq_answers || typeof mcq_answers !== 'object' || !essay_answers || typeof essay_answers !== 'object') {
+      return NextResponse.json({ error: 'Jawaban ujian tidak valid.' }, { status: 400 });
+    }
+
+    if (exam_data.mcq.length > 40 || exam_data.essay.length > 20) {
+      return NextResponse.json({ error: 'Jumlah soal melebihi batas aman.' }, { status: 400 });
+    }
 
     // 1. Auto-grade MCQ (tidak perlu AI - cukup bandingkan jawaban)
     let mcqCorrect = 0;

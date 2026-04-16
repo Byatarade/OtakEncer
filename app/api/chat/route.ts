@@ -18,19 +18,36 @@ BATASAN PENTING (HEMAT TOKEN):
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { message, history } = body;
+    const message = typeof body?.message === 'string' ? body.message.trim() : '';
+    const history = Array.isArray(body?.history) ? body.history : [];
 
     if (!message) {
       return NextResponse.json({ error: 'Message is required' }, { status: 400 });
     }
 
+    if (message.length > 2000) {
+      return NextResponse.json({ error: 'Message terlalu panjang (maks 2000 karakter).' }, { status: 400 });
+    }
+
+    if (history.length > 20) {
+      return NextResponse.json({ error: 'Riwayat chat terlalu panjang (maks 20 item).' }, { status: 400 });
+    }
+
     // Format chat history for Groq
     const chatMessages = [
       { role: 'system', content: systemPrompt },
-      ...history.map((m: { sender: string; text: string }) => ({
-        role: m.sender === 'user' ? 'user' : 'assistant',
-        content: m.text
-      })),
+      ...history
+        .filter((m: unknown) => typeof m === 'object' && m !== null)
+        .map((m) => {
+          const sender = (m as { sender?: unknown }).sender;
+          const text = (m as { text?: unknown }).text;
+          const safeText = typeof text === 'string' ? text.slice(0, 1000) : '';
+          return {
+            role: sender === 'user' ? 'user' : 'assistant',
+            content: safeText
+          };
+        })
+        .filter((m) => m.content.length > 0),
       { role: 'user', content: message }
     ];
 

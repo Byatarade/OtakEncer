@@ -190,11 +190,13 @@ export default function SettingsPage() {
       }
 
       const { data: { session } } = await supabase.auth.getSession();
-      if (session) {
+      const accessToken = session?.access_token;
+
+      if (accessToken) {
         try {
           await fetch('/api/sync-profile', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${session.access_token}` },
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${accessToken}` },
             body: JSON.stringify({ name, avatar })
           });
         } catch (syncError) {

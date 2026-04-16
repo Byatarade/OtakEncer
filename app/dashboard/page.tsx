@@ -77,6 +77,12 @@ function Dashboard() {
       formData.append('user_id', user.id);
 
       const { data: { session } } = await supabase.auth.getSession();
+      const accessToken = session?.access_token;
+
+      if (!accessToken) {
+        showError('Sesi Belum Siap', 'Token login belum tersedia. Tunggu sebentar lalu coba lagi.');
+        return;
+      }
 
       // Create AbortController for cancel support
       const controller = new AbortController();
@@ -85,7 +91,7 @@ function Dashboard() {
       const response = await fetch('/api/generate-materi', {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${session?.access_token}`
+          'Authorization': `Bearer ${accessToken}`
         },
         body: formData,
         signal: controller.signal,
@@ -133,6 +139,12 @@ function Dashboard() {
       formData.append('user_id', user.id);
 
       const { data: { session } } = await supabase.auth.getSession();
+      const accessToken = session?.access_token;
+
+      if (!accessToken) {
+        showError('Sesi Belum Siap', 'Token login belum tersedia. Tunggu sebentar lalu coba lagi.');
+        return;
+      }
 
       // Create AbortController for cancel support
       const controller = new AbortController();
@@ -141,7 +153,7 @@ function Dashboard() {
       const response = await fetch('/api/generate-materi', {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${session?.access_token}`
+          'Authorization': `Bearer ${accessToken}`
         },
         body: formData,
         signal: controller.signal,
