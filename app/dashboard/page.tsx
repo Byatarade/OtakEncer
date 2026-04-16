@@ -876,7 +876,7 @@ function RecentActivityWidget({ userId }: { userId: string }) {
 interface LeaderboardItem {
   user_id: string;
   user_name: string;
-  current_streak: number;
+  current_streak: number | null;
   rank: number;
 }
 
@@ -884,7 +884,7 @@ function LeaderboardRankWidget({ userId, userName }: { userId: string, userName:
   const [data, setData] = useState<LeaderboardItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentUserRank, setCurrentUserRank] = useState<number | string>('-');
-  const [currentUserStreak, setCurrentUserStreak] = useState<number>(0);
+  const [currentUserStreak, setCurrentUserStreak] = useState<number | '-'>('-');
 
   useEffect(() => {
     const fetchLeaderboard = async () => {
@@ -896,11 +896,13 @@ function LeaderboardRankWidget({ userId, userName }: { userId: string, userName:
 
         if (dbError) throw dbError;
 
-        const results = (streakData || []).map((row, index) => ({
-           user_id: row.user_id,
-           user_name: row.user_name || 'Pelajar',
-           current_streak: row.current_streak || 0,
-           rank: index + 1
+        const rankedOnly = (streakData || []).filter((row) => (row.current_streak || 0) > 0);
+
+        const results = rankedOnly.map((row, index) => ({
+          user_id: row.user_id,
+          user_name: row.user_id === userId ? (row.user_name || userName) : (row.user_name || 'Pengguna'),
+          current_streak: row.current_streak || null,
+          rank: index + 1
         }));
 
         const top3 = results.slice(0, 3);
@@ -908,7 +910,7 @@ function LeaderboardRankWidget({ userId, userName }: { userId: string, userName:
         const currentUser = results[currentUserIndex];
         
         setCurrentUserRank(currentUser ? currentUser.rank : '-');
-        setCurrentUserStreak(currentUser ? currentUser.current_streak : 0);
+        setCurrentUserStreak(currentUser?.current_streak ?? '-');
 
         // Show top 3. If current user is not in top 3, append them at the end.
         const displayList = [...top3];
@@ -918,7 +920,7 @@ function LeaderboardRankWidget({ userId, userName }: { userId: string, userName:
           displayList.push({
             user_id: userId,
             user_name: userName,
-            current_streak: 0,
+            current_streak: null,
             rank: 0 // Gunakan angka 0 sebagai indikator 'belum ada ranking' agar tidak error type
           });
         }
@@ -967,7 +969,7 @@ function LeaderboardRankWidget({ userId, userName }: { userId: string, userName:
                     </div>
                     <span className={`font-medium ${isCurrentUser ? 'text-[#0f172a]' : 'text-slate-700'}`}>{item.user_name}</span>
                   </div>
-                  <span className={`font-bold ${isCurrentUser ? 'text-[#0f172a]' : 'text-slate-800'}`}>{item.current_streak}</span>
+                  <span className={`font-bold ${isCurrentUser ? 'text-[#0f172a]' : 'text-slate-800'}`}>{item.current_streak ?? '-'}</span>
                 </div>
               );
             })}
