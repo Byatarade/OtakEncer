@@ -25,7 +25,7 @@ function Dashboard() {
   const abortControllerRef = useRef<AbortController | null>(null);
   const searchParams = useSearchParams();
 
-  // Prevent accidental page close/refresh during uploadd
+  // Prevent accidental page close/refresh during uploaadd
   useEffect(() => {
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
       if (isUploading) {
