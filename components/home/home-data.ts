@@ -22,7 +22,7 @@ export const testimonials = [
   },
   {
     id: 4,
-    name: "Arrifqi",
+    name: "Shani",
     role: "Peminat Teknologi Pendidikan",
     text: "OtakEncer memberikan pengalaman belajar yang sangat berbeda dan modern. Antarmukanya sangat intuitif dan fitur-fitur bertenaga AI-nya benar-benar membantu dalam mengorganisir materi pembelajaran dengan baik.",
     avatar: "",
