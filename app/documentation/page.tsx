@@ -141,7 +141,7 @@ export default function DocumentationPage() {
                     ))
                   ) : (
                     <div className="px-3 py-4 text-sm text-center text-slate-500">
-                      Tidak ditemukan hasil untuk "{searchQuery}"
+                      Tidak ditemukan hasil untuk &quot;{searchQuery}&quot;
                     </div>
                   )}
                 </div>
@@ -339,7 +339,7 @@ export default function DocumentationPage() {
 
              <div className="space-y-4 my-6">
                 <details className="border border-slate-200/80 bg-slate-50/50 rounded-xl p-4 cursor-pointer group">
-                  <summary className="font-semibold text-slate-800 outline-none select-none text-[15px]">Teks gagal diperiksa atau kalimat "Gagal mengurai dokumen"</summary>
+                  <summary className="font-semibold text-slate-800 outline-none select-none text-[15px]">Teks gagal diperiksa atau kalimat &quot;Gagal mengurai dokumen&quot;</summary>
                   <p className="mt-3 text-[14px] text-slate-600 leading-relaxed pl-5 border-l-2 border-[#672cb9]/30">Kemungkinan terbesar pemilik sah buku PDF tersebut menanamkan perlindungan keamanan (*Password / Protected File*) supaya isinya terhalang penyalinan komputer sembarang. Hal ini berakibat rintangan bagi AI kita meniru tulisan dalam dokumen. Sila menjebol pelindungnya dulu dengan fasilitas pembuka PDF luar di Internet.</p>
                 </details>
                 <details className="border border-slate-200/80 bg-slate-50/50 rounded-xl p-4 cursor-pointer group">

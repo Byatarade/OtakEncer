@@ -918,6 +918,7 @@ export default function MaterialReader() {
               {/* Header Materi Bacaan */}
               <div className="mb-12 border-b border-gray-100 pb-8">
                 <div className="flex items-center gap-2 text-[#672cb9] font-bold text-xs uppercase tracking-widest mb-4">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src="/assets/logo.svg" alt="Logo" className="w-5 h-5 object-contain" /> Rangkuman Cerdas
                 </div>
                 <h1 className="text-3xl md:text-5xl font-extrabold text-gray-900 tracking-tight leading-tight mb-6 break-words hyphens-auto">

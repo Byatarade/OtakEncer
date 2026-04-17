@@ -210,7 +210,7 @@ Struktur HARUS persis seperti ini:
     let parsedData;
     try {
       parsedData = JSON.parse(aiOutput);
-    } catch (e) {
+    } catch {
       console.error("Gagal parse JSON dari output AI:", aiOutput);
       throw new Error('Format output AI tidak valid. Silakan coba lagi.');
     }

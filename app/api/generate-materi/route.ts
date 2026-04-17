@@ -349,7 +349,7 @@ ${safePdfText}
                   });
                   
                   if (!hfRes.ok) {
-                    const failErr = await hfRes.text();
+                    await hfRes.text();
                     throw new Error(`Semua server AI (Gemini, Groq, OpenRouter, DeepSeek, HuggingFace) sedang sibuk. Mohon coba beberapa saat lagi.`);
                   }
                   const hfData = await hfRes.json();

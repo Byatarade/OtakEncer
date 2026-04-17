@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { User, Save, Mail, Camera, Loader2, ArrowLeft, X, Crop, Activity, FileText, Layers, ListTodo, Calendar, Clock, BarChart2, PieChart, CheckCircle2, GraduationCap } from 'lucide-react';
+import { User, Save, Mail, Camera, Loader2, ArrowLeft, X, Crop, FileText, Layers, ListTodo, Clock, BarChart2, PieChart, CheckCircle2, GraduationCap } from 'lucide-react';
 import { useAuth } from '@/components/AuthProvider';
 import { supabase } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
@@ -32,9 +32,8 @@ export default function SettingsPage() {
 
   // Activity & Log states
   const [stats, setStats] = useState({ materials: 0, quizzes: 0, flashcards: 0, exams: 0, files: 0 });
-  const [activities, setActivities] = useState<any[]>([]);
+  const [activities, setActivities] = useState<{ id: string; type: string; title: string; created_at: Date }[]>([]);
   const [timeFilter, setTimeFilter] = useState('all');
-  const [heatmapData, setHeatmapData] = useState<Record<string, number>>({});
   const [loadingStats, setLoadingStats] = useState(true);
 
   useEffect(() => {
@@ -58,7 +57,7 @@ export default function SettingsPage() {
         let examCount = 0;
         let fileCount = 0;
         const heatMap: Record<string, number> = {};
-        const logs: any[] = [];
+        const logs: { id: string; type: string; title: string; created_at: Date }[] = [];
 
         if (materials) {
           matCount = materials.length;
@@ -87,7 +86,7 @@ export default function SettingsPage() {
             const dateStr = `${dateObj.getFullYear()}-${String(dateObj.getMonth() + 1).padStart(2, '0')}-${String(dateObj.getDate()).padStart(2, '0')}`;
             heatMap[dateStr] = (heatMap[dateStr] || 0) + 1;
 
-            // @ts-ignore
+            // @ts-expect-error type override
             const t = q.materials?.title || 'Quiz/Ujian';
             logs.push({
               id: `quiz-${q.id}`,
@@ -101,7 +100,7 @@ export default function SettingsPage() {
         logs.sort((a, b) => b.created_at.getTime() - a.created_at.getTime());
 
         setStats({ materials: matCount, quizzes: quizCount, flashcards: flashcardCount, exams: examCount, files: fileCount });
-        setHeatmapData(heatMap);
+        
         setActivities(logs);
       } catch (e) {
         console.error(e);

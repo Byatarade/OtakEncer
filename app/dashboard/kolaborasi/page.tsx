@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Users, Hammer, Sparkles, MessageSquareShare, ArrowLeft } from 'lucide-react';
+import { Users, Hammer, MessageSquareShare, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 

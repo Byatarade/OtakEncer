@@ -210,7 +210,7 @@ Format JSON yang HARUS diikuti:
                   });
                   
                   if (!hfRes.ok) {
-                    const failErr = await hfRes.text();
+                    await hfRes.text();
                     throw new Error(`Semua server AI (Gemini, Groq, OpenRouter, DeepSeek, HuggingFace) sedang sibuk merumuskan ujian. Mohon tunggu beberapa menit lagi.`);
                   }
                   const hfData = await hfRes.json();
@@ -232,7 +232,7 @@ Format JSON yang HARUS diikuti:
     let parsedData;
     try {
       parsedData = JSON.parse(aiOutput);
-    } catch (e) {
+    } catch {
       console.error("Gagal parse JSON dari output AI:", aiOutput);
       throw new Error('Format output AI tidak valid. Silakan coba lagi.');
     }

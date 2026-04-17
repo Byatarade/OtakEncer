@@ -1,7 +1,7 @@
 "use client";
 import { supabase } from '@/lib/supabase';
 
-import {Plus, LogOut, Settings, HelpCircle, ChevronDown, FileText, CheckCircle2, Check, X, MonitorPlay, Volume2, Link as LinkIcon, Flame, Volume, Speaker, Mic, Mic2, Voicemail, Monitor, PlaySquareIcon, PlaySquare, Music } from 'lucide-react';
+import {Plus, LogOut, Settings, HelpCircle, ChevronDown, FileText, CheckCircle2, Check, X, Link as LinkIcon, Flame, PlaySquare, Music } from 'lucide-react';
 import Image from 'next/image';
 import { useAuth } from '@/components/AuthProvider';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -10,7 +10,6 @@ import Link from 'next/link';
 import { showSuccess, showError } from '@/lib/swal';
 import { formatDistanceToNow, format } from 'date-fns';
 import { toZonedTime, formatInTimeZone } from 'date-fns-tz';
-import { Play } from 'next/font/google';
 
 function Dashboard() {
   const { user, logout } = useAuth();
@@ -587,7 +586,7 @@ function DailyStreakCard({ userId }: { userId: string }) {
     setIsModalOpen(true);
     // Selalu fetch ulang data terbaru saat modal dibuka untuk mencegah data basi (materi yang sudah dihapus)
     setLoadingMaterials(true);
-    const { data, error } = await supabase
+    const { data } = await supabase
       .from('materials')
       .select('id, title')
       .eq('user_id', userId)

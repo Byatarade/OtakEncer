@@ -3,12 +3,11 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { Variants } from 'framer-motion';
-import { Search, FolderPlus, FileText, Video, Music, Layers, Loader2, Library, PlaySquare } from 'lucide-react';
+import { Search, FolderPlus, FileText, Music, Layers, Loader2, Library, PlaySquare } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { LibraryCard, Material } from '@/components/library/LibraryCard';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/components/AuthProvider';
-import Image from 'next/image';
 
 const containerVariants: Variants = {
   hidden: { opacity: 0 },
