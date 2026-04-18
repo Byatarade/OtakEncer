@@ -16,13 +16,13 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: {
     template: "%s | OtakEncer",
-    default: "OtakEncer - Ubah Dokumenmu Menjadi Materi Siap Pelajari",
+    default: "OtakEncer - Ubah Dokumenmu Menjadi Materi Siap Dipelajari",
   },
-  description: "Platform AI pintar yang mengubah dokumen PDF, dokumen teks, hingga link YouTube atau Audio menjadi materi interaktif yang siap dipelajari. Tingkatkan efisiensi dan produktivitas belajar Anda secara cepat.",
+  description: "Platform AI pintar yang mengubah dokumen PDF, Audio, dan link YouTube menjadi materi yang siap dipelajari.",
   applicationName: "OtakEncer",
   authors: [{ name: "OtakEncer Team" }],
   generator: "Next.js",
-  keywords: ["AI untuk Pendidikan", "Ringkasan Dokumen Otomatis", "Materi Interaktif", "Chat AI Dokumen", "Belajar Cerdas", "Ubah PDF ke Materi", "OtakEncer"],
+  keywords: ["AI pelajaran", "Ringkas Audio", "Ringkas Link Youtube", "Ringkas yt", "Ringkas Dokumen", "Ringkas Materi", "Chat AI Dokumen", "Belajar Cepat", "Ubah PDF ke Materi", "OtakEncer", "Otak Encer", "Neura AI"],
   creator: "OtakEncer",
   publisher: "OtakEncer",
   formatDetection: {
@@ -35,8 +35,8 @@ export const metadata: Metadata = {
     canonical: "/",
   },
   openGraph: {
-    title: "OtakEncer - Ubah Dokumen Kompleks Menjadi Materi Super Mudah",
-    description: "Platform AI inovatif yang memecahkan rintangan pembelajaran. Kami mengubah PDF, dokumen, YouTube, dan Audio Anda menjadi materi interaktif dalam sekejap.",
+    title: "OtakEncer - Ubah Dokumenmu Menjadi Materi Siap Dipelajari",
+    description: "Platform AI pintar yang mengubah dokumen PDF, Audio, dan link YouTube menjadi materi yang siap dipelajari.",
     url: "https://otakencer.me",
     siteName: "OtakEncer.me",
     locale: "id_ID",
@@ -46,14 +46,14 @@ export const metadata: Metadata = {
         url: "/assets/og-image.jpg",
         width: 1200,
         height: 630,
-        alt: "OtakEncer - Platform AI Tercepat",
+        alt: "OtakEncer - Meringkas Lebih Cepat Dengan AI",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "OtakEncer - Pembelajaran AI Pintar",
-    description: "Tingkatkan produktivitas 10x lipat lebih cepat! AI cerdas yang membantu merangkum PDF dan video langsung menjadi materi pelajaran.",
+    title: "OtakEncer - Ubah Dokumenmu Menjadi Materi Siap Dipelajari",
+    description: "Platform AI pintar yang mengubah dokumen PDF, Audio, dan link YouTube menjadi materi yang siap dipelajari.",
     images: ["/assets/og-image.jpg"], // Gambar yang akan tampil di WhatsApp, Twitter
   },
   robots: {
