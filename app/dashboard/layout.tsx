@@ -33,7 +33,7 @@ export default function DashboardLayout({
               <div className="pt-4 pb-12 px-10 shrink-0">
                 <Link href="/?view=landing" className="flex items-center gap-3">
                   <div className="w-8 h-8 relative flex items-center justify-center p-0.5">
-                    <Image priority src="/assets/logo.svg" alt="Logo" fill className="object-contain brightness-0 invert" />
+                    <Image priority src="/assets/logo.avif" alt="Logo" fill className="object-contain brightness-0 invert" />
                   </div>
                   <div className="leading-[1.1]">
                     <div className="text-[20px] font-bold text-white tracking-tight">OtakEncer</div>

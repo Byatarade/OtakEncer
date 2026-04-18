@@ -103,7 +103,7 @@ export default function MobileNavbar() {
           {/* Logo */}
           <Link href="/?view=landing" className="flex items-center gap-2 shrink-0">
             <div className="relative w-7 h-7">
-              <Image priority src="/assets/logo.svg" alt="OtakEncer Logo" fill className="object-contain" />
+              <Image priority src="/assets/logo.avif" alt="OtakEncer Logo" fill className="object-contain" />
             </div>
             <span className="font-bold text-[17px] tracking-tight text-slate-900">
               Otak<span className="text-[#672cb9]">Encer</span>

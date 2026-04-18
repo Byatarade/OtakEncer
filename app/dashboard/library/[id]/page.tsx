@@ -726,7 +726,7 @@ export default function MaterialReader() {
           <div className="absolute inset-0 rounded-full border-4 border-[#672cb9]/20 border-t-[#672cb9] animate-spin"></div>
           <div className="absolute inset-[6px] rounded-full border-4 border-[#672cb9]/20 border-b-[#672cb9] animate-[spin_2s_linear_infinite_reverse]"></div>
           <div className="relative w-10 h-10 flex items-center justify-center animate-pulse">
-            <Image priority src="/assets/logo.svg" alt="OtakEncer Loading" fill className="object-contain" />
+            <Image priority src="/assets/logo.avif" alt="OtakEncer Loading" fill className="object-contain" />
           </div>
         </div>
         <p className="text-gray-500 font-bold animate-pulse">Mempersiapkan materi Anda...</p>
@@ -919,7 +919,7 @@ export default function MaterialReader() {
               <div className="mb-12 border-b border-gray-100 pb-8">
                 <div className="flex items-center gap-2 text-[#672cb9] font-bold text-xs uppercase tracking-widest mb-4">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src="/assets/logo.svg" alt="Logo" className="w-5 h-5 object-contain" /> Rangkuman Cerdas
+                  <img src="/assets/logo.avif" alt="Logo" className="w-5 h-5 object-contain" /> Rangkuman Cerdas
                 </div>
                 <h1 className="text-3xl md:text-5xl font-extrabold text-gray-900 tracking-tight leading-tight mb-6 break-words hyphens-auto">
                   {material.title}
@@ -962,7 +962,7 @@ export default function MaterialReader() {
                    <div className="absolute inset-0 rounded-full border-4 border-[#672cb9]/20 border-t-[#672cb9] animate-spin"></div>
                    <div className="absolute inset-[6px] rounded-full border-4 border-[#672cb9]/20 border-b-[#672cb9] animate-[spin_2s_linear_infinite_reverse]"></div>
                    <div className="relative w-10 h-10 flex items-center justify-center animate-pulse">
-                     <Image priority src="/assets/logo.svg" alt="OtakEncer Loading" fill className="object-contain" />
+                     <Image priority src="/assets/logo.avif" alt="OtakEncer Loading" fill className="object-contain" />
                    </div>
                  </div>
                  <h2 className="text-2xl font-bold text-[#672cb9] text-center">Menyusun Soal Quiz...</h2>
@@ -1113,7 +1113,7 @@ export default function MaterialReader() {
                    <div className="absolute inset-0 rounded-full border-4 border-[#672cb9]/20 border-t-[#672cb9] animate-spin"></div>
                    <div className="absolute inset-[6px] rounded-full border-4 border-[#672cb9]/20 border-b-[#672cb9] animate-[spin_2s_linear_infinite_reverse]"></div>
                    <div className="relative w-10 h-10 flex items-center justify-center animate-pulse">
-                     <Image priority src="/assets/logo.svg" alt="OtakEncer Loading" fill className="object-contain" />
+                     <Image priority src="/assets/logo.avif" alt="OtakEncer Loading" fill className="object-contain" />
                    </div>
                  </div>
                  <h2 className="text-2xl font-bold text-[#672cb9] text-center">Menyusun Flashcard Pintar...</h2>
@@ -1229,7 +1229,7 @@ export default function MaterialReader() {
                   <div className="absolute inset-0 rounded-full border-4 border-[#672cb9]/20 border-t-[#672cb9] animate-spin"></div>
                   <div className="absolute inset-[6px] rounded-full border-4 border-[#672cb9]/20 border-b-[#672cb9] animate-[spin_2s_linear_infinite_reverse]"></div>
                   <div className="relative w-10 h-10 flex items-center justify-center animate-pulse">
-                    <Image priority src="/assets/logo.svg" alt="OtakEncer Loading" fill className="object-contain" />
+                    <Image priority src="/assets/logo.avif" alt="OtakEncer Loading" fill className="object-contain" />
                   </div>
                 </div>
                 <h2 className="text-2xl font-bold text-[#672cb9] text-center">Menyusun Prediksi Soal Ujian...</h2>
@@ -1241,7 +1241,7 @@ export default function MaterialReader() {
                   <div className="absolute inset-0 rounded-full border-4 border-[#672cb9]/20 border-t-[#672cb9] animate-spin"></div>
                   <div className="absolute inset-[6px] rounded-full border-4 border-[#672cb9]/20 border-b-[#672cb9] animate-[spin_2s_linear_infinite_reverse]"></div>
                   <div className="relative w-10 h-10 flex items-center justify-center animate-pulse">
-                    <Image priority src="/assets/logo.svg" alt="OtakEncer Loading" fill className="object-contain" />
+                    <Image priority src="/assets/logo.avif" alt="OtakEncer Loading" fill className="object-contain" />
                   </div>
                 </div>
                 <h2 className="text-2xl font-bold text-[#672cb9] text-center">AI Sedang Menilai Jawaban...</h2>

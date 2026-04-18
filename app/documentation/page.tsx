@@ -93,7 +93,7 @@ export default function DocumentationPage() {
                 <span className="sr-only">Back</span>
               </Link>
               <Link href="/documentation" className="flex items-center gap-2">
-                <Image src="/assets/logo.svg" alt="OtakEncer" width={24} height={24} className="object-contain brightness-0" />
+                <Image src="/assets/logo.avif" alt="OtakEncer" width={24} height={24} className="object-contain brightness-0" />
                 <span className="font-bold text-[18px] text-black">OtakEncer Documentation</span>
               </Link>
             </div>

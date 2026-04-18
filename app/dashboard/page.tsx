@@ -338,7 +338,7 @@ function Dashboard() {
                      <div className="absolute inset-[6px] rounded-full border-4 border-[#672cb9]/20 border-b-[#672cb9] animate-[spin_2s_linear_infinite_reverse]"></div>
                      {/* Logo OtakEncer — pulse hanya di logo, bukan text */}
                      <div className="relative w-10 h-10 flex items-center justify-center animate-pulse">
-                       <Image priority src="/assets/logo.svg" alt="OtakEncer Loading" fill className="object-contain" />
+                       <Image priority src="/assets/logo.avif" alt="OtakEncer Loading" fill className="object-contain" />
                      </div>
                    </div>
                    {/* Teks TANPA animate-pulse agar tidak kedap-kedip */}
