@@ -8,7 +8,7 @@ export const testimonials = [
   },
   {
     id: 2,
-    name: "Hillmi Azzam",
+    name: "Hilmi Azzam",
     role: "Pelajar Sekolah Menengah Atas",
     text: "Platform ini sangat membantu saya dalam menyusun materi presentasi dan tugas sekolah. Hasil analisis AI yang diberikan sangat akurat dan mudah dipahami, sehingga saya bisa belajar lebih efektif setiap harinya.",
     avatar: "",
