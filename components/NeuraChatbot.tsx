@@ -53,6 +53,13 @@ export default function NeuraChatbot({ showTrigger = true }: NeuraChatbotProps) 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const msgIdCounter = useRef(0);
 
+  // Listen to custom event to open chatbot
+  useEffect(() => {
+    const handleOpen = () => setIsOpen(true);
+    window.addEventListener("openNeuraChatbot", handleOpen);
+    return () => window.removeEventListener("openNeuraChatbot", handleOpen);
+  }, []);
+
   // Auto-scroll ke bawah saat ada pesan baru
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });

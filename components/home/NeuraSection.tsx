@@ -46,7 +46,10 @@ export const NeuraSection = forwardRef<HTMLElement>(function NeuraSection(_, ref
             </p>
           </div>
 
-          <div className="flex items-center text-[#672cb9] text-[12px] font-semibold mt-1 group cursor-pointer w-fit">
+          <div 
+            onClick={() => window.dispatchEvent(new Event('openNeuraChatbot'))}
+            className="flex items-center text-[#672cb9] text-[12px] font-semibold mt-1 group cursor-pointer w-fit"
+          >
             <span>Tanya sekarang</span>
             <svg
               width="14"
