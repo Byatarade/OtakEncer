@@ -4,7 +4,7 @@ const cspHeader = `
   default-src 'self';
   script-src 'self' 'unsafe-eval' 'unsafe-inline' https://accounts.google.com https://apis.google.com;
   style-src 'self' 'unsafe-inline' https:;
-  img-src 'self' data: blob: https://lh3.googleusercontent.com https://lhzznzgikawaybpgziff.supabase.co;
+  img-src 'self' data: blob: https://lh3.googleusercontent.com https://lhzznzgikawaybpgziff.supabase.co https://avatars.githubusercontent.com;
   font-src 'self' data: https:;
   connect-src 'self' https://lhzznzgikawaybpgziff.supabase.co https://accounts.google.com https:;
   frame-src https://accounts.google.com;
@@ -13,7 +13,10 @@ const cspHeader = `
   form-action 'self';
   frame-ancestors 'none';
   upgrade-insecure-requests;
-`.replace(/\n/g, "").replace(/\s{2,}/g, " ").trim();
+`
+  .replace(/\n/g, "")
+  .replace(/\s{2,}/g, " ")
+  .trim();
 
 const nextConfig: NextConfig = {
   serverExternalPackages: ["pdf-parse", "officeparser"],
@@ -27,6 +30,10 @@ const nextConfig: NextConfig = {
       {
         protocol: "https",
         hostname: "lhzznzgikawaybpgziff.supabase.co",
+      },
+      {
+        protocol: "https",
+        hostname: "avatars.githubusercontent.com",
       },
     ],
   },
